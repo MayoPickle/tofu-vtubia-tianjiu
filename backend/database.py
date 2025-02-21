@@ -15,6 +15,8 @@ def init_db():
     if os.path.exists(DB_NAME):
         os.remove(DB_NAME)
 
+    create_users_table()
+
     conn = get_connection()
     cur = conn.cursor()
     
@@ -47,6 +49,25 @@ def init_db():
 
     conn.commit()
     conn.close()
+
+
+# 1) 确保数据库有 users 表
+def create_users_table():
+    conn = get_connection()
+    cur = conn.cursor()
+    # username 唯一
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT UNIQUE NOT NULL,
+            password TEXT NOT NULL,
+            bilibili_uid TEXT,
+            is_admin INTEGER DEFAULT 0
+        )
+    """)
+    conn.commit()
+    conn.close()
+
 
 if __name__ == "__main__":
     init_db()
