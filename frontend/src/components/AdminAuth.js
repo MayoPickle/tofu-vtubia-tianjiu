@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Dropdown, Menu, Modal, Form, Input, message, Avatar, Typography, Button } from 'antd';
+import { Link, useNavigate} from 'react-router-dom';
+import { Dropdown, Menu, Modal, Form, Input, message, Avatar, Typography} from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import axios from 'axios';
 
 const { Text } = Typography;
 
 function AdminAuth() {
+    const navigate = useNavigate();
+
   const [isAdmin, setIsAdmin] = useState(false);
   const [username, setUsername] = useState(null);
 
@@ -53,10 +56,12 @@ function AdminAuth() {
   // 处理登出
   const handleLogout = async () => {
     try {
-      await axios.post('/api/logout');
+      await axios.post('/api/logout', null, { withCredentials: true });
       setIsAdmin(false);
       setUsername(null);
       message.success('已登出');
+      // ✅ 退出后跳转到 /intro
+      navigate('/intro');
     } catch (err) {
       message.error('登出失败');
     }
@@ -97,6 +102,11 @@ function AdminAuth() {
       <Menu.Item key="role" disabled>
         {isAdmin ? '管理员' : '普通用户'}
       </Menu.Item>
+      {isAdmin ? (
+        <Menu.Item key="manage-users">
+          <Link to="/admin/users">用户管理</Link>
+        </Menu.Item>
+      ) : null}
       <Menu.Divider />
       <Menu.Item key="logout" danger onClick={handleLogout}>
         退出登录
