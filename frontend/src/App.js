@@ -7,7 +7,7 @@ import SongList from './components/SongList';
 import AdminAuth from './components/AdminAuth';
 import AdminUserList from './components/AdminUserList';
 
-const { Header, Content } = Layout;
+const { Header, Content, Footer } = Layout;
 
 function App() {
   const location = useLocation();
@@ -73,6 +73,10 @@ function App() {
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </Content>
+      {/* 全局 Footer */}
+      <Footer style={{ textAlign: 'center' }}>
+        © 2025 豆腐观测站
+      </Footer>
     </Layout>
   );
 }
