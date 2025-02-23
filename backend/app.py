@@ -109,7 +109,7 @@ def register():
     data = request.get_json() or {}
     username = (data.get("username") or "").strip()
     password = (data.get("password") or "").strip()
-    bilibili_uid = data.get("bilibili_uid", "").strip()
+    bilibili_uid = (data.get("bilibili_uid") or "").strip()
 
     if not username:
         return jsonify({"message": "用户名不能为空"}), 400
