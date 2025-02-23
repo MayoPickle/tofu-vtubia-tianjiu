@@ -161,6 +161,10 @@ function AdminAuth() {
         okText="登录"
         cancelText="取消"
       >
+        {/* 重制密码提示 */}
+        <Text type="secondary" style={{ display: 'block', marginBottom: 16 }}>
+          如果忘记登录密码，请联系管理员重制。
+        </Text>
         <Form form={loginForm} layout="vertical">
           <Form.Item
             label="用户名"
@@ -229,7 +233,7 @@ function AdminAuth() {
           <Form.Item
             label="B站UID(可选)"
             name="bilibili_uid"
-            tooltip="可以在B站个人页面找到，纯数字"
+            tooltip="可以在B站个人页面找到，纯数字。提供UID可以自动获取头像等信息"
             rules={[
               {
                 validator: (_, value) => {

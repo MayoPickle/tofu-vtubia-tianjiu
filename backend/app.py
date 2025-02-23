@@ -37,11 +37,11 @@ def create_users_table_and_seed():
         cur.execute("""
             INSERT INTO users (username, password, bilibili_uid, is_admin)
             VALUES (?, ?, ?, ?)
-        """, ("tofu", "y10086Y+1s", "3915536", 1))
+        """, ("tofu", "5b5f2a30642928dc7f96079f72a4ac0f", "3915536", 1))
         cur.execute("""
             INSERT INTO users (username, password, bilibili_uid, is_admin)
             VALUES (?, ?, ?, ?)
-        """, ("xiaotu", "y10086Y+1s", "3915536", 1))
+        """, ("xiaotu", "5b5f2a30642928dc7f96079f72a4ac0f", "3915536", 1))
         conn.commit()
 
     conn.close()
