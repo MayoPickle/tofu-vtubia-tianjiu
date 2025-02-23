@@ -6,14 +6,22 @@ import axios from 'axios';
 import SongList from './components/SongList';
 import AdminAuth from './components/AdminAuth';
 import AdminUserList from './components/AdminUserList';
+
 const { Header, Content } = Layout;
 
 function App() {
   const location = useLocation();
   const params = new URLSearchParams(location.search);
-  const navParam = params.get('nav');  
+  const navParam = params.get('nav');
   const showIntro = navParam !== 'hideIntro';
   const [isAdmin, setIsAdmin] = useState(false);
+
+  // ✅ 动态确定当前路由对应的选中菜单项
+  const getSelectedMenuKey = () => {
+    if (location.pathname.startsWith('/intro')) return 'intro';
+    if (location.pathname.startsWith('/songs')) return 'songs';
+    return 'intro'; // 默认高亮
+  };
 
   useEffect(() => {
     checkAuth();
@@ -31,11 +39,16 @@ function App() {
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        
         {/* ✅ 左侧：标题 + 菜单 */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
           <div style={{ color: '#fff', fontSize: '18px', fontWeight: 'bold' }}>9872星球</div>
-          <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['intro']} >
+
+          {/* ✅ 动态更新选中项 */}
+          <Menu
+            theme="dark"
+            mode="horizontal"
+            selectedKeys={[getSelectedMenuKey()]} // 使用动态选择高亮
+          >
             {showIntro && (
               <Menu.Item key="intro">
                 <Link to="/intro">介绍</Link>
@@ -49,7 +62,6 @@ function App() {
 
         {/* ✅ 右侧：管理员登录/登出组件 */}
         <AdminAuth />
-
       </Header>
 
       <Content style={{ background: '#fff' }}>

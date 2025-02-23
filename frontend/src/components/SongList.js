@@ -1,26 +1,15 @@
+// SongList.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import {
-  Table,
-  Input,
-  Button,
-  Modal,
-  Form,
-  message,
-  Space,
-} from 'antd';
+import { Table, Input, Button, Modal, Form, message, Space } from 'antd';
 
 function SongList() {
   const [songs, setSongs] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
 
-  // 是否管理员登录
+  // 是否管理员
   const [isAdmin, setIsAdmin] = useState(false);
-
-  // 登录表单相关
-  const [showLoginModal, setShowLoginModal] = useState(false);
-  const [loginForm] = Form.useForm();
 
   // 新增歌曲对话框
   const [addModalVisible, setAddModalVisible] = useState(false);
@@ -31,12 +20,13 @@ function SongList() {
   const [editForm] = Form.useForm();
   const [currentEditId, setCurrentEditId] = useState(null);
 
-  // ========== 初始化: 获取歌曲列表 & 检查是否已登录管理员 ==========
+  // ========= 初始化：获取列表 & 检查是否管理员 =========
   useEffect(() => {
     fetchSongs();
     checkAuth();
   }, []);
 
+  // 获取歌曲列表
   const fetchSongs = async (search = '') => {
     setLoading(true);
     try {
@@ -52,58 +42,24 @@ function SongList() {
     }
   };
 
-  // 前端检查是否已登录
+  // 检查当前登录状态，获取是否 admin
   const checkAuth = async () => {
     try {
-      const res = await axios.get('/api/check_auth');
+      const res = await axios.get('/api/check_auth', { withCredentials: true });
       setIsAdmin(res.data.is_admin);
     } catch (err) {
       console.error('Error checking auth:', err);
-      // 如果出错，就认为没登录
       setIsAdmin(false);
     }
   };
 
-  // ========== 搜索 ==========
+  // ======== 搜索 ========
   const onSearch = (value) => {
     setSearchTerm(value);
     fetchSongs(value);
   };
 
-  // ========== 登录 & 登出 ==========
-  const handleLoginSubmit = async () => {
-    try {
-      const values = await loginForm.validateFields();
-      const res = await axios.post('/api/login', values);
-      if (res.status === 200) {
-        message.success('登录成功');
-        setIsAdmin(true);
-        setShowLoginModal(false);
-      }
-    } catch (err) {
-      console.error('Login error:', err);
-      if (err.response) {
-        message.error(err.response.data.message || '登录失败');
-      } else if (err.errorFields) {
-        // 表单校验错误，不弹 message
-      } else {
-        message.error('登录失败');
-      }
-    }
-  };
-
-  const handleLogout = async () => {
-    try {
-      await axios.post('/api/logout');
-      setIsAdmin(false);
-      message.success('已登出');
-    } catch (err) {
-      console.error('Logout error:', err);
-      message.error('登出失败');
-    }
-  };
-
-  // ========== 新增歌曲 ==========
+  // ======== 新增歌曲 ========
   const handleOpenAddModal = () => {
     if (!isAdmin) {
       message.warning('请先登录管理员账号');
@@ -119,13 +75,13 @@ function SongList() {
       if (values.year) {
         values.year = parseInt(values.year, 10);
       }
-      await axios.post('/api/songs', values);
+      await axios.post('/api/songs', values, { withCredentials: true });
       message.success('添加歌曲成功');
       setAddModalVisible(false);
       fetchSongs(searchTerm);
     } catch (err) {
       console.error('Error adding song:', err);
-      if (err.response && err.response.status === 403) {
+      if (err.response?.status === 403) {
         message.error('没有管理员权限，无法添加');
       } else {
         message.error('添加失败');
@@ -133,7 +89,7 @@ function SongList() {
     }
   };
 
-  // ========== 编辑 ==========
+  // ======== 编辑 ========
   const handleOpenEditModal = (record) => {
     if (!isAdmin) {
       message.warning('请先登录管理员账号');
@@ -157,14 +113,14 @@ function SongList() {
       if (values.year) {
         values.year = parseInt(values.year, 10);
       }
-      await axios.put(`/api/songs/${currentEditId}`, values);
+      await axios.put(`/api/songs/${currentEditId}`, values, { withCredentials: true });
       message.success('编辑歌曲成功');
       setEditModalVisible(false);
       setCurrentEditId(null);
       fetchSongs(searchTerm);
     } catch (err) {
       console.error('Error editing song:', err);
-      if (err.response && err.response.status === 403) {
+      if (err.response?.status === 403) {
         message.error('没有管理员权限，无法编辑');
       } else {
         message.error('编辑失败');
@@ -172,7 +128,7 @@ function SongList() {
     }
   };
 
-  // ========== 删除 ==========
+  // ======== 删除 ========
   const handleDeleteSong = async (id) => {
     if (!isAdmin) {
       message.warning('请先登录管理员账号');
@@ -186,12 +142,12 @@ function SongList() {
       cancelText: '取消',
       onOk: async () => {
         try {
-          await axios.delete(`/api/songs/${id}`);
+          await axios.delete(`/api/songs/${id}`, { withCredentials: true });
           message.success('删除成功');
           fetchSongs(searchTerm);
         } catch (error) {
           console.error('Error deleting song:', error);
-          if (error.response && error.response.status === 403) {
+          if (error.response?.status === 403) {
             message.error('没有管理员权限，无法删除');
           } else {
             message.error('删除失败');
@@ -228,15 +184,17 @@ function SongList() {
 
   return (
     <div style={{ padding: '20px' }}>
-      {/* 顶部标题与右上角登录/登出按钮 */}
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 2 }}>
         <h1>歌曲列表</h1>
       </div>
 
-      {/* 搜索栏 + 添加歌曲按钮 + 管理员登录/登出按钮 */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-        
-        {/* 左侧：搜索栏 + 添加歌曲按钮 */}
+      <div style={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'space-between', 
+        marginBottom: 20 
+      }}>
+        {/* 搜索栏 + 添加歌曲按钮 */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <Input.Search
             placeholder="搜索歌曲或歌手..."
@@ -248,21 +206,6 @@ function SongList() {
             添加歌曲
           </Button>
         </div>
-
-        {/* 右侧：管理员状态和登出按钮 */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          {isAdmin ? (
-            <>
-              <span>已登录为管理员</span>
-              <Button onClick={handleLogout}>登出</Button>
-            </>
-          ) : (
-            <Button type="primary" onClick={() => setShowLoginModal(true)}>
-              管理员登录
-            </Button>
-          )}
-        </div>
-
       </div>
 
       {/* 表格 */}
@@ -274,34 +217,7 @@ function SongList() {
         pagination={{ pageSize: 8 }}
       />
 
-      {/* 登录对话框 */}
-      <Modal
-        title="管理员登录"
-        visible={showLoginModal}
-        onOk={handleLoginSubmit}
-        onCancel={() => setShowLoginModal(false)}
-        okText="登录"
-        cancelText="取消"
-      >
-        <Form form={loginForm} layout="vertical">
-          <Form.Item
-            label="用户名"
-            name="username"
-            rules={[{ required: true, message: '请输入用户名' }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label="密码"
-            name="password"
-            rules={[{ required: true, message: '请输入密码' }]}
-          >
-            <Input.Password />
-          </Form.Item>
-        </Form>
-      </Modal>
-
-      {/* 添加歌曲 */}
+      {/* 添加歌曲弹窗 */}
       <Modal
         title="添加新歌曲"
         visible={addModalVisible}
@@ -340,7 +256,7 @@ function SongList() {
         </Form>
       </Modal>
 
-      {/* 编辑歌曲 */}
+      {/* 编辑歌曲弹窗 */}
       <Modal
         title="编辑歌曲"
         visible={editModalVisible}

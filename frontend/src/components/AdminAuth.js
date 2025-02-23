@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate} from 'react-router-dom';
-import { Dropdown, Menu, Modal, Form, Input, message, Avatar, Typography} from 'antd';
+import { Dropdown, Menu, Modal, Form, Input, message, Avatar, Typography, Divider} from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import axios from 'axios';
 
@@ -47,6 +47,7 @@ function AdminAuth() {
         setIsAdmin(res.data.is_admin);
         setUsername(res.data.username || '用户');
         setShowLoginModal(false);
+        window.location.reload();
       }
     } catch (err) {
       message.error(err.response?.data?.message || '登录失败');
@@ -128,8 +129,9 @@ function AdminAuth() {
         // ✅ 未登录: 显示 "管理员登录" + "注册" 按钮
         <div style={{ display: 'flex', gap: '12px' }}>
           <Text style={{ color: '#fff', cursor: 'pointer' }} onClick={() => setShowLoginModal(true)}>
-            管理员登录
+            登录
           </Text>
+          <Divider type="vertical" style={{ background: '#fff', height: '24px' }} />
           <Text style={{ color: '#fff', cursor: 'pointer' }} onClick={openRegisterModal}>
             注册
           </Text>
