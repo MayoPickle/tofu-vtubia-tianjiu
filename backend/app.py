@@ -10,6 +10,139 @@ CORS(app, supports_credentials=True)
 # 注意: init_db() 里会调用 create_tables() 并插入示例数据
 init_db()
 
+def create_prizes_table():
+    """
+    创建用于存储用户奖品的表 prizes:
+      id       | INTEGER PRIMARY KEY AUTOINCREMENT
+      user_id  | INTEGER (可加 FOREIGN KEY 约束到 users.id)
+      name     | TEXT
+      probability | REAL
+      image    | TEXT
+    """
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS prizes (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            name TEXT NOT NULL,
+            probability REAL NOT NULL,
+            image TEXT
+        )
+    """)
+    conn.commit()
+    conn.close()
+
+# 在 init_db() 或其他地方调用一下，以确保建表
+create_prizes_table()
+
+
+@app.route("/api/user/prizes", methods=["GET"])
+def get_user_prizes():
+    """
+    获取当前登录用户的所有奖品数据
+    如果未登录则返回 401
+    """
+    if "username" not in session:
+        return jsonify({"message": "请先登录"}), 401
+    
+    username = session["username"]
+
+    # 查询对应用户ID
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT id FROM users WHERE username = ?", (username,))
+    user_row = cur.fetchone()
+    if not user_row:
+        conn.close()
+        return jsonify({"message": "用户不存在"}), 404
+    
+    user_id = user_row["id"]
+
+    # 查询该用户在 prizes 表中的奖品
+    cur.execute("""
+        SELECT id, name, probability, image
+        FROM prizes
+        WHERE user_id = ?
+    """, (user_id,))
+    rows = cur.fetchall()
+    conn.close()
+
+    # 格式化返回
+    prizes = []
+    for r in rows:
+        prizes.append({
+            "id": r["id"],
+            "name": r["name"],
+            "probability": r["probability"],
+            "image": r["image"]
+        })
+    return jsonify(prizes), 200
+
+
+@app.route("/api/user/prizes", methods=["POST"])
+def save_user_prizes():
+    """
+    接收一个 JSON 数组, 如:
+    [
+      { "name": "一等奖", "probability": 0.2, "image": "..." },
+      { "name": "二等奖", "probability": 0.3, "image": "..." },
+      ...
+    ]
+    - 若未登录则返回 401
+    - 先删除该用户原先的奖品记录，再插入新的记录 (全量替换)
+    """
+    if "username" not in session:
+        return jsonify({"message": "请先登录"}), 401
+    
+    username = session["username"]
+
+    # 查用户ID
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT id FROM users WHERE username = ?", (username,))
+    user_row = cur.fetchone()
+    if not user_row:
+        conn.close()
+        return jsonify({"message": "用户不存在"}), 404
+    
+    user_id = user_row["id"]
+
+    # 解析前端传来的数据
+    prizes_data = request.get_json()
+    if not isinstance(prizes_data, list):
+        conn.close()
+        return jsonify({"message": "提交的数据格式应为 JSON 数组"}), 400
+
+    # 先删掉原有记录
+    cur.execute("DELETE FROM prizes WHERE user_id = ?", (user_id,))
+
+    # 逐条插入新的数据
+    for item in prizes_data:
+        name = item.get("name", "").strip()
+        probability = item.get("probability", 0)
+        image = item.get("image", "").strip()
+
+        if not name:
+            conn.close()
+            return jsonify({"message": "奖品名称不能为空"}), 400
+        if not isinstance(probability, (int, float)):
+            conn.close()
+            return jsonify({"message": "奖品概率必须是数字类型"}), 400
+        if probability < 0 or probability > 1:
+            conn.close()
+            return jsonify({"message": f"奖品 {name} 的概率超出范围"}), 400
+
+        cur.execute("""
+            INSERT INTO prizes (user_id, name, probability, image)
+            VALUES (?, ?, ?, ?)
+        """, (user_id, name, probability, image))
+
+    conn.commit()
+    conn.close()
+
+    return jsonify({"message": "奖品信息已保存"}), 200
+
 def create_users_table_and_seed():
     """
     1) 创建 users 表

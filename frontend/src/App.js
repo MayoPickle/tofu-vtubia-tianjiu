@@ -7,6 +7,9 @@ import SongList from './components/SongList';
 import AdminAuth from './components/AdminAuth';
 import AdminUserList from './components/AdminUserList';
 
+// ➡️ 新增导入 LotteryWheel 组件
+import LotteryWheel from './components/LotteryWheel';
+
 const { Header, Content, Footer } = Layout;
 
 function App() {
@@ -15,11 +18,16 @@ function App() {
   const navParam = params.get('nav');
   const showIntro = navParam !== 'hideIntro';
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   // ✅ 动态确定当前路由对应的选中菜单项
   const getSelectedMenuKey = () => {
     if (location.pathname.startsWith('/intro')) return 'intro';
     if (location.pathname.startsWith('/songs')) return 'songs';
+
+    // ➡️ 如果是抽奖页面
+    if (location.pathname.startsWith('/lottery')) return 'lottery';
+
     return 'intro'; // 默认高亮
   };
 
@@ -29,12 +37,18 @@ function App() {
 
   const checkAuth = async () => {
     try {
-      const res = await axios.get('/api/check_auth', { withCredentials: true });
+      const res = await axios.get('/api/check_auth', {
+        withCredentials: true
+      });
+  
       setIsAdmin(res.data.is_admin);
-    } catch {
+      setIsLoggedIn(!!res.data.username);
+    } catch (error) {
       setIsAdmin(false);
+      setIsLoggedIn(false);
     }
   };
+  
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
@@ -47,7 +61,7 @@ function App() {
           <Menu
             theme="dark"
             mode="horizontal"
-            selectedKeys={[getSelectedMenuKey()]} // 使用动态选择高亮
+            selectedKeys={[getSelectedMenuKey()]}
           >
             {showIntro && (
               <Menu.Item key="intro">
@@ -56,6 +70,11 @@ function App() {
             )}
             <Menu.Item key="songs">
               <Link to="/songs">音乐小馆</Link>
+            </Menu.Item>
+
+            {/* ➡️ 新增抽奖菜单项 */}
+            <Menu.Item key="lottery">
+              <Link to="/lottery">抽奖</Link>
             </Menu.Item>
           </Menu>
         </div>
@@ -70,9 +89,14 @@ function App() {
           <Route path="/songs" element={<SongList />} />
           <Route path="/" element={<Navigate to="/intro" />} />
           <Route path="/admin/users" element={<AdminUserList />} />
+
+          {/* ➡️ 新增抽奖路由 */}
+          <Route path="/lottery" element={<LotteryWheel isLoggedIn={isLoggedIn} />} />
+
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </Content>
+
       {/* 全局 Footer */}
       <Footer style={{ textAlign: 'center' }}>
         © 2025 豆腐观测站
