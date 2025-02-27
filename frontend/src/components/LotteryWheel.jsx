@@ -1,8 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Table, Input, InputNumber, Button, Space, message, Popconfirm } from 'antd';
+import {
+  Table, Input, InputNumber, Button, Space,
+  message, Popconfirm, Upload
+} from 'antd';
+import { UploadOutlined } from '@ant-design/icons';
 
 function LotteryWheel({ isLoggedIn }) {
-  // 1) 默认奖品 (未登录时使用)
+  // =========================================
+  // 1) 默认奖品 (未登录时使用) + 登录逻辑
+  // =========================================
   const defaultPrizes = [
     { name: '默认一等奖', probability: 0.2, image: 'https://via.placeholder.com/300?text=默认一等奖' },
     { name: '默认二等奖', probability: 0.3, image: 'https://via.placeholder.com/300?text=默认二等奖' },
@@ -12,7 +18,7 @@ function LotteryWheel({ isLoggedIn }) {
   // 当前可编辑的奖品列表
   const [prizes, setPrizes] = useState(defaultPrizes);
 
-  // 2) 若已登录，则在组件挂载时拉取后端奖品
+  // 如果已登录，挂载时从后端拉取奖品
   useEffect(() => {
     if (isLoggedIn) {
       fetch('/api/user/prizes', {
@@ -32,21 +38,17 @@ function LotteryWheel({ isLoggedIn }) {
           setPrizes(defaultPrizes);
         });
     } else {
-      // 未登录时，使用默认奖品
+      // 未登录，直接用默认
       setPrizes(defaultPrizes);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoggedIn]);
 
-  // 3) 手动保存到后端
+  // 手动保存到后端 (数据库)
   const handleSavePrizes = () => {
-    // 如果未登录，这个按钮根本就不会显示，这里可以做个保险提示或直接return
     if (!isLoggedIn) {
       message.warning('请先登录后再保存奖品');
       return;
     }
-
-    // 已登录 => 发 POST
     fetch('/api/user/prizes', {
       method: 'POST',
       credentials: 'include',
@@ -66,9 +68,11 @@ function LotteryWheel({ isLoggedIn }) {
       });
   };
 
-  // =========== 抽奖转盘逻辑，与原示例相同 ===========
+  // =========================================
+  // 2) 转盘抽奖逻辑 (融合 StableLotteryWheel)
+  // =========================================
 
-  const [rotationAngle, setRotationAngle] = useState(0); 
+  const [rotationAngle, setRotationAngle] = useState(0);
   const [result, setResult] = useState({ name: '', image: '' });
   const isSpinningRef = useRef(false);
   const animationIdRef = useRef(null);
@@ -76,10 +80,17 @@ function LotteryWheel({ isLoggedIn }) {
 
   useEffect(() => {
     drawWheel(rotationAngle);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [prizes, rotationAngle]);
 
-  const drawWheel = (angleOffset) => {
+  useEffect(() => {
+    return () => {
+      if (animationIdRef.current) {
+        cancelAnimationFrame(animationIdRef.current);
+      }
+    };
+  }, []);
+
+  function drawWheel(angle) {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -90,23 +101,22 @@ function LotteryWheel({ isLoggedIn }) {
 
     ctx.clearRect(0, 0, width, height);
 
-    const totalProbability = prizes.reduce((acc, cur) => acc + cur.probability, 0);
-    const loseProbability = totalProbability < 1 ? 1 - totalProbability : 0;
-    const segments = calcSegments(prizes, loseProbability);
+    const segments = calcSegments(prizes);
 
-    segments.forEach((seg, index) => {
-      const startAngle = seg.startAngle + angleOffset;
-      const endAngle = seg.endAngle + angleOffset;
+    segments.forEach((seg, i) => {
+      const startAngle = seg.startAngle + angle;
+      const endAngle = seg.endAngle + angle;
 
       ctx.beginPath();
       ctx.moveTo(centerX, centerY);
       ctx.arc(centerX, centerY, radius, startAngle, endAngle);
-      ctx.fillStyle = randomColor(index);
+      ctx.fillStyle = randomColor(i);
       ctx.fill();
 
-      const midAngle = (startAngle + endAngle) / 2;
-      const textX = centerX + Math.cos(midAngle) * radius * 0.65;
-      const textY = centerY + Math.sin(midAngle) * radius * 0.65;
+      // 扇区文字
+      const mid = (startAngle + endAngle) / 2;
+      const textX = centerX + Math.cos(mid) * radius * 0.65;
+      const textY = centerY + Math.sin(mid) * radius * 0.65;
       ctx.fillStyle = '#000';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
@@ -114,7 +124,7 @@ function LotteryWheel({ isLoggedIn }) {
       ctx.fillText(seg.name, textX, textY);
     });
 
-    // 指针
+    // 顶部指针
     ctx.save();
     ctx.fillStyle = 'red';
     ctx.beginPath();
@@ -124,136 +134,144 @@ function LotteryWheel({ isLoggedIn }) {
     ctx.closePath();
     ctx.fill();
     ctx.restore();
-  };
+  }
 
-  const calcSegments = (prizeList, loseProb) => {
-    let segments = [...prizeList];
+  function calcSegments(prizeList) {
+    const total = prizeList.reduce((acc, p) => acc + p.probability, 0);
+    const loseProb = total < 1 ? 1 - total : 0;
+    let arr = [...prizeList];
     if (loseProb > 0) {
-      segments.push({ name: '未中奖', probability: loseProb, image: '' });
+      arr.push({ name: '未中奖', probability: loseProb, image: '' });
     }
-    let currentAngle = 0;
-    return segments.map((seg) => {
-      const angleSize = seg.probability * 2 * Math.PI;
-      const startAngle = currentAngle;
-      const endAngle = startAngle + angleSize;
-      currentAngle = endAngle;
-      return { ...seg, startAngle, endAngle };
+
+    let start = 0;
+    return arr.map((item) => {
+      const size = item.probability * 2 * Math.PI;
+      const seg = {
+        ...item,
+        startAngle: start,
+        endAngle: start + size,
+      };
+      start += size;
+      return seg;
     });
-  };
+  }
 
-  const randomColor = (index) => {
-    const colors = [
-      '#FFD54F', '#4FC3F7', '#AED581',
-      '#BA68C8', '#FF8A65', '#90A4AE',
-      '#F06292', '#FFF176',
-    ];
-    return colors[index % colors.length];
-  };
-
-  const handleSpin = () => {
+  function handleSpin() {
     if (isSpinningRef.current) {
       message.warning('正在抽奖，请勿重复点击');
       return;
     }
     const chosen = getRandomPrize();
-    const targetAngle = calcTargetAngle(chosen);
+    const finalAngle = calcTargetAngle(chosen);
+
     setResult({ name: '', image: '' });
     isSpinningRef.current = true;
 
-    animateSpinTo(targetAngle, () => {
+    animateSpinTo(finalAngle, () => {
       isSpinningRef.current = false;
       setResult(chosen);
       if (chosen.name === '未中奖') {
-        message.info('很遗憾，未中奖，下次再试试吧~');
+        message.info('很遗憾，未中奖~');
       } else {
-        message.success(`恭喜抽中了：${chosen.name}`);
+        message.success(`恭喜中到：${chosen.name}`);
       }
     });
-  };
-
-  const getRandomPrize = () => {
-    const totalProb = prizes.reduce((a, b) => a + b.probability, 0);
-    const rand = Math.random();
-    let cumulative = 0;
-    for (let p of prizes) {
-      cumulative += p.probability;
-      if (rand < cumulative) {
-        return p;
-      }
-    }
-    return { name: '未中奖', probability: 0, image: '' };
-  };
-
-  function calcTargetAngle(chosenPrize) {
-    // 先算总概率，以及不中奖概率
-    let totalProbability = prizes.reduce((acc, cur) => acc + cur.probability, 0);
-    const loseProbability = totalProbability < 1 ? 1 - totalProbability : 0;
-    const segments = calcSegments(prizes, loseProbability);
-  
-    // 找到当前中奖奖品所在扇区
-    const seg = segments.find((s) => s.name === chosenPrize.name);
-    if (!seg) {
-      // 理论上不会走到这里
-      return rotationAngle;
-    }
-  
-    // 1) 扇区中点(弧度)
-    const segmentMid = (seg.startAngle + seg.endAngle) / 2;
-  
-    // 2) 当前角度(只需关心 0~2π)
-    const current = rotationAngle % (2 * Math.PI);
-  
-    // 3) 需要多转2~3圈
-    const randomExtraTurns = 2 + Math.floor(Math.random() * 2);
-    const fullTurns = randomExtraTurns * 2 * Math.PI;
-  
-    // 4) 计算从 current 转到 segmentMid 的差值
-    let delta = segmentMid - current;
-    if (delta < 0) {
-      delta += 2 * Math.PI;
-    }
-  
-    // 5) 由于指针在顶端，需要额外偏移 -Math.PI/2
-    const pointerOffset = -Math.PI / 2;
-  
-    // 6) 得出最终旋转角度
-    const finalAngle = rotationAngle + fullTurns + delta + pointerOffset;
-  
-    return finalAngle;
   }
 
-  const animateSpinTo = (targetAngle, onFinish) => {
+  function getRandomPrize() {
+    const total = prizes.reduce((acc, p) => acc + p.probability, 0);
+    const rand = Math.random();
+    let sum = 0;
+    for (const p of prizes) {
+      sum += p.probability;
+      if (rand < sum) return p;
+    }
+    // 没命中 => 未中奖
+    return { name: '未中奖', probability: 0, image: '' };
+  }
+
+  function calcTargetAngle(chosenPrize) {
+    const segs = calcSegments(prizes);
+    const seg = segs.find((s) => s.name === chosenPrize.name);
+    if (!seg) {
+      return rotationAngle;
+    }
+    const midAngle = (seg.startAngle + seg.endAngle) / 2;
+    const current = rotationAngle % (2 * Math.PI);
+
+    // 至少转 2 圈 => 4π
+    const revolve = 4 * Math.PI;
+    let finalWanted = -Math.PI / 2 - midAngle;
+
+    let neededDelta = finalWanted - current;
+    neededDelta = ((neededDelta % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+
+    return rotationAngle + revolve + neededDelta;
+  }
+
+  function animateSpinTo(target, onFinish) {
     const startAngle = rotationAngle;
     const startTime = performance.now();
-    const duration = 3000; 
+    const duration = 4000;
 
-    const animate = (now) => {
+    function tick(now) {
       const elapsed = now - startTime;
       const progress = elapsed / duration;
       if (progress >= 1) {
-        setRotationAngle(targetAngle);
+        setRotationAngle(target);
         onFinish && onFinish();
       } else {
         const eased = easeOutCubic(progress);
-        const current = startAngle + (targetAngle - startAngle) * eased;
+        const current = startAngle + (target - startAngle) * eased;
         setRotationAngle(current);
-        animationIdRef.current = requestAnimationFrame(animate);
+        animationIdRef.current = requestAnimationFrame(tick);
       }
-    };
-    animationIdRef.current = requestAnimationFrame(animate);
+    }
+    animationIdRef.current = requestAnimationFrame(tick);
+  }
+
+  function easeOutCubic(t) {
+    return 1 - Math.pow(1 - t, 3);
+  }
+
+  // ==================================
+  // 4) 图片上传处理 (前端)
+  // ==================================
+  const handleImageUpload = (file, idx) => {
+    // 1. 用 FormData 包装文件
+    const formData = new FormData();
+    formData.append('image', file);
+
+    // 2. 调用后端上传接口
+    fetch('/api/upload', {
+      method: 'POST',
+      body: formData,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          // 3. 更新 prizes[idx].image
+          const newPrizes = [...prizes];
+          newPrizes[idx].image = data.url; // 后端返回的图片地址
+          setPrizes(newPrizes);
+          message.success('图片上传成功');
+        } else {
+          message.error('图片上传失败');
+        }
+      })
+      .catch((err) => {
+        console.error('图片上传错误', err);
+        message.error('网络异常，上传失败');
+      });
+
+    // 为了阻止 antd 默认的上传行为，返回 false
+    return false;
   };
 
-  const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
-
-  useEffect(() => {
-    return () => {
-      if (animationIdRef.current) {
-        cancelAnimationFrame(animationIdRef.current);
-      }
-    };
-  }, []);
-
-  // antd Table
+  // ==============================
+  // 5) antd 表格
+  // ==============================
   const columns = [
     {
       title: '奖品名称',
@@ -287,17 +305,41 @@ function LotteryWheel({ isLoggedIn }) {
       ),
     },
     {
-      title: '图片链接',
+      title: '图片',
       dataIndex: 'image',
       render: (val, record, idx) => (
-        <Input
-          value={val}
-          onChange={(e) => {
-            const newPrizes = [...prizes];
-            newPrizes[idx].image = e.target.value;
-            setPrizes(newPrizes);
-          }}
-        />
+        <Space>
+          {/* 上传按钮 */}
+          <Upload
+            beforeUpload={(file) => handleImageUpload(file, idx)}
+            showUploadList={false}
+          >
+            <Button icon={<UploadOutlined />}>上传</Button>
+          </Upload>
+
+          {/* 也可让用户手动写图片链接 */}
+          <Input
+            style={{ width: 200 }}
+            value={val}
+            placeholder="或在此粘贴图片链接"
+            onChange={(e) => {
+              const newPrizes = [...prizes];
+              newPrizes[idx].image = e.target.value;
+              setPrizes(newPrizes);
+            }}
+          />
+
+          {/* 预览缩略图 */}
+          {val ? (
+            <img
+              src={val}
+              alt="奖品图片"
+              style={{ width: 50, height: 50, objectFit: 'cover', border: '1px solid #ccc' }}
+            />
+          ) : (
+            <div style={{ color: '#999' }}>暂无</div>
+          )}
+        </Space>
       ),
     },
     {
@@ -325,22 +367,32 @@ function LotteryWheel({ isLoggedIn }) {
       {
         name: '新奖品',
         probability: 0.0,
-        image: 'https://via.placeholder.com/300?text=新奖品',
+        image: '',
       },
     ]);
   };
 
+  // 颜色
+  function randomColor(i) {
+    const palette = [
+      '#FFD54F', '#4FC3F7', '#AED581',
+      '#BA68C8', '#FF8A65', '#90A4AE',
+      '#F06292', '#FFF176',
+    ];
+    return palette[i % palette.length];
+  }
+
+  // ==============================
+  // 6) 渲染
+  // ==============================
   return (
     <div style={{ padding: 20 }}>
-      <h2>抽奖转盘（带旋转动画，手动保存）</h2>
+      <h2>抽奖转盘（可上传图片 + 后端保存）</h2>
 
-      {/* 操作按钮：仅在已登录时显示“保存奖品”；添加奖品按钮始终可见（也可自行隐藏） */}
       <Space style={{ marginBottom: 10 }}>
         <Button type="primary" onClick={handleAddPrize}>
           添加奖品
         </Button>
-
-        {/* 如果你也想隐藏“添加奖品”，可以加 isLoggedIn 判断 */}
         {isLoggedIn && (
           <Button onClick={handleSavePrizes}>
             保存奖品
@@ -348,7 +400,7 @@ function LotteryWheel({ isLoggedIn }) {
         )}
       </Space>
 
-      {/* 奖品编辑表格 */}
+      {/* antd 表格 */}
       <Table
         dataSource={prizes}
         columns={columns}
@@ -364,7 +416,7 @@ function LotteryWheel({ isLoggedIn }) {
         </Button>
       </div>
 
-      {/* 转盘与结果 */}
+      {/* 转盘区域 + 结果 */}
       <div style={{ display: 'flex', gap: 40 }}>
         <div>
           <canvas

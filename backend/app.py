@@ -3,6 +3,11 @@ from flask import Flask, jsonify, request, session
 from flask_cors import CORS
 from database import get_connection, init_db
 
+import os
+import time
+from flask import Flask, jsonify, request, session, send_from_directory
+from werkzeug.utils import secure_filename
+
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "mysecretkey"
 CORS(app, supports_credentials=True)
@@ -287,6 +292,57 @@ def check_auth():
         "is_admin": bool(session.get("is_admin", False)),
         "username": session.get("username", None)
     }), 200
+
+
+
+# 确保有一个 uploads 文件夹
+UPLOAD_FOLDER = "uploads"
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+
+@app.route("/api/upload", methods=["POST"])
+def upload_image():
+    """
+    用户上传图片接口:
+    1) 必须登录后才能上传 (可自行去掉或改为 optional)
+    2) 从表单字段 'image' 获取文件
+    3) 存到 uploads/ 目录下
+    4) 返回 { success: bool, url: "/uploads/文件名" }
+    """
+    # 检查是否登录
+    if "username" not in session:
+        return jsonify({"success": False, "message": "请先登录"}), 401
+
+    # 检查请求里是否带有文件
+    if "image" not in request.files:
+        return jsonify({"success": False, "message": "缺少 'image' 字段"}), 400
+
+    file = request.files["image"]
+    if file.filename == "":
+        return jsonify({"success": False, "message": "文件名为空"}), 400
+
+    # 处理文件名安全
+    filename = secure_filename(file.filename)
+    # 为了避免重名，可以加个时间戳
+    unique_name = f"{int(time.time())}_{filename}"
+    save_path = os.path.join(UPLOAD_FOLDER, unique_name)
+
+    # 保存文件
+    file.save(save_path)
+
+    # 返回一个可访问的URL (比如 "/uploads/xxx.png")
+    file_url = f"/uploads/{unique_name}"
+
+    return jsonify({"success": True, "url": file_url}), 200
+
+# 让 Flask 能访问 uploads/ 中的文件
+@app.route("/uploads/<path:filename>")
+def serve_uploaded_file(filename):
+    """
+    静态路由: 直接访问 /uploads/xxx.png 时,
+    从本地 uploads/ 目录读文件
+    """
+    return send_from_directory(UPLOAD_FOLDER, filename)
 
 
 # ========== 管理员专属 API：列出用户、重置密码、切换管理员 ==========
