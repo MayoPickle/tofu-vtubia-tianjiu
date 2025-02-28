@@ -6,8 +6,7 @@ import axios from 'axios';
 import SongList from './components/SongList';
 import AdminAuth from './components/AdminAuth';
 import AdminUserList from './components/AdminUserList';
-
-// ➡️ 新增导入 LotteryWheel 组件
+import Observatory from './components/Observatory';
 import LotteryWheel from './components/LotteryWheel';
 
 const { Header, Content, Footer } = Layout;
@@ -24,10 +23,8 @@ function App() {
   const getSelectedMenuKey = () => {
     if (location.pathname.startsWith('/intro')) return 'intro';
     if (location.pathname.startsWith('/songs')) return 'songs';
-
-    // ➡️ 如果是抽奖页面
     if (location.pathname.startsWith('/lottery')) return 'lottery';
-
+    if (location.pathname.startsWith('/observatory')) return 'observatory';
     return 'intro'; // 默认高亮
   };
 
@@ -72,9 +69,12 @@ function App() {
               <Link to="/songs">音乐小馆</Link>
             </Menu.Item>
 
-            {/* ➡️ 新增抽奖菜单项 */}
             <Menu.Item key="lottery">
               <Link to="/lottery">抽奖</Link>
+            </Menu.Item>
+
+            <Menu.Item key="observatory">
+              <Link to="/observatory">观测站</Link>
             </Menu.Item>
           </Menu>
         </div>
@@ -89,9 +89,8 @@ function App() {
           <Route path="/songs" element={<SongList />} />
           <Route path="/" element={<Navigate to="/intro" />} />
           <Route path="/admin/users" element={<AdminUserList />} />
-
-          {/* ➡️ 新增抽奖路由 */}
           <Route path="/lottery" element={<LotteryWheel isLoggedIn={isLoggedIn} />} />
+          <Route path="/observatory" element={<Observatory isLoggedIn={isLoggedIn} isAdmin={isAdmin}/>} />
 
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>

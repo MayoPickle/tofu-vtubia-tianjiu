@@ -34,7 +34,7 @@ function LotteryWheel({ isLoggedIn }) {
         })
         .catch((err) => {
           console.error('拉取奖品失败:', err);
-          message.error('拉取用户奖品信息失败，使用默认奖品');
+          message.error('用户未登录，使用默认奖品');
           setPrizes(defaultPrizes);
         });
     } else {
