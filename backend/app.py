@@ -5,10 +5,10 @@ from database import get_connection, init_db
 
 import os
 import time
-from flask import Flask, jsonify, request, session, send_from_directory
+from flask import Flask, jsonify, request, session, send_from_directory, render_template
 from werkzeug.utils import secure_filename
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='build/static', template_folder='build')
 app.config["SECRET_KEY"] = "mysecretkey"
 CORS(app, supports_credentials=True)
 
@@ -40,6 +40,16 @@ def create_prizes_table():
 
 # 在 init_db() 或其他地方调用一下，以确保建表
 create_prizes_table()
+
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def serve_frontend(path):
+    if path != "" and os.path.exists(os.path.join('build', path)):
+        # 如果请求的文件存在于 build/ 下，就直接返回该文件
+        return send_from_directory('build', path)
+    else:
+        # 否则返回 index.html，让前端路由来处理
+        return send_from_directory('build', 'index.html')
 
 
 @app.route("/api/user/prizes", methods=["GET"])
@@ -621,4 +631,5 @@ def delete_song(song_id):
 
 
 if __name__ == "__main__":
+    # app.run(host='0.0.0.0', port=80)
     app.run(debug=True, port=5000)
