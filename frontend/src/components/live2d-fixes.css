@@ -1,0 +1,83 @@
+/* Live2D 背景处理与内容兼容性 */
+
+/* 确保所有内容区域具有适当的背景透明度 */
+.ant-layout-content {
+  background: rgba(255, 255, 255, 0.92) !important;
+  position: relative;
+  z-index: 1;
+  border-radius: 8px;
+  margin: 8px 16px;
+  padding: 16px;
+}
+
+/* Live2D背景下的内容区域特殊处理 */
+.with-live2d-background {
+  background: rgba(255, 255, 255, 0.92) !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border-radius: 8px;
+  margin: 16px 24px;
+  padding: 16px;
+  transition: all 0.3s ease;
+}
+
+/* 确保菜单和标题区域可见 */
+.ant-layout-header {
+  background: rgba(0, 21, 41, 0.92) !important;
+  position: relative;
+  z-index: 2;
+}
+
+/* 美化页脚样式，防止被背景遮挡 */
+.ant-layout-footer {
+  background: rgba(245, 245, 245, 0.92) !important;
+  position: relative;
+  z-index: 1;
+}
+
+/* 卡片和面板的背景处理 */
+.ant-card, 
+.ant-form,
+.ant-table-wrapper {
+  background: rgba(255, 255, 255, 0.92) !important;
+  backdrop-filter: blur(5px);
+  position: relative;
+  z-index: 1;
+}
+
+/* 分割线增强 */
+.ant-divider {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+/* 适配深色模式组件 */
+.ant-modal-content,
+.ant-dropdown-menu {
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(10px);
+}
+
+/* 确保弹窗在Live2D上方 */
+.ant-modal-mask,
+.ant-modal-wrap {
+  z-index: 1050 !important;
+}
+
+/* 确保提示和弹出框在Live2D上方 */
+.ant-tooltip,
+.ant-popover,
+.ant-message {
+  z-index: 1060 !important;
+}
+
+/* 确保按钮文本在透明背景上可见 */
+.ant-btn {
+  position: relative;
+  z-index: 1;
+}
+
+/* 处理表格透明度 */
+.ant-table {
+  background: rgba(255, 255, 255, 0.9) !important;
+} 

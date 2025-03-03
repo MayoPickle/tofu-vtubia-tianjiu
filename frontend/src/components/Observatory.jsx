@@ -35,15 +35,17 @@ const levels = [
  */
 function getRealPassword(exponent) {
   const now = new Date();
+  // 严格使用UTC时间
   const M = now.getUTCMonth() + 1; // 1~12
   const D = now.getUTCDate();      // 1~31
   const H = now.getUTCHours();     // 0~23
 
-  const baseStr = `${M}${D}${H}`; 
-  const baseNum = parseInt(baseStr, 10);
+  // 修改计算逻辑：使用相加而非拼接
+  const baseNum = M + D + H;
 
   const bigVal = Math.pow(baseNum, exponent);
   const last4 = bigVal % 10000;
+
   return last4.toString().padStart(4, '0');
 }
 
@@ -114,7 +116,7 @@ function Observatory({ isLoggedIn, isAdmin }) {
           // 1) 计算真实密码
           const realPwd = getRealPassword(lvl.exponent);
 
-          // 2) 根据权限决定显示“****”还是真实密码
+          // 2) 根据权限决定显示"****"还是真实密码
           const finalPwd = getEffectivePassword(idx, realPwd, isLoggedIn, isAdmin);
 
           // 3) 生成可复制的最终字符串

@@ -129,7 +129,7 @@ function PrizesTable({ prizes, setPrizes }) {
 
   return (
     <Table
-      dataSource={prizes}
+      dataSource={Array.isArray(prizes) ? prizes : []}
       columns={columns}
       pagination={false}
       rowKey={(item, idx) => idx}

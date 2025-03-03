@@ -11,9 +11,10 @@ function AdminUserList() {
     setLoading(true);
     try {
       const res = await axios.get('/api/users'); // GET /api/users
-      setUsers(res.data);
+      setUsers(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       message.error(err.response?.data?.message || '获取用户列表失败');
+      setUsers([]);
     } finally {
       setLoading(false);
     }
@@ -84,7 +85,7 @@ function AdminUserList() {
         rowKey="id"
         loading={loading}
         columns={columns}
-        dataSource={users}
+        dataSource={Array.isArray(users) ? users : []}
       />
     </div>
   );

@@ -33,10 +33,14 @@ function SongList() {
       const res = await axios.get(
         search ? `/api/songs?search=${search}` : '/api/songs'
       );
-      setSongs(res.data);
+      // 从响应中提取songs数组
+      const songsData = res.data.songs;
+      // 确保数据是数组
+      setSongs(Array.isArray(songsData) ? songsData : []);
     } catch (error) {
       console.error('Error fetching songs:', error);
       message.error('获取歌曲列表失败');
+      setSongs([]); // 出错时设为空数组
     } finally {
       setLoading(false);
     }
@@ -211,7 +215,7 @@ function SongList() {
       {/* 表格 */}
       <Table
         columns={columns}
-        dataSource={songs}
+        dataSource={Array.isArray(songs) ? songs : []}
         rowKey="id"
         loading={loading}
         pagination={{ pageSize: 8 }}

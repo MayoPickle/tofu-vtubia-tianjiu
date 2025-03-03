@@ -1,2 +1,61 @@
 backend/songs.db
 backend/__pycache__/database.cpython-312.pyc
+# 💡 忽略 Node.js 依赖包
+node_modules/
+npm-debug.log
+yarn-error.log
+pnpm-debug.log
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# 💡 忽略环境变量文件（避免泄露 API 密钥）
+.env
+.env.local
+.env.*.local
+
+# 💡 忽略日志和调试文件
+*.log
+logs/
+*.log.*
+debug.log
+output.log
+*.pid
+*.seed
+*.gz
+
+# 💡 忽略 TypeScript 编译输出
+dist/
+out/
+build/
+
+# 💡 忽略 Babel 编译输出
+.babel_cache/
+.cache/
+
+# 💡 忽略 ESLint / Prettier 缓存
+.eslintcache
+.prettierignore
+
+# 💡 忽略测试相关文件
+coverage/
+.nyc_output/
+jest-cache/
+jest-debug.log
+
+# 💡 忽略本地 IDE/编辑器配置
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# 💡 忽略 PM2 进程管理文件
+pm2.log
+pm2.pid
+dump.pm2
+
+# 💡 忽略 Docker 相关文件（如果使用 Docker）
+docker-compose.override.yml
+
+# 💡 忽略 model 目录及所有内容
+model/

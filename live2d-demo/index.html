@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JK Rabbit Live2D 演示</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Microsoft YaHei', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #f5f5f5;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        #live2d-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        #content {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            width: 80%;
+            z-index: 1;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        p {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        #loading {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            z-index: 1000;
+            display: none;
+        }
+        
+        #error-message {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(255, 0, 0, 0.7);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            z-index: 1000;
+            display: none;
+            max-width: 80%;
+        }
+        
+        .fallback-button {
+            margin-top: 20px;
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .fallback-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <!-- 加载指示器 -->
+    <div id="loading">正在加载模型...</div>
+    
+    <!-- 错误消息 -->
+    <div id="error-message"></div>
+    
+    <!-- Live2D 模型容器 -->
+    <div id="live2d-container"></div>
+    
+    <!-- 内容区域 -->
+    <div id="content">
+        <h1>JK Rabbit Live2D 模型演示</h1>
+        <p>这是一个将Live2D模型作为背景的演示页面。</p>
+        <p>JK Rabbit在背景中活动，可以与网页内容形成互动。</p>
+        <p>您可以根据需要自定义这个页面，添加更多内容或修改样式。</p>
+        <p>Live2D模型提供了丰富的互动可能性，使网页更加生动有趣。</p>
+        <p>这个演示展示了如何将Live2D模型整合到网页设计中。</p>
+        <button id="fallback-button" class="fallback-button" style="display: none;">尝试备用加载方式</button>
+    </div>
+
+    <script>
+        // 显示加载指示器
+        document.getElementById('loading').style.display = 'block';
+        
+        // 全局错误处理
+        window.addEventListener('error', function(event) {
+            console.error('全局错误:', event.error);
+            showError('加载出错: ' + event.error.message);
+            
+            // 显示备用按钮
+            document.getElementById('fallback-button').style.display = 'inline-block';
+        });
+        
+        function showError(message) {
+            const errorElement = document.getElementById('error-message');
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+            document.getElementById('loading').style.display = 'none';
+            setTimeout(function() {
+                errorElement.style.display = 'none';
+            }, 5000);
+        }
+    </script>
+
+    <!-- 引入我们的脚本 -->
+    <script src="live2d.js"></script>
+    <script src="live2d-helper.js"></script>
+    
+    <script>
+        // 在所有脚本加载完成后隐藏加载指示器
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                document.getElementById('loading').style.display = 'none';
+            }, 2000); // 给额外的时间让模型初始化
+        });
+        
+        // 备用按钮点击事件
+        document.getElementById('fallback-button').addEventListener('click', function() {
+            this.disabled = true;
+            this.textContent = '正在尝试备用方法...';
+            
+            try {
+                // 清空容器
+                document.getElementById('live2d-container').innerHTML = '';
+                
+                // 使用备用方法
+                window.live2dHelper.initModel('live2d-container', 'model/JK Rabbit/JK Rabbit.model3.json');
+                
+                this.textContent = '已切换到备用方法';
+            } catch (e) {
+                console.error('备用方法失败:', e);
+                this.textContent = '备用方法也失败了';
+                showError('无法加载模型: ' + e.message);
+            }
+        });
+    </script>
+</body>
+</html> 

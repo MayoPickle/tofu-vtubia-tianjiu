@@ -1,74 +1,143 @@
 # database.py
 import sqlite3
 import os
+import json
 
-DB_NAME = "songs.db"
+class Database:
+    def __init__(self, db_path="songs.db"):
+        """初始化数据库类，设置数据库路径"""
+        self.db_path = db_path
+    
+    def get_connection(self):
+        """获取数据库连接"""
+        conn = sqlite3.connect(self.db_path)
+        conn.row_factory = sqlite3.Row  # 方便后续以字典形式获取数据
+        return conn
+    
+    def init_db(self, reset=False):
+        """初始化数据库：创建必要的表并插入示例数据
+        
+        Args:
+            reset: 如果为True，则删除现有数据库并重新创建
+        """
+        if reset and os.path.exists(self.db_path):
+            os.remove(self.db_path)
+        
+        # 创建所有表
+        self.create_users_table()
+        self.create_songs_table()
+        self.create_prizes_table()
+        
+        # 插入初始数据
+        self.seed_users_data()
+        self.seed_songs_data()
+    
+    def create_users_table(self):
+        """创建用户表"""
+        conn = self.get_connection()
+        cur = conn.cursor()
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                username TEXT UNIQUE NOT NULL,
+                password TEXT NOT NULL,
+                bilibili_uid TEXT,
+                is_admin INTEGER DEFAULT 0
+            )
+        """)
+        conn.commit()
+        conn.close()
+    
+    def create_songs_table(self):
+        """创建歌曲表"""
+        conn = self.get_connection()
+        cur = conn.cursor()
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS songs (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT NOT NULL,
+            artist TEXT NOT NULL,
+            album TEXT,
+            genre TEXT,
+            year INTEGER,
+            meta_data TEXT
+        )
+        """)
+        conn.commit()
+        conn.close()
+    
+    def create_prizes_table(self):
+        """创建奖品表"""
+        conn = self.get_connection()
+        cur = conn.cursor()
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS prizes (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                name TEXT NOT NULL,
+                probability REAL NOT NULL,
+                image TEXT
+            )
+        """)
+        conn.commit()
+        conn.close()
+    
+    def seed_users_data(self):
+        """插入默认用户数据"""
+        conn = self.get_connection()
+        cur = conn.cursor()
+        
+        # 检查是否已存在管理员用户
+        cur.execute("SELECT id FROM users WHERE username = ?", ("tofu",))
+        if not cur.fetchone():
+            # 插入默认管理员
+            admin_users = [
+                ("tofu", "5b5f2a30642928dc7f96079f72a4ac0f", "3915536", 1),
+                ("xiaotu", "5b5f2a30642928dc7f96079f72a4ac0f", "3915536", 1)
+            ]
+            cur.executemany("""
+                INSERT INTO users (username, password, bilibili_uid, is_admin)
+                VALUES (?, ?, ?, ?)
+            """, admin_users)
+            conn.commit()
+        
+        conn.close()
+    
+    def seed_songs_data(self):
+        """插入示例歌曲数据"""
+        conn = self.get_connection()
+        cur = conn.cursor()
+        
+        # 检查是否已存在歌曲数据
+        cur.execute("SELECT COUNT(*) FROM songs")
+        count = cur.fetchone()[0]
+        
+        if count == 0:
+            # 插入示例歌曲数据
+            example_songs = [
+                ("Shape of You", "Ed Sheeran", "Divide", "Pop", 2017, '{"duration": "3:53", "producer": "Steve Mac"}'),
+                ("Billie Jean", "Michael Jackson", "Thriller", "Pop", 1982, '{"duration": "4:54"}'),
+                ("Hotel California", "Eagles", "Hotel California", "Rock", 1977, '{"duration": "6:30"}'),
+                ("Imagine", "John Lennon", "Imagine", "Rock", 1971, '{"duration": "3:07"}'),
+                ("Lose Yourself", "Eminem", "8 Mile Soundtrack", "Hip-Hop", 2002, '{"duration": "5:20"}'),
+            ]
+            
+            cur.executemany("""
+            INSERT INTO songs (title, artist, album, genre, year, meta_data)
+            VALUES (?, ?, ?, ?, ?, ?)
+            """, example_songs)
+            conn.commit()
+        
+        conn.close()
 
+# 创建默认数据库实例
+db = Database()
+
+# 提供简便的访问方法，便于从其他模块调用
 def get_connection():
     """获取数据库连接"""
-    conn = sqlite3.connect(DB_NAME)
-    conn.row_factory = sqlite3.Row  # 方便后续以字典形式获取数据
-    return conn
+    return db.get_connection()
 
-def init_db():
-    """初始化数据库：创建表并插入示例数据"""
-    if os.path.exists(DB_NAME):
-        os.remove(DB_NAME)
-
-    create_users_table()
-
-    conn = get_connection()
-    cur = conn.cursor()
-    
-    # 创建 songs 表，包含一些基本字段
-    cur.execute("""
-    CREATE TABLE songs (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        title TEXT NOT NULL,
-        artist TEXT NOT NULL,
-        album TEXT,
-        genre TEXT,        -- 风格标签: "Pop", "Rock", "Hip-Hop", ...
-        year INTEGER,
-        meta_data TEXT     -- 可用于存储更多信息(JSON字符串)等
-    )
-    """)
-
-    # 插入一些示例歌曲数据
-    example_songs = [
-        ("Shape of You", "Ed Sheeran", "Divide", "Pop", 2017, '{"duration": "3:53", "producer": "Steve Mac"}'),
-        ("Billie Jean", "Michael Jackson", "Thriller", "Pop", 1982, '{"duration": "4:54"}'),
-        ("Hotel California", "Eagles", "Hotel California", "Rock", 1977, '{"duration": "6:30"}'),
-        ("Imagine", "John Lennon", "Imagine", "Rock", 1971, '{"duration": "3:07"}'),
-        ("Lose Yourself", "Eminem", "8 Mile Soundtrack", "Hip-Hop", 2002, '{"duration": "5:20"}'),
-    ]
-
-    cur.executemany("""
-    INSERT INTO songs (title, artist, album, genre, year, meta_data)
-    VALUES (?, ?, ?, ?, ?, ?)
-    """, example_songs)
-
-    conn.commit()
-    conn.close()
-
-
-# 1) 确保数据库有 users 表
-def create_users_table():
-    conn = get_connection()
-    cur = conn.cursor()
-    # username 唯一
-    cur.execute("""
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT UNIQUE NOT NULL,
-            password TEXT NOT NULL,
-            bilibili_uid TEXT,
-            is_admin INTEGER DEFAULT 0
-        )
-    """)
-    conn.commit()
-    conn.close()
-
-
-if __name__ == "__main__":
-    init_db()
-    print("数据库初始化完成。")
+def init_db(reset=False):
+    """初始化数据库"""
+    db.init_db(reset)
