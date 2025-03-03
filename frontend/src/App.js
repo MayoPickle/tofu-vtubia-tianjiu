@@ -8,6 +8,8 @@ import AdminAuth from './components/AdminAuth';
 import AdminUserList from './components/AdminUserList';
 import Observatory from './components/Observatory';
 import LotteryWheel from './components/LotteryWheel';
+import Live2DModel from './components/Live2DModel';
+
 
 const { Header, Content, Footer } = Layout;
 
@@ -95,6 +97,9 @@ function App() {
       <Footer style={{ textAlign: 'center', background: '#001529', color: '#fff' }}>
         © 2025 豆腐观测站
       </Footer>
+      
+      {/* ✅ Live2D 模型 */}
+      <Live2DModel />
     </Layout>
   );
 }
