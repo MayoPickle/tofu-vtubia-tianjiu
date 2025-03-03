@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, Link, Navigate, useLocation } from 'react-router-dom';
-import { Layout, Menu, Switch } from 'antd';
+import { Layout, Menu } from 'antd';
 import Intro from './components/Intro';
 import axios from 'axios';
 import SongList from './components/SongList';
@@ -8,8 +8,6 @@ import AdminAuth from './components/AdminAuth';
 import AdminUserList from './components/AdminUserList';
 import Observatory from './components/Observatory';
 import LotteryWheel from './components/LotteryWheel';
-import Live2DBackground from './components/Live2DBackground';
-import './components/live2d-fixes.css'; // 导入Live2D样式修复
 
 const { Header, Content, Footer } = Layout;
 
@@ -20,20 +18,6 @@ function App() {
   const showIntro = navParam !== 'hideIntro';
   const [isAdmin, setIsAdmin] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [showLive2D, setShowLive2D] = useState(true); // 默认显示Live2D模型
-
-  // 使用localStorage保存Live2D显示状态
-  useEffect(() => {
-    const savedLive2DState = localStorage.getItem('showLive2D');
-    if (savedLive2DState !== null) {
-      setShowLive2D(savedLive2DState === 'true');
-    }
-  }, []);
-
-  // 更新Live2D显示状态时保存到localStorage
-  useEffect(() => {
-    localStorage.setItem('showLive2D', showLive2D);
-  }, [showLive2D]);
 
   // ✅ 动态确定当前路由对应的选中菜单项
   const getSelectedMenuKey = () => {
@@ -64,20 +48,13 @@ function App() {
   
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      {/* Live2D背景组件 */}
-      {showLive2D && <Live2DBackground />}
-      
       <Header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         {/* ✅ 左侧：标题 + 菜单 */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
           <div style={{ color: '#fff', fontSize: '18px', fontWeight: 'bold' }}>9872星球</div>
 
           {/* ✅ 动态更新选中项 */}
-          <Menu
-            theme="dark"
-            mode="horizontal"
-            selectedKeys={[getSelectedMenuKey()]}
-          >
+          <Menu theme="dark" mode="horizontal" selectedKeys={[getSelectedMenuKey()]}>
             {showIntro && (
               <Menu.Item key="intro">
                 <Link to="/intro">介绍</Link>
@@ -94,19 +71,6 @@ function App() {
             <Menu.Item key="observatory">
               <Link to="/observatory">观测站</Link>
             </Menu.Item>
-            
-            {/* Live2D控制开关 */}
-            <Menu.Item key="live2d-control">
-              <span>
-                Live2D:
-                <Switch 
-                  checked={showLive2D} 
-                  onChange={setShowLive2D} 
-                  size="small" 
-                  style={{ marginLeft: '8px' }} 
-                />
-              </span>
-            </Menu.Item>
           </Menu>
         </div>
 
@@ -114,7 +78,7 @@ function App() {
         <AdminAuth />
       </Header>
 
-      <Content className="with-live2d-background">
+      <Content>
         <Routes>
           <Route path="/intro" element={<Intro />} />
           <Route path="/songs" element={<SongList />} />
@@ -128,7 +92,7 @@ function App() {
       </Content>
 
       {/* 全局 Footer */}
-      <Footer style={{ textAlign: 'center' }}>
+      <Footer style={{ textAlign: 'center', background: '#001529', color: '#fff' }}>
         © 2025 豆腐观测站
       </Footer>
     </Layout>
