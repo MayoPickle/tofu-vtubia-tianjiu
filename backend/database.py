@@ -27,6 +27,7 @@ class Database:
         self.create_users_table()
         self.create_songs_table()
         self.create_prizes_table()
+        self.create_cotton_candy_table()
         
         # 插入初始数据
         self.seed_users_data()
@@ -78,6 +79,23 @@ class Database:
                 name TEXT NOT NULL,
                 probability REAL NOT NULL,
                 image TEXT
+            )
+        """)
+        conn.commit()
+        conn.close()
+    
+    def create_cotton_candy_table(self):
+        """创建棉花糖表"""
+        conn = self.get_connection()
+        cur = conn.cursor()
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS cotton_candy (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                sender TEXT NOT NULL,
+                title TEXT,
+                content TEXT NOT NULL,
+                create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                read INTEGER DEFAULT 0
             )
         """)
         conn.commit()

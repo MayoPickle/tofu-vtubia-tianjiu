@@ -623,6 +623,221 @@ def register_routes(app):
             "id": song_id
         }), 200
 
+    # 棉花糖相关API
+    @app.route("/api/cotton_candy", methods=["POST"])
+    def create_cotton_candy():
+        """
+        创建新的棉花糖，任何人都可以发送
+        """
+        data = request.get_json() or {}
+        
+        # 获取发送者，如果用户已登录则使用用户名，否则使用默认值"幽灵DD"
+        sender = session.get("username", "幽灵DD")
+        if not data.get("sender") or data.get("sender").strip() == "":
+            data["sender"] = sender
+            
+        title = data.get("title", "").strip()
+        content = data.get("content", "").strip()
+        
+        # 内容是必填项
+        if not content:
+            return jsonify({"message": "棉花糖内容不能为空"}), 400
+        
+        conn = get_connection()
+        cur = conn.cursor()
+        
+        cur.execute("""
+            INSERT INTO cotton_candy (sender, title, content, read)
+            VALUES (?, ?, ?, 0)
+        """, (data["sender"], title, content))
+        
+        conn.commit()
+        candy_id = cur.lastrowid
+        conn.close()
+        
+        return jsonify({
+            "message": "棉花糖发送成功",
+            "id": candy_id
+        }), 201
+    
+    @app.route("/api/cotton_candy", methods=["GET"])
+    def get_cotton_candy_list():
+        """
+        获取棉花糖列表，需要管理员权限
+        支持分页和筛选已读/未读
+        """
+        if not session.get("is_admin"):
+            return jsonify({"message": "需要管理员权限"}), 403
+        
+        page = request.args.get("page", 1, type=int)
+        per_page = request.args.get("per_page", 10, type=int)
+        read_filter = request.args.get("read")
+        
+        # 计算偏移量
+        offset = (page - 1) * per_page
+        
+        conn = get_connection()
+        cur = conn.cursor()
+        
+        # 构建查询
+        query = "SELECT * FROM cotton_candy"
+        params = []
+        
+        if read_filter is not None:
+            read_value = 1 if read_filter.lower() == 'true' else 0
+            query += " WHERE read = ?"
+            params = [read_value]
+        
+        # 添加排序和分页
+        query += " ORDER BY create_time DESC LIMIT ? OFFSET ?"
+        params.extend([per_page, offset])
+        
+        # 执行查询
+        cur.execute(query, params)
+        rows = cur.fetchall()
+        
+        # 获取总数
+        count_query = "SELECT COUNT(*) FROM cotton_candy"
+        if read_filter is not None:
+            count_query += " WHERE read = ?"
+            cur.execute(count_query, [read_value])
+        else:
+            cur.execute(count_query)
+            
+        total = cur.fetchone()[0]
+        
+        # 格式化结果
+        candies = []
+        for row in rows:
+            candies.append({
+                "id": row["id"],
+                "sender": row["sender"],
+                "title": row["title"],
+                "content": row["content"],
+                "create_time": row["create_time"],
+                "read": bool(row["read"])
+            })
+        
+        conn.close()
+        
+        return jsonify({
+            "candies": candies,
+            "total": total,
+            "page": page,
+            "per_page": per_page,
+            "total_pages": (total + per_page - 1) // per_page
+        }), 200
+    
+    @app.route("/api/cotton_candy/<int:candy_id>", methods=["GET"])
+    def get_cotton_candy(candy_id):
+        """
+        获取单个棉花糖详情，需要管理员权限
+        """
+        if not session.get("is_admin"):
+            return jsonify({"message": "需要管理员权限"}), 403
+        
+        conn = get_connection()
+        cur = conn.cursor()
+        
+        cur.execute("SELECT * FROM cotton_candy WHERE id = ?", (candy_id,))
+        row = cur.fetchone()
+        
+        if not row:
+            conn.close()
+            return jsonify({"message": "棉花糖不存在"}), 404
+        
+        # 标记为已读
+        if not row["read"]:
+            cur.execute("UPDATE cotton_candy SET read = 1 WHERE id = ?", (candy_id,))
+            conn.commit()
+        
+        candy = {
+            "id": row["id"],
+            "sender": row["sender"],
+            "title": row["title"],
+            "content": row["content"],
+            "create_time": row["create_time"],
+            "read": True  # 已读取即标记为已读
+        }
+        
+        conn.close()
+        
+        return jsonify(candy), 200
+    
+    @app.route("/api/cotton_candy/<int:candy_id>", methods=["DELETE"])
+    def delete_cotton_candy(candy_id):
+        """
+        删除棉花糖，需要管理员权限
+        """
+        if not session.get("is_admin"):
+            return jsonify({"message": "需要管理员权限"}), 403
+        
+        conn = get_connection()
+        cur = conn.cursor()
+        
+        # 先检查是否存在
+        cur.execute("SELECT id FROM cotton_candy WHERE id = ?", (candy_id,))
+        if not cur.fetchone():
+            conn.close()
+            return jsonify({"message": "棉花糖不存在"}), 404
+        
+        # 删除
+        cur.execute("DELETE FROM cotton_candy WHERE id = ?", (candy_id,))
+        conn.commit()
+        conn.close()
+        
+        return jsonify({
+            "message": "棉花糖已删除",
+            "id": candy_id
+        }), 200
+    
+    @app.route("/api/cotton_candy/mark_read", methods=["POST"])
+    def mark_cotton_candy_read():
+        """
+        批量标记棉花糖为已读，需要管理员权限
+        """
+        if not session.get("is_admin"):
+            return jsonify({"message": "需要管理员权限"}), 403
+        
+        data = request.get_json() or {}
+        candy_ids = data.get("ids", [])
+        
+        if not candy_ids:
+            return jsonify({"message": "未提供棉花糖ID"}), 400
+        
+        conn = get_connection()
+        cur = conn.cursor()
+        
+        # 构建更新语句
+        placeholders = ','.join(['?'] * len(candy_ids))
+        query = f"UPDATE cotton_candy SET read = 1 WHERE id IN ({placeholders})"
+        
+        cur.execute(query, candy_ids)
+        conn.commit()
+        conn.close()
+        
+        return jsonify({
+            "message": "棉花糖已标记为已读",
+            "count": len(candy_ids)
+        }), 200
+    
+    @app.route("/api/cotton_candy/unread_count", methods=["GET"])
+    def get_unread_count():
+        """
+        获取未读棉花糖数量，需要管理员权限
+        """
+        if not session.get("is_admin"):
+            return jsonify({"message": "需要管理员权限"}), 403
+        
+        conn = get_connection()
+        cur = conn.cursor()
+        
+        cur.execute("SELECT COUNT(*) FROM cotton_candy WHERE read = 0")
+        count = cur.fetchone()[0]
+        conn.close()
+        
+        return jsonify({"unread_count": count}), 200
+
 
 # 创建应用实例
 app = create_app()

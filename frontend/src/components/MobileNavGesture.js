@@ -47,7 +47,7 @@ const MobileNavGesture = () => {
   };
 
   // 页面路由列表，按导航顺序排列
-  const routes = ['/intro', '/songs', '/lottery', '/observatory'];
+  const routes = ['/intro', '/songs', '/lottery', '/observatory', '/cotton-candy'];
   
   // 处理向前导航
   const handleNavigateNext = () => {

@@ -189,6 +189,15 @@ a:hover {
   background-color: var(--primary-color);
 }
 
+/* 增加菜单项的间距和宽度 */
+.ant-menu-horizontal > .ant-menu-item,
+.ant-menu-horizontal > .ant-menu-submenu {
+  padding: 0 16px;
+  margin: 0 4px;
+  min-width: 80px;
+  text-align: center;
+}
+
 /* 导航菜单选中项样式 */
 .ant-menu-dark .ant-menu-item-selected {
   background-color: var(--accent-color) !important;

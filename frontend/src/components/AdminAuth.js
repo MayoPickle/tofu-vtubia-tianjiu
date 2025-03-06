@@ -57,7 +57,19 @@ function AdminAuth() {
         setIsAdmin(res.data.is_admin);
         setUsername(res.data.username || '用户');
         setShowLoginModal(false);
-        window.location.reload();
+        
+        // 获取当前路径
+        const currentPath = window.location.pathname;
+        
+        // 如果当前在棉花糖页面，根据管理员状态重定向
+        if (currentPath === '/cotton-candy' && res.data.is_admin) {
+          window.location.href = '/admin/cotton-candy';
+        } else if (currentPath === '/admin/cotton-candy' && !res.data.is_admin) {
+          window.location.href = '/cotton-candy';
+        } else {
+          // 其他页面只需刷新即可
+          window.location.reload();
+        }
       }
     } catch (err) {
       message.error(err.response?.data?.message || '登录失败');
@@ -69,10 +81,21 @@ function AdminAuth() {
   const handleLogout = async () => {
     try {
       await axios.post('/api/logout', null, { withCredentials: true });
+      
+      // 获取当前路径
+      const currentPath = window.location.pathname;
+      
       setIsAdmin(false);
       setUsername(null);
       message.success('已登出');
-      navigate('/intro');
+      
+      // 如果当前在管理员棉花糖页面，重定向到普通棉花糖页面
+      if (currentPath === '/admin/cotton-candy') {
+        window.location.href = '/cotton-candy';
+      } else {
+        // 其他页面导航到首页
+        navigate('/intro');
+      }
     } catch (err) {
       message.error('登出失败');
     }

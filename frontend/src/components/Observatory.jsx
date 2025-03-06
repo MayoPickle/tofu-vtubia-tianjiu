@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, Row, Col, Button, message, Tooltip, Typography, Space } from 'antd';
 import { CopyOutlined } from '@ant-design/icons';
 import { useDeviceDetect } from '../utils/deviceDetector';
@@ -111,13 +111,17 @@ function copyToClipboard(text) {
 
 function Observatory({ isLoggedIn, isAdmin }) {
   const { isMobile } = useDeviceDetect();
-
+  
+  // 完全移除之前的状态和useEffect，避免重新渲染循环
+  
   return (
-    <div style={{ 
-      padding: isMobile ? '12px 8px' : '20px',
-      maxWidth: '1200px',
-      margin: '0 auto'
-    }}>
+    <div 
+      style={{ 
+        padding: isMobile ? '12px 8px' : '20px',
+        maxWidth: '1200px',
+        margin: '0 auto'
+      }}
+    >
       <Title level={isMobile ? 3 : 2} style={{ marginBottom: isMobile ? 12 : 20, textAlign: 'center' }}>
         观测站
       </Title>
