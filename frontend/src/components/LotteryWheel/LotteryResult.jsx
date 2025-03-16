@@ -1,7 +1,11 @@
 // LotteryResult.jsx
 import React, { useRef } from 'react';
 import { Empty, Card, Carousel, Button } from 'antd';
-import { TrophyOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons';
+import { TrophyOutlined, LeftOutlined, RightOutlined, GiftOutlined, HeartOutlined } from '@ant-design/icons';
+
+// 主题颜色和渐变定义
+const themeColor = '#FF85A2';
+const themeGradient = 'linear-gradient(135deg, #FFB6C1 0%, #FF69B4 100%)';
 
 function LotteryResult({ result, prizes = [] }) {
   const hasResult = result && result.name;
@@ -19,89 +23,147 @@ function LotteryResult({ result, prizes = [] }) {
       flexDirection: 'column', 
       alignItems: 'center', 
       justifyContent: 'center',
-      textAlign: 'center'
+      textAlign: 'center',
+      position: 'relative'
     }}>
+      {/* 装饰性背景元素 */}
+      <div style={{
+        position: 'absolute',
+        width: '120px',
+        height: '120px',
+        borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(255,192,203,0.1) 0%, rgba(255,192,203,0) 70%)',
+        top: '-20px',
+        right: '-20px',
+        zIndex: 0,
+      }} />
+
       <h3 style={{ 
-        fontSize: '18px', 
-        color: '#333',
-        textAlign: 'center',
-        marginBottom: '16px',
+        fontSize: '20px', 
+        margin: '0 0 20px 0',
+        background: themeGradient,
+        WebkitBackgroundClip: 'text',
+        WebkitTextFillColor: 'transparent',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: '8px'
+        gap: '8px',
+        position: 'relative',
+        zIndex: 1
       }}>
-        <TrophyOutlined style={{ color: '#ff85c0' }} />
+        {hasResult ? <TrophyOutlined /> : <GiftOutlined />}
         {hasResult ? '中奖结果' : '奖品展示'}
       </h3>
 
       {hasResult ? (
         <Card 
           style={{ 
-            textAlign: 'center',
             width: '100%',
-            border: result.name === '未中奖' ? '1px solid #f0f0f0' : '1px solid #ff85c0',
-            backgroundColor: result.name === '未中奖' ? '#fafafa' : '#fff0f6',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
+            border: result.name === '未中奖' ? '1px solid rgba(0,0,0,0.1)' : '1px solid rgba(255, 133, 162, 0.3)',
+            background: result.name === '未中奖' ? 
+              'linear-gradient(135deg, #f5f5f5 0%, #fafafa 100%)' : 
+              'linear-gradient(135deg, rgba(255, 182, 193, 0.1) 0%, rgba(255, 105, 180, 0.1) 100%)',
+            borderRadius: '16px',
+            boxShadow: '0 8px 24px rgba(255, 133, 162, 0.15)',
+            backdropFilter: 'blur(10px)',
+            overflow: 'hidden',
+            transition: 'all 0.3s ease',
+            animation: 'slideIn 0.5s ease-out'
           }}
         >
-          <h4 style={{ 
-            fontSize: '20px', 
-            color: result.name === '未中奖' ? '#999' : '#ff85c0',
-            margin: '0 0 16px 0',
-            textAlign: 'center'
+          <div style={{
+            position: 'relative',
+            padding: '20px'
           }}>
-            {result.name}
-          </h4>
-          
-          {result.image ? (
-            <div style={{ display: 'flex', justifyContent: 'center' }}>
-              <img
-                src={result.image}
-                alt={result.name}
-                style={{ 
-                  maxWidth: '100%', 
-                  maxHeight: '200px',
-                  borderRadius: '8px',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-                }}
-              />
-            </div>
-          ) : (
-            <div style={{ color: '#999', padding: '20px 0', textAlign: 'center' }}>暂无奖品图片</div>
-          )}
+            <h4 style={{ 
+              fontSize: '24px', 
+              color: result.name === '未中奖' ? '#999' : themeColor,
+              margin: '0 0 20px 0',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px'
+            }}>
+              {result.name === '未中奖' ? '💔' : '🎉'} {result.name}
+            </h4>
+            
+            {result.image ? (
+              <div style={{ 
+                display: 'flex', 
+                justifyContent: 'center',
+                position: 'relative'
+              }}>
+                <img
+                  src={result.image}
+                  alt={result.name}
+                  style={{ 
+                    maxWidth: '100%', 
+                    maxHeight: '200px',
+                    borderRadius: '12px',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                    transition: 'transform 0.3s ease',
+                    '&:hover': {
+                      transform: 'scale(1.02)'
+                    }
+                  }}
+                />
+              </div>
+            ) : (
+              <div style={{ 
+                color: '#999',
+                padding: '30px 0',
+                textAlign: 'center',
+                background: 'rgba(0,0,0,0.02)',
+                borderRadius: '8px'
+              }}>
+                暂无奖品图片
+              </div>
+            )}
+          </div>
         </Card>
       ) : prizes && prizes.length > 0 ? (
-        <div style={{ width: '100%' }}>
-          <div style={{ position: 'relative' }}>
-            <Carousel 
-              ref={carouselRef}
-              dots={true}
-              dotPosition="bottom"
-              autoplay
-              autoplaySpeed={3000}
-            >
-              {prizes.map((prize, index) => (
-                <div key={index}>
-                  <Card 
-                    style={{ 
-                      margin: '0 auto',
-                      maxWidth: '90%',
-                      border: '1px solid #ff85c0',
-                      backgroundColor: '#fff',
-                      height: '280px',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'center'
-                    }}
-                  >
+        <div style={{ width: '100%', position: 'relative' }}>
+          <Carousel 
+            ref={carouselRef}
+            dots={{ className: 'custom-dots' }}
+            autoplay
+            autoplaySpeed={3000}
+            effect="fade"
+          >
+            {prizes.map((prize, index) => (
+              <div key={index}>
+                <Card 
+                  style={{ 
+                    margin: '0 auto',
+                    maxWidth: '90%',
+                    border: '1px solid rgba(255, 133, 162, 0.3)',
+                    background: 'rgba(255, 255, 255, 0.95)',
+                    borderRadius: '16px',
+                    height: '300px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    boxShadow: '0 8px 24px rgba(255, 133, 162, 0.15)',
+                    backdropFilter: 'blur(10px)',
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                      transform: 'translateY(-5px)'
+                    }
+                  }}
+                >
+                  <div style={{ position: 'relative', padding: '20px' }}>
                     <h4 style={{ 
-                      fontSize: '18px', 
-                      color: '#ff85c0',
+                      fontSize: '20px', 
+                      background: themeGradient,
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
                       margin: '0 0 16px 0',
-                      textAlign: 'center'
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px'
                     }}>
-                      {prize.name || '未命名奖品'}
+                      <GiftOutlined /> {prize.name || '未命名奖品'}
                     </h4>
                     
                     {prize.image ? (
@@ -109,7 +171,8 @@ function LotteryResult({ result, prizes = [] }) {
                         display: 'flex', 
                         justifyContent: 'center',
                         alignItems: 'center',
-                        height: '180px'
+                        height: '180px',
+                        position: 'relative'
                       }}>
                         <img
                           src={prize.image}
@@ -117,83 +180,148 @@ function LotteryResult({ result, prizes = [] }) {
                           style={{ 
                             maxWidth: '100%', 
                             maxHeight: '180px',
-                            borderRadius: '8px',
-                            boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                            borderRadius: '12px',
+                            boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                            transition: 'transform 0.3s ease',
+                            '&:hover': {
+                              transform: 'scale(1.05)'
+                            }
                           }}
                         />
                       </div>
                     ) : (
                       <div style={{ 
                         color: '#999', 
-                        padding: '20px 0', 
+                        padding: '30px 0', 
                         textAlign: 'center',
                         height: '180px',
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'center'
+                        justifyContent: 'center',
+                        background: 'rgba(0,0,0,0.02)',
+                        borderRadius: '8px'
                       }}>
                         暂无奖品图片
                       </div>
                     )}
                     
                     <div style={{ 
-                      marginTop: '10px',
-                      textAlign: 'center',
-                      fontSize: '14px',
-                      color: '#666'
+                      marginTop: '16px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '4px'
                     }}>
-                      概率: {Math.round(prize.probability * 100)}%
+                      <HeartOutlined style={{ color: themeColor }} />
+                      <span style={{ 
+                        fontSize: '14px',
+                        color: themeColor
+                      }}>
+                        中奖概率: {Math.round(prize.probability * 100)}%
+                      </span>
                     </div>
-                  </Card>
-                </div>
-              ))}
-            </Carousel>
-            
-            {/* 左右翻页按钮 */}
-            <Button 
-              icon={<LeftOutlined />} 
-              style={{
-                position: 'absolute',
-                top: '50%',
-                left: '0',
-                transform: 'translateY(-50%)',
-                zIndex: 2,
-                opacity: 0.7,
-                color: '#ff85c0',
-                borderColor: '#ff85c0'
-              }}
-              type="default"
-              shape="circle"
-              size="small"
-              onClick={handlePrev}
-            />
-            
-            <Button 
-              icon={<RightOutlined />} 
-              style={{
-                position: 'absolute',
-                top: '50%',
-                right: '0',
-                transform: 'translateY(-50%)',
-                zIndex: 2,
-                opacity: 0.7,
-                color: '#ff85c0',
-                borderColor: '#ff85c0'
-              }}
-              type="default"
-              shape="circle"
-              size="small"
-              onClick={handleNext}
-            />
-          </div>
+                  </div>
+                </Card>
+              </div>
+            ))}
+          </Carousel>
+          
+          {/* 左右翻页按钮 */}
+          <Button 
+            icon={<LeftOutlined />} 
+            style={{
+              position: 'absolute',
+              top: '50%',
+              left: '-12px',
+              transform: 'translateY(-50%)',
+              zIndex: 2,
+              width: '32px',
+              height: '32px',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              border: `1px solid ${themeColor}`,
+              color: themeColor,
+              background: 'rgba(255, 255, 255, 0.9)',
+              boxShadow: '0 2px 8px rgba(255, 133, 162, 0.2)',
+              transition: 'all 0.3s ease',
+              '&:hover': {
+                transform: 'translateY(-50%) scale(1.1)',
+                boxShadow: '0 4px 12px rgba(255, 133, 162, 0.3)'
+              }
+            }}
+            type="default"
+            onClick={handlePrev}
+          />
+          
+          <Button 
+            icon={<RightOutlined />} 
+            style={{
+              position: 'absolute',
+              top: '50%',
+              right: '-12px',
+              transform: 'translateY(-50%)',
+              zIndex: 2,
+              width: '32px',
+              height: '32px',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              border: `1px solid ${themeColor}`,
+              color: themeColor,
+              background: 'rgba(255, 255, 255, 0.9)',
+              boxShadow: '0 2px 8px rgba(255, 133, 162, 0.2)',
+              transition: 'all 0.3s ease',
+              '&:hover': {
+                transform: 'translateY(-50%) scale(1.1)',
+                boxShadow: '0 4px 12px rgba(255, 133, 162, 0.3)'
+              }
+            }}
+            type="default"
+            onClick={handleNext}
+          />
         </div>
       ) : (
         <Empty 
-          description="暂无奖品" 
+          description={
+            <span style={{ color: '#999' }}>暂无奖品</span>
+          }
           image={Empty.PRESENTED_IMAGE_SIMPLE} 
-          style={{ margin: '20px 0' }}
+          style={{ 
+            margin: '20px 0',
+            opacity: 0.6
+          }}
         />
       )}
+
+      {/* 添加CSS动画 */}
+      <style jsx="true">{`
+        @keyframes slideIn {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .custom-dots {
+          bottom: -25px !important;
+        }
+        
+        .custom-dots li button {
+          background: ${themeColor} !important;
+          opacity: 0.3;
+        }
+        
+        .custom-dots li.slick-active button {
+          opacity: 1;
+        }
+      `}</style>
     </div>
   );
 }

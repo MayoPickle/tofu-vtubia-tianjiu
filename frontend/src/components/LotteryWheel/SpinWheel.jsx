@@ -1,7 +1,24 @@
 // SpinWheel.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import { Button, message } from 'antd';
+import { GiftOutlined } from '@ant-design/icons';
 import { useDeviceDetect } from '../../utils/deviceDetector';
+
+// 主题颜色和渐变定义
+const themeColor = '#FF85A2';
+const themeGradient = 'linear-gradient(135deg, #FFB6C1 0%, #FF69B4 100%)';
+
+// 调色板 - 可爱的粉色系
+const palette = [
+  '#FFB6C1', // Light Pink
+  '#FFD1DC', // Pastel Pink
+  '#FFC0CB', // Pink
+  '#FF69B4', // Hot Pink
+  '#FFB7C5', // Cherry Blossom Pink
+  '#FFA5B3', // Flamingo Pink
+  '#FF85A2', // Rose Pink
+  '#FFB3BA', // Baby Pink
+];
 
 function SpinWheel({ prizes, result, setResult }) {
   const canvasRef = useRef(null);
@@ -36,42 +53,111 @@ function SpinWheel({ prizes, result, setResult }) {
     const { width, height } = canvas;
     const centerX = width / 2;
     const centerY = height / 2;
-    const radius = Math.min(centerX, centerY) - 10;
+    const radius = Math.min(centerX, centerY) - 20; // 留出更多边距
 
     ctx.clearRect(0, 0, width, height);
 
+    // 绘制外圈装饰
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius + 10, 0, Math.PI * 2);
+    ctx.strokeStyle = themeColor;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    
+    // 绘制装饰性圆点
+    for (let i = 0; i < 24; i++) {
+      const dotAngle = (i * Math.PI * 2) / 24;
+      const dotX = centerX + (radius + 15) * Math.cos(dotAngle);
+      const dotY = centerY + (radius + 15) * Math.sin(dotAngle);
+      
+      ctx.beginPath();
+      ctx.arc(dotX, dotY, 3, 0, Math.PI * 2);
+      ctx.fillStyle = themeColor;
+      ctx.fill();
+    }
+    ctx.restore();
+
     const segments = calcSegments(prizes);
 
+    // 绘制扇形和文字
     segments.forEach((seg, i) => {
       const startAngle = seg.startAngle + angle;
       const endAngle = seg.endAngle + angle;
 
+      // 绘制扇形
+      ctx.save();
       ctx.beginPath();
       ctx.moveTo(centerX, centerY);
       ctx.arc(centerX, centerY, radius, startAngle, endAngle);
-      ctx.fillStyle = randomColor(i);
+      ctx.fillStyle = palette[i % palette.length];
       ctx.fill();
+      
+      // 添加扇形边框
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.restore();
 
-      // 扇区文字
+      // 绘制文字
+      ctx.save();
       const mid = (startAngle + endAngle) / 2;
-      const textX = centerX + Math.cos(mid) * radius * 0.65;
-      const textY = centerY + Math.sin(mid) * radius * 0.65;
-      ctx.fillStyle = '#000';
+      const textRadius = radius * 0.65;
+      const textX = centerX + Math.cos(mid) * textRadius;
+      const textY = centerY + Math.sin(mid) * textRadius;
+      
+      ctx.translate(textX, textY);
+      ctx.rotate(mid + Math.PI / 2);
+      
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 16px sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.font = '14px sans-serif';
-      ctx.fillText(seg.name, textX, textY);
+      ctx.fillText(seg.name, 0, 0);
+      
+      // 添加文字阴影效果
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.2)';
+      ctx.shadowBlur = 3;
+      ctx.shadowOffsetX = 1;
+      ctx.shadowOffsetY = 1;
+      
+      ctx.restore();
     });
+
+    // 绘制中心装饰
+    ctx.save();
+    // 外圈
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, 30, 0, Math.PI * 2);
+    ctx.fillStyle = '#fff';
+    ctx.fill();
+    ctx.strokeStyle = themeColor;
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    
+    // 内圈
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, 20, 0, Math.PI * 2);
+    ctx.fillStyle = themeColor;
+    ctx.fill();
+    ctx.restore();
 
     // 指针
     ctx.save();
-    ctx.fillStyle = '#ff85c0';
+    ctx.fillStyle = themeColor;
     ctx.beginPath();
-    ctx.moveTo(centerX - 10, centerY - radius - 10);
-    ctx.lineTo(centerX + 10, centerY - radius - 10);
-    ctx.lineTo(centerX, centerY - radius + 10);
+    ctx.moveTo(centerX - 15, centerY - radius - 15);
+    ctx.lineTo(centerX + 15, centerY - radius - 15);
+    ctx.lineTo(centerX, centerY - radius + 5);
     ctx.closePath();
     ctx.fill();
+    
+    // 指针阴影
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.2)';
+    ctx.shadowBlur = 5;
+    ctx.shadowOffsetX = 2;
+    ctx.shadowOffsetY = 2;
+    
     ctx.restore();
   }
 
@@ -195,20 +281,29 @@ function SpinWheel({ prizes, result, setResult }) {
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
-      width: '100%'
+      width: '100%',
+      position: 'relative'
     }}>
       <Button 
         type="primary" 
         onClick={handleSpin} 
+        icon={<GiftOutlined />}
         style={{ 
           marginBottom: isMobile ? 20 : 24,
-          width: isMobile ? '100%' : '180px',
+          width: isMobile ? '100%' : '200px',
           height: isMobile ? '44px' : '40px',
           fontSize: isMobile ? '16px' : '15px',
           borderRadius: '20px',
-          background: '#ff85c0',
-          borderColor: '#ff85c0',
-          boxShadow: '0 4px 10px rgba(255, 133, 192, 0.3)'
+          background: themeGradient,
+          border: 'none',
+          boxShadow: '0 4px 15px rgba(255, 133, 192, 0.3)',
+          transition: 'all 0.3s ease',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '8px',
+          transform: isSpinningRef.current ? 'scale(0.98)' : 'scale(1)',
+          opacity: isSpinningRef.current ? 0.8 : 1
         }}
         size="large"
         disabled={isSpinningRef.current}
@@ -229,27 +324,25 @@ function SpinWheel({ prizes, result, setResult }) {
             borderRadius: '50%',
             maxWidth: '100%',
             height: 'auto',
-            boxShadow: '0 6px 16px rgba(0,0,0,0.12)',
-            transition: 'transform 0.3s ease',
-            transform: isSpinningRef.current ? 'scale(1.02)' : 'scale(1)'
+            boxShadow: '0 8px 24px rgba(255, 133, 162, 0.2)',
+            transition: 'all 0.3s ease',
+            transform: isSpinningRef.current ? 'scale(1.02)' : 'scale(1)',
+            animation: isSpinningRef.current ? 'glow 1.5s ease-in-out infinite alternate' : 'none'
           }}
         />
-        
-        {/* 转盘中心装饰 */}
-        <div style={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: '30px',
-          height: '30px',
-          borderRadius: '50%',
-          backgroundColor: '#fff',
-          border: '3px solid #ff85c0',
-          boxShadow: '0 0 0 3px rgba(255, 133, 192, 0.2)',
-          zIndex: 2
-        }} />
       </div>
+
+      {/* 添加CSS动画 */}
+      <style jsx="true">{`
+        @keyframes glow {
+          from {
+            box-shadow: 0 8px 24px rgba(255, 133, 162, 0.2);
+          }
+          to {
+            box-shadow: 0 8px 36px rgba(255, 133, 162, 0.4);
+          }
+        }
+      `}</style>
     </div>
   );
 }

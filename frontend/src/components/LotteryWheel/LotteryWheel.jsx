@@ -1,6 +1,7 @@
 // LotteryWheel.jsx
 import React, { useState, useEffect } from 'react';
 import { Button, Space, message, Typography, Divider } from 'antd';
+import { GiftOutlined, SaveOutlined, PlusOutlined, HeartOutlined, StarOutlined } from '@ant-design/icons';
 import { defaultPrizes } from './constants';
 import PrizesTable from './PrizesTable';
 import SpinWheel from './SpinWheel';
@@ -8,6 +9,11 @@ import LotteryResult from './LotteryResult';
 import { useDeviceDetect } from '../../utils/deviceDetector';
 
 const { Title } = Typography;
+
+// 主题颜色和渐变定义
+const themeColor = '#FF85A2';
+const themeGradient = 'linear-gradient(135deg, #FFB6C1 0%, #FF69B4 100%)';
+const secondaryColor = '#FF69B4';
 
 function LotteryWheel({ isLoggedIn }) {
   const { isMobile } = useDeviceDetect();
@@ -93,46 +99,106 @@ function LotteryWheel({ isLoggedIn }) {
       padding: isMobile ? '16px 12px' : '24px',
       maxWidth: '1200px',
       margin: '0 auto',
-      backgroundColor: '#f9f9f9',
-      borderRadius: '12px',
-      boxShadow: '0 4px 12px rgba(0,0,0,0.05)'
+      position: 'relative',
+      background: 'linear-gradient(135deg, rgba(255, 182, 193, 0.1) 0%, rgba(255, 105, 180, 0.1) 100%)',
+      borderRadius: '20px',
+      boxShadow: '0 10px 25px rgba(255, 133, 162, 0.2)',
+      overflow: 'hidden'
     }}>
+      {/* 装饰性背景元素 */}
+      <div style={{
+        position: 'absolute',
+        width: '200px',
+        height: '200px',
+        borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(255,192,203,0.1) 0%, rgba(255,192,203,0) 70%)',
+        top: '10%',
+        right: '-50px',
+        zIndex: 0,
+      }} />
+      
+      <div style={{
+        position: 'absolute',
+        width: '150px',
+        height: '150px',
+        borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(255,105,180,0.1) 0%, rgba(255,105,180,0) 70%)',
+        bottom: '10%',
+        left: '-30px',
+        zIndex: 0,
+      }} />
+
       <Title level={isMobile ? 3 : 2} style={{ 
-        marginBottom: isMobile ? 16 : 24, 
+        margin: '16px 0 24px',
         textAlign: 'center',
-        color: '#333',
-        fontWeight: 600
+        background: themeGradient,
+        WebkitBackgroundClip: 'text',
+        WebkitTextFillColor: 'transparent',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '8px',
+        position: 'relative',
+        zIndex: 1
       }}>
+        <StarOutlined />
         幸运抽奖转盘
+        <StarOutlined />
       </Title>
 
       {/* 桌面端布局 */}
       {!isMobile && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+        <div style={{ 
+          display: 'flex', 
+          flexDirection: 'column', 
+          gap: '24px',
+          position: 'relative',
+          zIndex: 1
+        }}>
           {/* 上部分：奖品编辑区域 */}
           <div style={{ 
-            backgroundColor: '#fff',
-            padding: '20px',
-            borderRadius: '8px',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
+            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+            padding: '24px',
+            borderRadius: '16px',
+            boxShadow: '0 8px 24px rgba(255, 133, 162, 0.15)',
+            border: '1px solid rgba(255, 192, 203, 0.3)',
+            backdropFilter: 'blur(10px)'
           }}>
             <div style={{ 
               display: 'flex', 
               justifyContent: 'space-between',
-              marginBottom: '16px'
+              marginBottom: '20px'
             }}>
               <Button 
                 type="primary" 
                 onClick={handleAddPrize}
-                style={{ backgroundColor: '#ff85c0', borderColor: '#ff85c0' }}
+                icon={<PlusOutlined />}
+                style={{ 
+                  background: themeGradient,
+                  border: 'none',
+                  borderRadius: '12px',
+                  height: '40px',
+                  boxShadow: '0 4px 12px rgba(255, 133, 162, 0.2)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px'
+                }}
               >
                 添加奖品
               </Button>
               {isLoggedIn && (
                 <Button
                   onClick={handleSavePrizes}
-                  type="default"
-                  style={{ borderColor: '#ff85c0', color: '#ff85c0' }}
+                  icon={<SaveOutlined />}
+                  style={{ 
+                    borderColor: themeColor,
+                    color: themeColor,
+                    borderRadius: '12px',
+                    height: '40px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px'
+                  }}
                 >
                   保存奖品
                 </Button>
@@ -149,10 +215,16 @@ function LotteryWheel({ isLoggedIn }) {
             {/* 左边：转盘 */}
             <div style={{ 
               width: '60%',
-              backgroundColor: '#fff',
-              padding: '20px',
-              borderRadius: '8px',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
+              backgroundColor: 'rgba(255, 255, 255, 0.95)',
+              padding: '24px',
+              borderRadius: '16px',
+              boxShadow: '0 8px 24px rgba(255, 133, 162, 0.15)',
+              border: '1px solid rgba(255, 192, 203, 0.3)',
+              backdropFilter: 'blur(10px)',
+              transition: 'transform 0.3s ease',
+              '&:hover': {
+                transform: 'translateY(-5px)'
+              }
             }}>
               <SpinWheel prizes={prizes} result={result} setResult={setResult} />
             </div>
@@ -160,12 +232,18 @@ function LotteryWheel({ isLoggedIn }) {
             {/* 右边：结果展示 */}
             <div style={{ 
               width: '40%',
-              backgroundColor: '#fff',
-              padding: '20px',
-              borderRadius: '8px',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+              backgroundColor: 'rgba(255, 255, 255, 0.95)',
+              padding: '24px',
+              borderRadius: '16px',
+              boxShadow: '0 8px 24px rgba(255, 133, 162, 0.15)',
+              border: '1px solid rgba(255, 192, 203, 0.3)',
+              backdropFilter: 'blur(10px)',
               display: 'flex',
-              alignItems: 'center'
+              alignItems: 'center',
+              transition: 'transform 0.3s ease',
+              '&:hover': {
+                transform: 'translateY(-5px)'
+              }
             }}>
               <LotteryResult result={result} prizes={prizes} />
             </div>
@@ -178,34 +256,59 @@ function LotteryWheel({ isLoggedIn }) {
         <div style={{ 
           display: 'flex', 
           flexDirection: 'column',
-          gap: '20px'
+          gap: '20px',
+          position: 'relative',
+          zIndex: 1
         }}>
           {/* 奖品编辑区域 */}
           <div style={{ 
-            backgroundColor: '#fff',
-            padding: '16px',
-            borderRadius: '8px',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
+            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+            padding: '20px',
+            borderRadius: '16px',
+            boxShadow: '0 8px 24px rgba(255, 133, 162, 0.15)',
+            border: '1px solid rgba(255, 192, 203, 0.3)',
+            backdropFilter: 'blur(10px)'
           }}>
             <Space style={{ 
               marginBottom: '16px',
               display: 'flex',
               width: '100%',
-              justifyContent: 'space-between'
+              gap: '12px'
             }}>
               <Button 
                 type="primary" 
                 onClick={handleAddPrize}
-                block
-                style={{ flex: 1, backgroundColor: '#ff85c0', borderColor: '#ff85c0' }}
+                icon={<PlusOutlined />}
+                style={{ 
+                  flex: 1,
+                  background: themeGradient,
+                  border: 'none',
+                  borderRadius: '12px',
+                  height: '40px',
+                  boxShadow: '0 4px 12px rgba(255, 133, 162, 0.2)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px'
+                }}
               >
                 添加奖品
               </Button>
               {isLoggedIn && (
                 <Button
                   onClick={handleSavePrizes}
-                  style={{ flex: 1, borderColor: '#ff85c0', color: '#ff85c0' }}
-                  block
+                  icon={<SaveOutlined />}
+                  style={{ 
+                    flex: 1,
+                    borderColor: themeColor,
+                    color: themeColor,
+                    borderRadius: '12px',
+                    height: '40px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '6px'
+                  }}
                 >
                   保存奖品
                 </Button>
@@ -216,25 +319,44 @@ function LotteryWheel({ isLoggedIn }) {
           
           {/* 转盘 */}
           <div style={{ 
-            backgroundColor: '#fff',
-            padding: '16px',
-            borderRadius: '8px',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
+            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+            padding: '20px',
+            borderRadius: '16px',
+            boxShadow: '0 8px 24px rgba(255, 133, 162, 0.15)',
+            border: '1px solid rgba(255, 192, 203, 0.3)',
+            backdropFilter: 'blur(10px)'
           }}>
             <SpinWheel prizes={prizes} result={result} setResult={setResult} />
           </div>
           
           {/* 结果展示 */}
           <div style={{ 
-            backgroundColor: '#fff',
-            padding: '16px',
-            borderRadius: '8px',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
+            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+            padding: '20px',
+            borderRadius: '16px',
+            boxShadow: '0 8px 24px rgba(255, 133, 162, 0.15)',
+            border: '1px solid rgba(255, 192, 203, 0.3)',
+            backdropFilter: 'blur(10px)'
           }}>
             <LotteryResult result={result} prizes={prizes} />
           </div>
         </div>
       )}
+
+      {/* 全局CSS动画定义 */}
+      <style jsx="true">{`
+        @keyframes float {
+          0% {
+            transform: translateY(0px);
+          }
+          50% {
+            transform: translateY(-10px);
+          }
+          100% {
+            transform: translateY(0px);
+          }
+        }
+      `}</style>
     </div>
   );
 }
