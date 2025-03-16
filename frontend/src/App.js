@@ -316,7 +316,8 @@ function App() {
           fontWeight: '500',
           letterSpacing: '0.5px',
         }}>
-          © 2025 豆腐观测站 <HeartOutlined style={{ margin: '0 4px' }} />
+          © 2025 豆腐观测站 <HeartOutlined style={{ margin: '0 4px' }} /> <br />
+          <span style={{ fontSize: '12px', opacity: '0.9' }}>支援邮箱: support@xiaotudd.com</span>
         </Footer>
         
         <Live2DModel />
@@ -453,7 +454,8 @@ function App() {
         fontWeight: '500',
         letterSpacing: '0.5px',
       }}>
-        © 2025 豆腐观测站 <HeartOutlined style={{ margin: '0 4px' }} />
+        © 2025 豆腐观测站 <HeartOutlined style={{ margin: '0 4px' }} /> <br />
+        <span style={{ fontSize: '12px', opacity: '0.9' }}>支援邮箱: support@xiaotudd.com</span>
       </Footer>
       
       <Live2DModel />
