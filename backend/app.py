@@ -1,8 +1,12 @@
 import sqlite3
-from flask import Flask, jsonify, request, session
+from flask import Flask, jsonify, request, session, Response
 from flask_cors import CORS
 from database import get_connection, init_db, db
 from config import get_config
+import psycopg2
+import psycopg2.extras
+from datetime import datetime
+import requests
 
 import os
 import time
@@ -838,9 +842,120 @@ def register_routes(app):
         
         return jsonify({"unread_count": count}), 200
 
+    # 获取舰长信息API
+    @app.route("/api/guards", methods=["GET"])
+    def get_guards():
+        """
+        获取特定直播间的舰长信息
+        """
+        try:
+            # 从配置中获取数据库连接信息
+            config = get_config()
+            # 连接PostgreSQL数据库
+            conn = psycopg2.connect(
+                host=config.POSTGRES_HOST,
+                port=config.POSTGRES_PORT,
+                database=config.POSTGRES_DB,
+                user=config.POSTGRES_USER,
+                password=config.POSTGRES_PASSWORD
+            )
+            
+            # 使用DictCursor，这样可以通过列名访问结果
+            cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+            
+            # 查询特定直播间的舰长信息
+            cur.execute("""
+                SELECT id, room_id, ruid, uid, rank, accompany, 
+                       username, face, name_color, is_mystery,
+                       medal_name, medal_level, medal_color_start, 
+                       medal_color_end, medal_color_border, medal_color,
+                       guard_level, expired_str, is_top3, timestamp
+                FROM bilibili_guards 
+                WHERE room_id = 1883353860
+                ORDER BY rank ASC
+            """)
+            
+            rows = cur.fetchall()
+            
+            # 格式化结果
+            guards = []
+            for row in rows:
+                guard = {
+                    "id": row["id"],
+                    "room_id": row["room_id"],
+                    "ruid": row["ruid"],
+                    "uid": row["uid"],
+                    "rank": row["rank"],
+                    "accompany": row["accompany"],
+                    "username": row["username"],
+                    "face": row["face"],
+                    "name_color": row["name_color"],
+                    "is_mystery": row["is_mystery"],
+                    "medal_name": row["medal_name"],
+                    "medal_level": row["medal_level"],
+                    "medal_color_start": row["medal_color_start"],
+                    "medal_color_end": row["medal_color_end"],
+                    "medal_color_border": row["medal_color_border"],
+                    "medal_color": row["medal_color"],
+                    "guard_level": row["guard_level"],
+                    "expired_str": row["expired_str"],
+                    "is_top3": row["is_top3"],
+                    "timestamp": row["timestamp"].isoformat() if row["timestamp"] else None
+                }
+                guards.append(guard)
+            
+            cur.close()
+            conn.close()
+            
+            return jsonify({
+                "message": "获取舰长信息成功",
+                "total": len(guards),
+                "guards": guards
+            }), 200
+            
+        except Exception as e:
+            print(f"获取舰长信息错误: {str(e)}")  # 添加错误日志
+            return jsonify({
+                "message": f"获取舰长信息失败: {str(e)}"
+            }), 500
+
+    # 添加图片代理接口
+    @app.route("/api/proxy/image")
+    def proxy_image():
+        """
+        代理获取图片，解决防盗链问题
+        """
+        image_url = request.args.get('url')
+        if not image_url:
+            return jsonify({"message": "缺少图片URL"}), 400
+            
+        try:
+            # 设置请求头，模拟浏览器请求
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+                'Referer': 'https://www.bilibili.com'
+            }
+            response = requests.get(image_url, headers=headers)
+            
+            # 返回图片数据
+            return Response(
+                response.content,
+                mimetype=response.headers['Content-Type'],
+                headers={
+                    "Cache-Control": "public, max-age=31536000",
+                    "Access-Control-Allow-Origin": "*"
+                }
+            )
+        except Exception as e:
+            print(f"代理图片错误: {str(e)}")
+            return jsonify({"message": "获取图片失败"}), 500
+
 
 # 创建应用实例
 app = create_app()
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0")
+    # 从环境变量获取主机和端口
+    host = os.getenv('HOST', '0.0.0.0')
+    port = int(os.getenv('PORT', 5000))  # 默认使用5000端口
+    app.run(debug=True, host=host, port=port)

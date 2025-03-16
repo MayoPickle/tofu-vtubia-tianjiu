@@ -1,14 +1,22 @@
 # config.py
 import os
+from dotenv import load_dotenv
+
+# 加载.env文件
+load_dotenv()
 
 class Config:
-    """基础配置类"""
-    DEBUG = False
-    TESTING = False
-    SECRET_KEY = os.environ.get('SECRET_KEY', 'mysecretkey')
-    UPLOAD_FOLDER = 'uploads'
-    MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB
-    DB_PATH = os.environ.get('DB_PATH', 'songs.db')
+    """应用配置类"""
+    SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key-here")
+    UPLOAD_FOLDER = 'uploads'  # 文件上传目录
+    DB_PATH = os.getenv("DB_PATH", 'songs.db')
+    
+    # PostgreSQL数据库配置
+    POSTGRES_HOST = os.getenv("POSTGRES_HOST")
+    POSTGRES_PORT = int(os.getenv("POSTGRES_PORT", "5432"))
+    POSTGRES_DB = os.getenv("POSTGRES_DB")
+    POSTGRES_USER = os.getenv("POSTGRES_USER")
+    POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD")
 
 class ProductionConfig(Config):
     """生产环境配置"""

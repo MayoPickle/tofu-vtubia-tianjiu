@@ -1,7 +1,7 @@
 // Intro.js
 import React, { useEffect, useState } from 'react';
-import { Typography, Card, Image, Space, Row, Col, Button, Divider, Collapse } from 'antd';
-import { HeartOutlined, StarOutlined, SmileOutlined, ArrowDownOutlined, RocketOutlined, HomeOutlined, BookOutlined } from '@ant-design/icons';
+import { Typography, Card, Image, Space, Row, Col, Button, Divider, Collapse, Avatar, List, Tag, Spin, message, Empty, Modal } from 'antd';
+import { HeartOutlined, StarOutlined, SmileOutlined, ArrowDownOutlined, RocketOutlined, HomeOutlined, BookOutlined, CrownOutlined } from '@ant-design/icons';
 import { useDeviceDetect } from '../utils/deviceDetector';
 
 const { Title, Paragraph, Text } = Typography;
@@ -15,7 +15,62 @@ function Intro() {
   const { isMobile } = useDeviceDetect();
   const [showCards, setShowCards] = useState(false);
   const [expandStory, setExpandStory] = useState(false);
+  const [guards, setGuards] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [expandedGuards, setExpandedGuards] = useState({});
+  const [selectedGuard, setSelectedGuard] = useState(null);
+  const [storyModalVisible, setStoryModalVisible] = useState(false);
   
+  // 获取舰长数据
+  useEffect(() => {
+    const fetchGuards = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch('/api/guards');
+        if (!response.ok) {
+          throw new Error('获取舰长数据失败');
+        }
+        const data = await response.json();
+        setGuards(data.guards || []);
+      } catch (error) {
+        console.error('获取舰长数据错误:', error);
+        message.error('获取舰长数据失败');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchGuards();
+  }, []);
+
+  // 获取舰长等级对应的标签颜色
+  const getGuardLevelColor = (level) => {
+    switch (level) {
+      case 3:
+        return '#FF1493'; // 舰长
+      case 2:
+        return '#FF69B4'; // 提督
+      case 1:
+        return '#FFB6C1'; // 总督
+      default:
+        return '#FFC0CB';
+    }
+  };
+
+  // 获取舰长等级对应的文字
+  const getGuardLevelText = (level) => {
+    switch (level) {
+      case 3:
+        return '舰长';
+      case 2:
+        return '提督';
+      case 1:
+        return '总督';
+      default:
+        return '未知';
+    }
+  };
+
   // 页面加载时添加动画效果
   useEffect(() => {
     // 延迟显示卡片，创造渐入效果
@@ -146,6 +201,39 @@ function Intro() {
     }
   ];
 
+  // 处理守护者展开/收起
+  const handleGuardExpand = (guardId) => {
+    setExpandedGuards(prev => ({
+      ...prev,
+      [guardId]: !prev[guardId]
+    }));
+  };
+
+  // 生成守护者的故事
+  const generateGuardStory = (guard) => {
+    const levelText = getGuardLevelText(guard.guard_level);
+    const days = guard.accompany;
+    const stories = [
+      {
+        title: '初次相遇',
+        content: `在9672星球的第${Math.floor(days * 0.1)}天，${guard.username}带着对未知的好奇来到了这里。作为一名${levelText}，${guard.username}的到来让这个星球增添了一份独特的色彩。`,
+      },
+      {
+        title: '守护时光',
+        content: `在这${days}天里，${guard.username}见证了无数个日出日落，参与了众多精彩的故事。${guard.medal_name ? `佩戴着「${guard.medal_name}」的${guard.username}，用温暖的心为这个星球增添了独特的光芒。` : ''}`,
+      },
+      {
+        title: '难忘瞬间',
+        content: `每一次的互动，每一个温暖的瞬间，都让人难以忘怀。${guard.username}不仅是一位${levelText}，更是9672星球故事中不可或缺的一部分。`,
+      },
+      {
+        title: '未来期许',
+        content: `期待在未来的日子里，能和${guard.username}一起创造更多精彩的故事，让9672星球变得更加绚丽多彩。`,
+      },
+    ];
+    return stories;
+  };
+
   return (
     <div style={{ 
       padding: isMobile ? '16px 8px' : '24px',
@@ -266,26 +354,22 @@ function Intro() {
         >
           <Button
             type="link"
-            icon={<BookOutlined />}
+            icon={<BookOutlined style={{
+              transform: expandStory ? 'rotate(180deg)' : 'rotate(0)',
+              transition: 'transform 0.3s ease',
+            }} />}
             style={{
               color: themeColor,
               fontWeight: 'bold',
               fontSize: isMobile ? '15px' : '16px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px',
+              margin: '0 auto',
             }}
           >
             {expandStory ? '收起完整故事' : '阅读完整故事'}
           </Button>
-          <div style={{ 
-            textAlign: 'center',
-            animation: expandStory ? 'rotateUp 0.5s forwards' : 'rotateDown 0.5s forwards',
-            marginTop: '8px',
-            display: 'inline-block',
-          }}>
-            <ArrowDownOutlined style={{ 
-              color: themeColor, 
-              fontSize: '20px',
-            }} />
-          </div>
         </div>
         
         {/* 完整故事展开区域 */}
@@ -358,20 +442,6 @@ function Intro() {
               ))}
             </Space>
           </Card>
-        </div>
-        
-        <div style={{ 
-          textAlign: 'center',
-          animation: 'bounce 2s infinite',
-          opacity: expandStory ? 0 : 1,
-          height: expandStory ? 0 : 'auto',
-          overflow: 'hidden',
-          transition: 'all 0.3s ease',
-        }}>
-          <ArrowDownOutlined style={{ 
-            color: themeColor, 
-            fontSize: '24px',
-          }} />
         </div>
       </Card>
 
@@ -531,6 +601,443 @@ function Intro() {
         </Col>
       </Row>
       
+      {/* 添加舰长信息卡片 */}
+      <Card 
+        title={
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <div style={{ 
+                background: 'rgba(255, 133, 162, 0.1)', 
+                borderRadius: '50%', 
+                width: '36px', 
+                height: '36px', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center',
+                marginRight: '12px',
+              }}>
+                <CrownOutlined style={{ color: themeColor, fontSize: '18px' }} />
+              </div>
+              <span style={{ 
+                fontWeight: 'bold', 
+                fontSize: isMobile ? '16px' : '18px',
+                background: 'linear-gradient(45deg, #FF85A2, #FF1493)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+              }}>星球守护者</span>
+            </div>
+            <Tag color={themeColor} style={{ marginLeft: '8px' }}>
+              {guards.length} 位守护者
+            </Tag>
+          </div>
+        }
+        style={{ 
+          marginTop: '24px',
+          borderRadius: '16px',
+          boxShadow: '0 8px 20px rgba(255, 133, 162, 0.15)',
+          border: '1px solid rgba(255, 192, 203, 0.3)',
+          background: 'rgba(255, 255, 255, 0.9)',
+          backdropFilter: 'blur(10px)',
+          animation: showCards ? 'slideUp 0.6s ease-out' : 'none',
+        }}
+        bordered={false}
+      >
+        {loading ? (
+          <div style={{ 
+            textAlign: 'center', 
+            padding: '40px',
+            background: 'rgba(255, 240, 245, 0.5)',
+            borderRadius: '12px',
+          }}>
+            <Space direction="vertical" size="middle" align="center">
+              <Spin size="large" />
+              <Text type="secondary">正在召集星球守护者...</Text>
+            </Space>
+          </div>
+        ) : guards.length === 0 ? (
+          <Empty
+            image={Empty.PRESENTED_IMAGE_SIMPLE}
+            description={
+              <Text type="secondary">暂时还没有守护者加入我们</Text>
+            }
+          />
+        ) : (
+          <List
+            grid={{ 
+              gutter: [24, 24],
+              xs: 1,
+              sm: 1,
+              md: 2,
+              lg: 2,
+              xl: 3,
+              xxl: 3,
+            }}
+            dataSource={guards}
+            renderItem={(guard, index) => (
+              <List.Item 
+                style={{
+                  transform: showCards ? 'translateY(0)' : 'translateY(20px)',
+                  opacity: showCards ? 1 : 0,
+                  transition: `all 0.5s ease ${index * 0.1}s`,
+                }}
+              >
+                <div
+                  style={{
+                    position: 'relative',
+                    borderRadius: '16px',
+                    overflow: 'hidden',
+                    background: '#fff',
+                    boxShadow: '0 8px 24px rgba(255, 182, 193, 0.15)',
+                    border: '1px solid rgba(255, 192, 203, 0.2)',
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                    cursor: 'pointer',
+                    minHeight: expandedGuards[guard.id] ? '380px' : '260px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    transform: 'translateY(0)',
+                    ':hover': {
+                      transform: 'translateY(-6px)',
+                      boxShadow: '0 12px 28px rgba(255, 182, 193, 0.25)',
+                    }
+                  }}
+                  onClick={() => handleGuardExpand(guard.id)}
+                  className="guard-card"
+                >
+                  {/* 头像背景 */}
+                  <div style={{
+                    height: '100px',
+                    background: `linear-gradient(45deg, ${getGuardLevelColor(guard.guard_level)}22, ${getGuardLevelColor(guard.guard_level)}11)`,
+                    position: 'relative',
+                    overflow: 'hidden',
+                    transition: 'all 0.3s ease',
+                  }}>
+                    <div style={{
+                      position: 'absolute',
+                      top: '50%',
+                      left: '50%',
+                      transform: 'translate(-50%, -50%)',
+                      width: '140px',
+                      height: '140px',
+                      borderRadius: '50%',
+                      background: `radial-gradient(circle, ${getGuardLevelColor(guard.guard_level)}22 30%, transparent 70%)`,
+                      animation: 'pulse 3s infinite',
+                    }} />
+                  </div>
+
+                  {/* 头像 */}
+                  <div style={{
+                    position: 'absolute',
+                    top: '40px',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    zIndex: 2,
+                  }}>
+                    <div style={{
+                      width: '100px',
+                      height: '100px',
+                      borderRadius: '50%',
+                      padding: '3px',
+                      background: '#fff',
+                      boxShadow: '0 4px 16px rgba(255, 182, 193, 0.2)',
+                      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                      animation: 'float 3s ease-in-out infinite',
+                    }}
+                    className="avatar-container"
+                    >
+                      <Avatar 
+                        size={94}
+                        src={guard.face ? `/api/proxy/image?url=${encodeURIComponent(guard.face)}` : null}
+                        style={{ 
+                          border: `2px solid ${getGuardLevelColor(guard.guard_level)}22`,
+                          transition: 'all 0.3s ease',
+                        }}
+                        className="avatar-image"
+                        fallback={
+                          <div style={{
+                            width: '94px',
+                            height: '94px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            background: `linear-gradient(135deg, ${getGuardLevelColor(guard.guard_level)}22, ${getGuardLevelColor(guard.guard_level)}11)`,
+                            color: getGuardLevelColor(guard.guard_level),
+                            fontSize: '32px',
+                            fontWeight: 'bold',
+                          }}>
+                            {guard.username.slice(0, 1)}
+                          </div>
+                        }
+                      />
+                    </div>
+                  </div>
+
+                  {/* 内容区域 */}
+                  <div style={{
+                    padding: '50px 16px 16px',
+                    textAlign: 'center',
+                    flex: 1,
+                    display: 'flex',
+                    flexDirection: 'column',
+                  }}>
+                    <div style={{
+                      fontSize: '18px',
+                      fontWeight: 'bold',
+                      color: '#333',
+                      marginBottom: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '6px',
+                    }}>
+                      {guard.username}
+                      {guard.is_top3 && (
+                        <div style={{
+                          background: 'linear-gradient(45deg, #FFD700, #FFA500)',
+                          WebkitBackgroundClip: 'text',
+                          WebkitTextFillColor: 'transparent',
+                          fontSize: '14px',
+                        }}>
+                          👑 TOP {guard.rank}
+                        </div>
+                      )}
+                    </div>
+
+                    <Space size={4} wrap style={{ justifyContent: 'center', marginBottom: '10px' }}>
+                      <Tag 
+                        color={getGuardLevelColor(guard.guard_level)}
+                        style={{
+                          borderRadius: '10px',
+                          padding: '1px 8px',
+                          border: 'none',
+                          fontSize: '12px',
+                          opacity: 0.8,
+                        }}
+                      >
+                        <CrownOutlined style={{ marginRight: '4px' }} />
+                        {getGuardLevelText(guard.guard_level)}
+                      </Tag>
+                      
+                      {guard.medal_name && (
+                        <Tag
+                          style={{
+                            borderRadius: '10px',
+                            padding: '1px 8px',
+                            border: 'none',
+                            background: `linear-gradient(45deg, ${guard.medal_color_start || '#FFB6C1'}, ${guard.medal_color_end || '#FF69B4'})`,
+                            color: '#fff',
+                            fontSize: '12px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                            cursor: 'pointer',
+                          }}
+                          className="medal-tag"
+                          title={`粉丝勋章颜色: ${guard.medal_color_start} → ${guard.medal_color_end}`}
+                        >
+                          <span style={{ 
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            background: 'rgba(255, 255, 255, 0.2)',
+                            padding: '0 4px',
+                            borderRadius: '8px',
+                            marginRight: '2px',
+                          }}>
+                            🏅
+                          </span>
+                          {guard.medal_name} · {guard.medal_level}
+                        </Tag>
+                      )}
+                    </Space>
+
+                    <div style={{
+                      fontSize: '13px',
+                      color: '#666',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '4px',
+                      marginBottom: '12px',
+                    }}>
+                      <HeartOutlined style={{ color: themeColor }} />
+                      已陪伴: {guard.accompany} 天
+                    </div>
+
+                    {/* 展开的故事内容 */}
+                    <div style={{
+                      maxHeight: expandedGuards[guard.id] ? '160px' : '0',
+                      opacity: expandedGuards[guard.id] ? 1 : 0,
+                      overflow: 'hidden',
+                      transition: 'all 0.3s ease-in-out',
+                      marginTop: expandedGuards[guard.id] ? '12px' : '0',
+                      flex: 1,
+                    }}>
+                      <div style={{
+                        background: 'rgba(255, 240, 245, 0.5)',
+                        borderRadius: '12px',
+                        padding: '24px 12px 12px',
+                        fontSize: '13px',
+                        color: '#666',
+                        lineHeight: '1.6',
+                        position: 'relative',
+                        height: '100%',
+                        marginTop: '10px',
+                      }}>
+                        <div style={{
+                          position: 'absolute',
+                          top: '-12px',
+                          left: '50%',
+                          transform: 'translateX(-50%)',
+                          background: '#fff',
+                          padding: '2px 10px',
+                          borderRadius: '10px',
+                          fontSize: '12px',
+                          color: themeColor,
+                          boxShadow: '0 2px 8px rgba(255, 182, 193, 0.2)',
+                          border: '1px solid rgba(255, 192, 203, 0.3)',
+                          whiteSpace: 'nowrap',
+                          zIndex: 1,
+                        }}>
+                          守护者档案 #{guard.rank}
+                        </div>
+                        <Paragraph style={{ 
+                          margin: 0,
+                          fontSize: '13px',
+                          color: '#666',
+                        }}>
+                          这是一位来自遥远星系的旅行者，带着对9672星球的向往而来。
+                          在这里，{guard.username} 已经陪伴了 {guard.accompany} 个日夜，
+                          见证了无数个日出日落，也留下了许多温暖的故事...
+                        </Paragraph>
+                      </div>
+                    </div>
+
+                    {/* 展开/收起指示器 */}
+                    <div style={{
+                      marginTop: 'auto',
+                      color: '#999',
+                      fontSize: '12px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
+                      padding: '4px 0',
+                    }}>
+                      <Button
+                        type="link"
+                        size="small"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedGuard(guard);
+                          setStoryModalVisible(true);
+                        }}
+                        style={{
+                          fontSize: '13px',
+                          color: themeColor,
+                          padding: '4px 8px',
+                          height: 'auto',
+                          background: 'rgba(255, 133, 162, 0.1)',
+                          borderRadius: '8px',
+                        }}
+                      >
+                        查看完整故事
+                      </Button>
+                      <span style={{ color: '#ccc' }}>|</span>
+                      {expandedGuards[guard.id] ? '收起简介' : '展开简介'} 
+                    </div>
+                  </div>
+                </div>
+              </List.Item>
+            )}
+          />
+        )}
+      </Card>
+
+      {/* 添加故事弹窗 */}
+      <Modal
+        title={
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            padding: '12px 0',
+          }}>
+            <Avatar 
+              size={48}
+              src={selectedGuard?.face ? `/api/proxy/image?url=${encodeURIComponent(selectedGuard.face)}` : null}
+              style={{
+                border: `2px solid ${selectedGuard ? getGuardLevelColor(selectedGuard.guard_level) : themeColor}`,
+              }}
+            />
+            <div>
+              <div style={{
+                fontSize: '18px',
+                fontWeight: 'bold',
+                marginBottom: '4px',
+              }}>
+                {selectedGuard?.username} 的故事
+              </div>
+              <div style={{
+                fontSize: '14px',
+                color: '#666',
+              }}>
+                已陪伴: {selectedGuard?.accompany} 天
+              </div>
+            </div>
+          </div>
+        }
+        open={storyModalVisible}
+        onCancel={() => setStoryModalVisible(false)}
+        footer={null}
+        width={600}
+        style={{ top: 20 }}
+        bodyStyle={{ 
+          padding: '24px',
+          maxHeight: '70vh',
+          overflow: 'auto',
+        }}
+      >
+        {selectedGuard && generateGuardStory(selectedGuard).map((story, index) => (
+          <div key={index} style={{
+            marginBottom: index < generateGuardStory(selectedGuard).length - 1 ? '32px' : 0,
+          }}>
+            <div style={{
+              fontSize: '16px',
+              fontWeight: 'bold',
+              color: themeColor,
+              marginBottom: '12px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+            }}>
+              <div style={{
+                width: '24px',
+                height: '24px',
+                borderRadius: '50%',
+                background: 'rgba(255, 133, 162, 0.1)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '12px',
+              }}>
+                {index + 1}
+              </div>
+              {story.title}
+            </div>
+            <Paragraph style={{
+              fontSize: '14px',
+              lineHeight: '1.8',
+              color: '#666',
+              margin: 0,
+              paddingLeft: '32px',
+            }}>
+              {story.content}
+            </Paragraph>
+          </div>
+        ))}
+      </Modal>
+
       {/* 全局CSS动画定义 */}
       <style jsx="true">{`
         @keyframes slideDown {
@@ -572,6 +1079,106 @@ function Intro() {
           to {
             transform: rotate(180deg);
           }
+        }
+        
+        @keyframes slideUp {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        @keyframes pulse {
+          0% {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 0.6;
+          }
+          50% {
+            transform: translate(-50%, -50%) scale(1.1);
+            opacity: 0.4;
+          }
+          100% {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 0.6;
+          }
+        }
+
+        @keyframes float {
+          0% {
+            transform: translateY(0px);
+          }
+          50% {
+            transform: translateY(-6px);
+          }
+          100% {
+            transform: translateY(0px);
+          }
+        }
+
+        .guard-card:hover .avatar-container {
+          transform: scale(1.05) rotate(5deg);
+          box-shadow: 0 8px 24px rgba(255, 182, 193, 0.3);
+        }
+
+        .guard-card:hover .avatar-image {
+          border-color: ${themeColor} !important;
+        }
+
+        .guard-card {
+          position: relative;
+        }
+
+        .guard-card::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(45deg, rgba(255, 182, 193, 0.1), rgba(255, 105, 180, 0.1));
+          opacity: 0;
+          transition: opacity 0.3s ease;
+          pointer-events: none;
+          border-radius: 16px;
+        }
+
+        .guard-card:hover::after {
+          opacity: 1;
+        }
+
+        .medal-tag {
+          position: relative;
+          transform-origin: center;
+        }
+
+        .medal-tag:hover {
+          transform: scale(1.1);
+          box-shadow: 0 4px 12px rgba(255, 105, 180, 0.3),
+                     0 0 20px rgba(255, 182, 193, 0.5);
+          z-index: 1;
+        }
+
+        .medal-tag::before {
+          content: '';
+          position: absolute;
+          top: -2px;
+          left: -2px;
+          right: -2px;
+          bottom: -2px;
+          background: inherit;
+          border-radius: 12px;
+          opacity: 0;
+          transition: opacity 0.3s ease;
+          filter: blur(8px);
+          z-index: -1;
+        }
+
+        .medal-tag:hover::before {
+          opacity: 0.6;
         }
       `}</style>
     </div>
