@@ -382,13 +382,20 @@ function SongList() {
     const filteredSongs = getFilteredSongs();
 
     return (
-      <>
+      <div style={{ 
+        width: '100%', 
+        maxWidth: '100%', 
+        overflowX: 'hidden',
+        boxSizing: 'border-box'
+      }}>
         <div style={{ 
           padding: '16px',
           background: 'rgba(255, 255, 255, 0.95)',
           borderRadius: '20px',
           boxShadow: '0 8px 24px rgba(255, 133, 162, 0.15)',
-          marginBottom: '16px'
+          marginBottom: '16px',
+          width: '100%',
+          boxSizing: 'border-box'
         }}>
           {/* 搜索栏和标签栏 */}
           <div style={{ 
@@ -457,12 +464,14 @@ function SongList() {
               key={item.id}
               size="small"
               style={{ 
-                margin: '8px 16px',
+                margin: '8px 0',
                 borderRadius: '16px',
                 border: '1px solid rgba(255, 192, 203, 0.3)',
                 background: 'rgba(255, 255, 255, 0.9)',
                 boxShadow: '0 4px 12px rgba(255, 133, 162, 0.1)',
-                transition: 'all 0.3s ease'
+                transition: 'all 0.3s ease',
+                width: '100%',
+                boxSizing: 'border-box'
               }}
               hoverable
               title={
@@ -508,7 +517,7 @@ function SongList() {
             </Card>
           )}
         />
-      </>
+      </div>
     );
   };
 

@@ -2,6 +2,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&display=swap');
 
+/* 防止水平滚动 */
+html, body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -10,6 +17,62 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: #fff6f9;
+}
+
+/* 确保所有内容都在视口内 */
+#root {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* 确保所有组件都不会超出视口宽度 */
+.ant-layout, 
+.ant-layout-content,
+.ant-layout-header,
+.ant-layout-footer,
+.ant-card,
+.ant-table,
+.ant-form,
+.ant-modal,
+.ant-drawer,
+.ant-menu,
+.ant-list,
+.ant-row,
+.ant-col,
+div[class^="ant-"] {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* 确保卡片和列表项不会超出视口宽度 */
+.ant-card,
+.ant-list-item,
+.ant-list-item-meta,
+.ant-card-body,
+.ant-card-head,
+.ant-card-actions,
+.ant-list-item-action {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  overflow-x: hidden !important;
+}
+
+/* 确保文本内容不会溢出容器 */
+.ant-typography,
+.ant-card-meta-title,
+.ant-card-meta-description,
+h1, h2, h3, h4, h5, p, span, div {
+  max-width: 100%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* 图片和媒体元素响应式处理 */
+img, video, iframe {
+  max-width: 100%;
+  height: auto;
 }
 
 code {

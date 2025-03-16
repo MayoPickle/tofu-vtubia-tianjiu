@@ -237,9 +237,11 @@ function Intro() {
   return (
     <div style={{ 
       padding: isMobile ? '16px 8px' : '24px',
-      maxWidth: '1200px',
+      maxWidth: '100%',
       margin: '0 auto',
       position: 'relative',
+      overflowX: 'hidden',
+      boxSizing: 'border-box'
     }}>
       {/* 装饰性背景元素 */}
       <div style={{
@@ -249,8 +251,10 @@ function Intro() {
         borderRadius: '50%',
         background: 'radial-gradient(circle, rgba(255,192,203,0.15) 0%, rgba(255,192,203,0) 70%)',
         top: '10%',
-        right: '-50px',
+        right: isMobile ? '0' : '-50px',
         zIndex: -1,
+        pointerEvents: 'none',
+        overflow: 'hidden'
       }} />
       
       <div style={{
@@ -260,8 +264,10 @@ function Intro() {
         borderRadius: '50%',
         background: 'radial-gradient(circle, rgba(255,105,180,0.1) 0%, rgba(255,105,180,0) 70%)',
         bottom: '10%',
-        left: '-30px',
+        left: isMobile ? '0' : '-30px',
         zIndex: -1,
+        pointerEvents: 'none',
+        overflow: 'hidden'
       }} />
       
       <Card 

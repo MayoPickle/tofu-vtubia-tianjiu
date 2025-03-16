@@ -138,7 +138,13 @@ function App() {
   // 移动端布局
   if (isMobile) {
     return (
-      <Layout style={{ minHeight: '100vh' }}>
+      <Layout style={{ 
+        minHeight: '100vh',
+        width: '100%',
+        maxWidth: '100vw',
+        overflowX: 'hidden',
+        position: 'relative'
+      }}>
         <CherryBlossom />
         <Header style={{ 
           display: 'flex', 
@@ -153,6 +159,8 @@ function App() {
           top: 0,
           zIndex: 1000,
           height: '60px',
+          width: '100%',
+          boxSizing: 'border-box'
         }}>
           <div style={{ 
             color: '#fff', 
@@ -274,7 +282,11 @@ function App() {
         <Content style={{ 
           padding: '16px', 
           marginBottom: '70px',
-          marginTop: '8px'
+          marginTop: '8px',
+          width: '100%',
+          maxWidth: '100%',
+          overflowX: 'hidden',
+          boxSizing: 'border-box'
         }} className="mobile-content">
           <Routes>
             <Route path="/intro" element={<Intro />} />
@@ -315,6 +327,8 @@ function App() {
           fontSize: '14px',
           fontWeight: '500',
           letterSpacing: '0.5px',
+          boxSizing: 'border-box',
+          left: 0
         }}>
           © 2025 豆腐观测站 <HeartOutlined style={{ margin: '0 4px' }} /> <br />
           <span style={{ fontSize: '12px', opacity: '0.9' }}>支援邮箱: support@xiaotudd.com</span>
