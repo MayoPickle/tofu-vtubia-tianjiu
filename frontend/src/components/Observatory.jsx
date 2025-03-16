@@ -1,35 +1,39 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Row, Col, Button, message, Tooltip, Typography, Space } from 'antd';
-import { CopyOutlined } from '@ant-design/icons';
+import { Card, Row, Col, Button, message, Tooltip, Typography, Space, Divider } from 'antd';
+import { CopyOutlined, LockOutlined, UnlockOutlined, SyncOutlined } from '@ant-design/icons';
 import { useDeviceDetect } from '../utils/deviceDetector';
 
 const { Title, Paragraph, Text } = Typography;
 
-// 4个挡位配置
+// 4个挡位配置 - 修改为粉色系渐变
 const levels = [
   {
     label: '幽灵',
     trigger: '观测站幽灵+密码',
     exponent: 2,
     comment: '一倍',
+    color: 'linear-gradient(135deg, #FFB6C1 0%, #FF69B4 100%)',
   },
   {
     label: '强袭',
     trigger: '观测站强袭+密码',
     exponent: 3,
     comment: '十倍',
+    color: 'linear-gradient(135deg, #FF69B4 0%, #FF1493 100%)',
   },
   {
     label: '泰坦',
     trigger: '观测站泰坦+密码',
     exponent: 4,
     comment: '百倍',
+    color: 'linear-gradient(135deg, #FF1493 0%, #C71585 100%)',
   },
   {
     label: '全境',
     trigger: '观测站全境+密码',
     exponent: 5,
     comment: 'ALL IN',
+    color: 'linear-gradient(135deg, #C71585 0%, #8B008B 100%)',
   },
 ];
 
@@ -109,24 +113,115 @@ function copyToClipboard(text) {
     });
 }
 
+// 密码过期倒计时计算
+function getCountdownTime() {
+  const now = new Date();
+  const currentHour = now.getUTCHours();
+  const nextHour = new Date(now);
+  
+  nextHour.setUTCHours(currentHour + 1, 0, 0, 0);
+  
+  // 计算剩余毫秒数
+  const diffMs = nextHour - now;
+  
+  // 转换为分钟和秒
+  const minutes = Math.floor(diffMs / 60000);
+  const seconds = Math.floor((diffMs % 60000) / 1000);
+  
+  return { minutes, seconds };
+}
+
 function Observatory({ isLoggedIn, isAdmin }) {
   const { isMobile } = useDeviceDetect();
   
-  // 完全移除之前的状态和useEffect，避免重新渲染循环
+  // 添加时间状态和自动刷新功能
+  const [currentTime, setCurrentTime] = useState(new Date());
+  const [countdown, setCountdown] = useState(getCountdownTime());
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  
+  // 手动刷新函数
+  const handleRefresh = () => {
+    setIsRefreshing(true);
+    setCurrentTime(new Date());
+    setCountdown(getCountdownTime());
+    
+    // 模拟刷新动画效果
+    setTimeout(() => {
+      setIsRefreshing(false);
+    }, 800);
+  };
+  
+  useEffect(() => {
+    // 每分钟更新一次时间，确保密码保持最新
+    const minuteTimer = setInterval(() => {
+      setCurrentTime(new Date());
+      setCountdown(getCountdownTime());
+    }, 60000); // 60秒 = 1分钟
+    
+    // 倒计时每秒更新
+    const secondTimer = setInterval(() => {
+      setCountdown(getCountdownTime());
+    }, 1000);
+    
+    // 组件卸载时清除定时器
+    return () => {
+      clearInterval(minuteTimer);
+      clearInterval(secondTimer);
+    };
+  }, []);
   
   return (
     <div 
       style={{ 
         padding: isMobile ? '12px 8px' : '20px',
         maxWidth: '1200px',
-        margin: '0 auto'
+        margin: '0 auto',
+        background: 'rgba(255, 245, 250, 0.8)',
+        borderRadius: '12px',
+        boxShadow: '0 4px 15px rgba(220, 110, 170, 0.1)',
+        backdropFilter: 'blur(10px)',
+        border: '1px solid rgba(255, 192, 203, 0.2)'
       }}
     >
-      <Title level={isMobile ? 3 : 2} style={{ marginBottom: isMobile ? 12 : 20, textAlign: 'center' }}>
-        观测站
-      </Title>
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center',
+        marginBottom: isMobile ? 12 : 20 
+      }}>
+        <Title level={isMobile ? 3 : 2} style={{ 
+          margin: 0, 
+          background: 'linear-gradient(45deg, #FF69B4, #FFB6C1)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          fontWeight: 700,
+        }}>
+          观测站
+        </Title>
+        <Tooltip title="刷新密码">
+          <Button 
+            type="text"
+            icon={<SyncOutlined spin={isRefreshing} style={{ color: '#FF69B4' }} />} 
+            onClick={handleRefresh}
+            style={{ marginLeft: 10 }}
+          />
+        </Tooltip>
+      </div>
+      
+      <div style={{ 
+        textAlign: 'center', 
+        marginBottom: isMobile ? 16 : 24,
+        padding: '8px',
+        background: 'rgba(255, 230, 240, 0.6)',
+        borderRadius: '8px',
+        border: '1px solid rgba(255, 192, 203, 0.3)'
+      }}>
+        <Text type="secondary" style={{ fontSize: isMobile ? '12px' : '14px', color: '#FF1493' }}>
+          密码将在 {countdown.minutes}:{countdown.seconds.toString().padStart(2, '0')} 后更新
+        </Text>
+      </div>
 
-      <Row gutter={isMobile ? [8, 8] : [16, 16]}>
+      <Row gutter={isMobile ? [12, 12] : [16, 16]}>
         {levels.map((lvl, idx) => {
           // 1) 计算真实密码
           const realPwd = getRealPassword(lvl.exponent);
@@ -147,36 +242,69 @@ function Observatory({ isLoggedIn, isAdmin }) {
           return (
             <Col xs={12} sm={12} md={6} key={lvl.label}>
               <Card
-                title={lvl.label}
-                variant="outlined"
+                title={
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    {!copyAllowed && <LockOutlined style={{ marginRight: 5 }} />}
+                    {copyAllowed && <UnlockOutlined style={{ marginRight: 5 }} />}
+                    <span>{lvl.label}</span>
+                  </div>
+                }
+                bordered={false}
                 size={isMobile ? "small" : "default"}
                 style={{ 
                   textAlign: 'center', 
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-                  height: '100%'
+                  height: '100%',
+                  backgroundImage: 'linear-gradient(to bottom, rgba(255, 245, 250, 0.95), rgba(255, 240, 245, 0.85))',
+                  borderRadius: '12px',
+                  overflow: 'hidden',
+                  boxShadow: '0 4px 12px rgba(220, 110, 170, 0.08)',
+                  border: '1px solid rgba(255, 192, 203, 0.2)',
+                  transition: 'all 0.3s ease',
                 }}
                 styles={{
                   header: {
                     fontSize: isMobile ? '14px' : '16px',
-                    padding: isMobile ? '0 8px' : '0 16px'
+                    padding: isMobile ? '8px' : '12px',
+                    fontWeight: 'bold',
+                    borderBottom: '1px solid rgba(255, 192, 203, 0.3)',
+                    backgroundImage: lvl.color,
+                    color: 'white',
+                    textShadow: '0 1px 2px rgba(0, 0, 0, 0.2)',
                   },
                   body: {
-                    padding: isMobile ? '8px' : '24px'
+                    padding: isMobile ? '12px' : '24px'
                   }
                 }}
+                hoverable
               >
-                <Paragraph style={{ fontSize: isMobile ? '12px' : '14px', marginBottom: isMobile ? 4 : 8 }}>
-                  挡位说明：<Text strong>{lvl.comment}</Text>
+                <Paragraph style={{ 
+                  fontSize: isMobile ? '12px' : '14px', 
+                  marginBottom: isMobile ? 8 : 12,
+                  color: '#555'
+                }}>
+                  挡位说明：<Text strong style={{ color: '#FF1493' }}>{lvl.comment}</Text>
                 </Paragraph>
 
+                <Divider style={{ margin: isMobile ? '8px 0' : '12px 0', borderColor: 'rgba(255, 192, 203, 0.3)' }} />
+
                 {/* 触发关键词 + 复制按钮 */}
-                <div style={{ marginBottom: isMobile ? 6 : 12 }}>
+                <div style={{ marginBottom: isMobile ? 10 : 16 }}>
                   <Paragraph style={{ 
-                    marginBottom: isMobile ? 4 : 6,
-                    fontSize: isMobile ? '12px' : '14px'
+                    marginBottom: isMobile ? 6 : 10,
+                    fontSize: isMobile ? '12px' : '14px',
+                    color: '#666'
                   }}>
                     触发关键词：
-                    <Text strong style={{ color: '#333' }}>
+                    <Text strong style={{ 
+                      color: '#111',
+                      display: 'block',
+                      padding: '5px',
+                      margin: '4px 0',
+                      background: 'rgba(255, 230, 240, 0.5)',
+                      borderRadius: '4px',
+                      wordBreak: 'break-all',
+                      border: '1px solid rgba(255, 192, 203, 0.2)'
+                    }}>
                       {finalTrigger}
                     </Text>
                   </Paragraph>
@@ -190,6 +318,13 @@ function Observatory({ isLoggedIn, isAdmin }) {
                       onClick={() => copyToClipboard(finalTrigger)}
                       size={isMobile ? "small" : "middle"}
                       disabled={!copyAllowed}
+                      type="primary"
+                      style={{ 
+                        background: copyAllowed ? lvl.color : undefined,
+                        borderColor: 'transparent',
+                        width: '100%',
+                        boxShadow: copyAllowed ? '0 2px 6px rgba(255, 105, 180, 0.25)' : 'none',
+                      }}
                     >
                       复制触发词
                     </Button>
@@ -198,9 +333,13 @@ function Observatory({ isLoggedIn, isAdmin }) {
 
                 {/* 显示4位密码(或 "****") */}
                 <div style={{ 
-                  fontSize: isMobile ? '18px' : '24px', 
+                  fontSize: isMobile ? '28px' : '36px', 
                   fontWeight: 'bold', 
-                  color: '#333' 
+                  fontFamily: 'monospace',
+                  color: finalPwd === '****' ? '#C9C9C9' : '#FF1493',
+                  padding: '10px 0',
+                  letterSpacing: '2px',
+                  textShadow: finalPwd === '****' ? 'none' : '0 1px 0 rgba(255, 105, 180, 0.1)',
                 }}>
                   {finalPwd}
                 </div>
@@ -216,6 +355,21 @@ function Observatory({ isLoggedIn, isAdmin }) {
           );
         })}
       </Row>
+      
+      {/* 添加上次更新时间提示 */}
+      <div style={{
+        textAlign: 'center',
+        fontSize: isMobile ? '11px' : '13px',
+        color: '#888',
+        marginTop: isMobile ? 16 : 24,
+        padding: '8px',
+        background: 'rgba(255, 230, 240, 0.3)',
+        borderRadius: '6px',
+        border: '1px solid rgba(255, 192, 203, 0.2)'
+      }}>
+        <SyncOutlined spin={isRefreshing} style={{ marginRight: 5, color: '#FF69B4' }} />
+        密码自动更新 (上次更新: {currentTime.toLocaleTimeString()})
+      </div>
     </div>
   );
 }

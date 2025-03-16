@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, Link, Navigate, useLocation } from 'react-router-dom';
-import { Layout, Menu, Drawer, Button } from 'antd';
+import { Layout, Menu, Drawer, Button, Badge, Avatar } from 'antd';
 import { MenuOutlined, HeartOutlined, CustomerServiceOutlined, GiftOutlined, RocketOutlined, CoffeeOutlined } from '@ant-design/icons';
 import Intro from './components/Intro';
 import axios from 'axios';
@@ -18,6 +18,11 @@ import MobileNavGesture from './components/MobileNavGesture';
 
 
 const { Header, Content, Footer } = Layout;
+
+// 粉色主题色常量
+const themeColor = '#FF85A2';
+const themeGradient = 'linear-gradient(135deg, #FF85A2 0%, #FF1493 100%)';
+const headerGradient = 'linear-gradient(to right, rgba(255, 133, 162, 0.95), rgba(255, 20, 147, 0.95))';
 
 function App() {
   const location = useLocation();
@@ -95,16 +100,38 @@ function App() {
     }
   };
 
+  // 菜单项配置
   const menuItems = [
-    ...(showIntro ? [{ key: 'intro', label: <Link to="/intro">介绍</Link>, icon: <HeartOutlined /> }] : []),
-    { key: 'songs', label: <Link to="/songs">音乐小馆</Link>, icon: <CustomerServiceOutlined /> },
-    { key: 'lottery', label: <Link to="/lottery">抽奖</Link>, icon: <GiftOutlined /> },
-    { key: 'observatory', label: <Link to="/observatory">观测站</Link>, icon: <RocketOutlined /> },
+    ...(showIntro ? [{ 
+      key: 'intro', 
+      label: <Link to="/intro">介绍</Link>, 
+      icon: <HeartOutlined style={{ fontSize: '16px' }} /> 
+    }] : []),
+    { 
+      key: 'songs', 
+      label: <Link to="/songs">音乐小馆</Link>, 
+      icon: <CustomerServiceOutlined style={{ fontSize: '16px' }} /> 
+    },
+    { 
+      key: 'lottery', 
+      label: <Link to="/lottery">抽奖</Link>, 
+      icon: <GiftOutlined style={{ fontSize: '16px' }} /> 
+    },
+    { 
+      key: 'observatory', 
+      label: <Link to="/observatory">观测站</Link>, 
+      icon: <RocketOutlined style={{ fontSize: '16px' }} /> 
+    },
     { 
       key: 'cotton-candy', 
       label: <Link to={isAdmin ? "/admin/cotton-candy" : "/cotton-candy"}>棉花糖</Link>, 
-      icon: <CoffeeOutlined />,
-      ...(isAdmin && unreadCandyCount > 0 && { badge: unreadCandyCount })
+      icon: <CoffeeOutlined style={{ fontSize: '16px' }} />,
+      ...(isAdmin && unreadCandyCount > 0 && { 
+        badge: {
+          count: unreadCandyCount,
+          style: { backgroundColor: '#FF1493' }
+        }
+      })
     }
   ];
   
@@ -118,8 +145,14 @@ function App() {
           alignItems: 'center', 
           justifyContent: 'space-between', 
           padding: '0 16px',
-          borderRadius: '0 0 16px 16px',
-          boxShadow: '0 2px 8px rgba(255, 133, 162, 0.3)'
+          background: headerGradient,
+          borderRadius: '0 0 20px 20px',
+          boxShadow: '0 4px 15px rgba(255, 133, 162, 0.3)',
+          backdropFilter: 'blur(10px)',
+          position: 'sticky',
+          top: 0,
+          zIndex: 1000,
+          height: '60px',
         }}>
           <div style={{ 
             color: '#fff', 
@@ -127,44 +160,121 @@ function App() {
             fontWeight: 'bold',
             display: 'flex',
             alignItems: 'center',
-            gap: '8px'
+            gap: '10px'
           }}>
-            <HeartOutlined /> 9672星球
+            <Avatar 
+              size={36} 
+              icon={<HeartOutlined />} 
+              style={{ 
+                backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+              }}
+            />
+            <span style={{ 
+              textShadow: '0px 1px 2px rgba(0, 0, 0, 0.1)',
+              letterSpacing: '1px',
+            }}>9672星球</span>
           </div>
           
           <Button
             type="text"
-            icon={<MenuOutlined style={{ color: '#fff', fontSize: '18px' }} />}
+            size="large"
+            icon={<MenuOutlined style={{ color: '#fff', fontSize: '20px' }} />}
             onClick={() => setDrawerVisible(true)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '40px',
+              height: '40px',
+              borderRadius: '50%',
+              background: 'rgba(255, 255, 255, 0.15)',
+              backdropFilter: 'blur(10px)',
+              border: 'none',
+            }}
           />
         </Header>
 
         <Drawer
-          title={<div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><HeartOutlined /> 9672星球</div>}
+          title={
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '10px',
+              color: themeColor,
+              fontSize: '18px',
+              fontWeight: 'bold',
+            }}>
+              <Avatar 
+                size={36} 
+                icon={<HeartOutlined />} 
+                style={{ 
+                  background: themeGradient,
+                  boxShadow: '0 2px 8px rgba(255, 133, 162, 0.3)'
+                }}
+              />
+              <span>9672星球</span>
+            </div>
+          }
           placement="right"
           onClose={() => setDrawerVisible(false)}
           open={drawerVisible}
+          width={280}
           styles={{
-            body: { padding: 0 },
-            header: { fontSize: '18px', fontWeight: 'bold' }
+            body: { padding: '12px' },
+            header: { 
+              padding: '16px 24px', 
+              borderBottom: '1px solid rgba(255, 133, 162, 0.2)',
+            },
+            mask: { backdropFilter: 'blur(5px)' },
+            content: { 
+              borderRadius: '16px 0 0 16px',
+              overflow: 'hidden',
+            }
           }}
+          closeIcon={
+            <Button 
+              type="text" 
+              shape="circle" 
+              size="small"
+              icon={<MenuOutlined />}
+              style={{ color: themeColor }}
+            />
+          }
         >
           <Menu 
             mode="vertical" 
             selectedKeys={[getSelectedMenuKey()]}
             onClick={() => setDrawerVisible(false)}
             items={menuItems}
-            style={{ borderRadius: '12px', margin: '8px' }}
+            style={{ 
+              borderRadius: '12px', 
+              marginBottom: '20px',
+              boxShadow: '0 2px 10px rgba(0, 0, 0, 0.03)',
+              border: '1px solid rgba(255, 133, 162, 0.1)',
+            }}
+            styles={{
+              item: {
+                borderRadius: '8px',
+                margin: '4px 0',
+                fontWeight: 500,
+              }
+            }}
           />
-          <div style={{ padding: '16px' }}>
+          <div style={{ 
+            padding: '16px',
+            background: 'rgba(255, 245, 250, 0.5)',
+            borderRadius: '12px',
+            border: '1px solid rgba(255, 133, 162, 0.1)',
+          }}>
             <AdminAuth />
           </div>
         </Drawer>
 
         <Content style={{ 
           padding: '16px', 
-          marginBottom: '56px',
-          marginTop: '16px'
+          marginBottom: '70px',
+          marginTop: '8px'
         }} className="mobile-content">
           <Routes>
             <Route path="/intro" element={<Intro />} />
@@ -173,10 +283,8 @@ function App() {
             <Route path="/admin/users" element={<AdminUserList />} />
             <Route path="/lottery" element={<LotteryWheel isLoggedIn={isLoggedIn} />} />
             
-            {/* 正常渲染观测站组件，不使用动态key */}
             <Route path="/observatory" element={<Observatory isLoggedIn={isLoggedIn} isAdmin={isAdmin} />} />
             
-            {/* 使用条件渲染来决定显示哪个棉花糖组件 */}
             <Route 
               path="/cotton-candy" 
               element={isAdmin ? <Navigate to="/admin/cotton-candy" /> : <CottonCandy />} 
@@ -189,7 +297,6 @@ function App() {
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
 
-          {/* 添加移动端滑动手势支持 */}
           <MobileNavGesture />
         </Content>
 
@@ -199,21 +306,25 @@ function App() {
           position: 'fixed',
           bottom: 0,
           width: '100%',
-          padding: '10px 0',
+          padding: '15px 0',
+          background: headerGradient,
           zIndex: 1000,
-          borderRadius: '16px 16px 0 0',
-          boxShadow: '0 -2px 8px rgba(255, 133, 162, 0.3)'
+          borderRadius: '20px 20px 0 0',
+          boxShadow: '0 -4px 15px rgba(255, 133, 162, 0.3)',
+          backdropFilter: 'blur(10px)',
+          fontSize: '14px',
+          fontWeight: '500',
+          letterSpacing: '0.5px',
         }}>
-          © 2025 豆腐观测站 <HeartOutlined />
+          © 2025 豆腐观测站 <HeartOutlined style={{ margin: '0 4px' }} />
         </Footer>
         
-        {/* ✅ Live2D 模型 */}
         <Live2DModel />
       </Layout>
     );
   }
   
-  // PC端布局 (保留原来的布局)
+  // PC端布局
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <CherryBlossom />
@@ -221,11 +332,17 @@ function App() {
         display: 'flex', 
         alignItems: 'center', 
         justifyContent: 'space-between',
-        borderRadius: '0 0 16px 16px',
-        boxShadow: '0 2px 8px rgba(255, 133, 162, 0.3)',
-        padding: '0 24px'
+        padding: '0 30px',
+        background: headerGradient,
+        borderRadius: '0 0 20px 20px',
+        boxShadow: '0 4px 15px rgba(255, 133, 162, 0.3)',
+        backdropFilter: 'blur(10px)',
+        position: 'sticky',
+        top: 0,
+        zIndex: 1000,
+        height: '64px',
       }}>
-        {/* ✅ 左侧：标题 + 菜单 */}
+        {/* 左侧：标题 + 菜单 */}
         <div style={{ 
           display: 'flex', 
           alignItems: 'center', 
@@ -238,13 +355,23 @@ function App() {
             fontWeight: 'bold',
             display: 'flex',
             alignItems: 'center',
-            gap: '8px',
+            gap: '12px',
             whiteSpace: 'nowrap'
           }}>
-            <HeartOutlined /> 9672星球
+            <Avatar 
+              size={40} 
+              icon={<HeartOutlined />} 
+              style={{ 
+                backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+              }}
+            />
+            <span style={{ 
+              textShadow: '0px 1px 2px rgba(0, 0, 0, 0.1)',
+              letterSpacing: '1px',
+            }}>9672星球</span>
           </div>
 
-          {/* ✅ 动态更新选中项 */}
           <Menu 
             theme="dark" 
             mode="horizontal" 
@@ -252,18 +379,44 @@ function App() {
             items={menuItems}
             style={{
               flex: '1',
-              minWidth: '500px'
-            }} 
+              minWidth: '500px',
+              background: 'transparent',
+              borderBottom: 'none',
+            }}
+            styles={{
+              item: {
+                margin: '0 5px',
+                borderRadius: '8px',
+                color: 'rgba(255, 255, 255, 0.85) !important',
+                transition: 'all 0.3s',
+              },
+              itemSelected: {
+                background: 'rgba(255, 255, 255, 0.15) !important',
+                borderBottom: 'none !important',
+                fontWeight: 'bold',
+              },
+              itemHover: {
+                background: 'rgba(255, 255, 255, 0.1) !important',
+                borderBottom: 'none !important',
+              },
+            }}
           />
         </div>
 
-        {/* ✅ 右侧：管理员登录/登出组件 */}
-        <AdminAuth />
+        {/* 右侧：管理员登录/登出组件 */}
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.15)',
+          borderRadius: '12px',
+          padding: '4px 12px',
+          backdropFilter: 'blur(5px)',
+        }}>
+          <AdminAuth />
+        </div>
       </Header>
 
       <Content style={{ 
-        padding: '24px',
-        marginTop: '16px'
+        padding: '30px',
+        marginTop: '0',
       }}>
         <Routes>
           <Route path="/intro" element={<Intro />} />
@@ -272,10 +425,8 @@ function App() {
           <Route path="/admin/users" element={<AdminUserList />} />
           <Route path="/lottery" element={<LotteryWheel isLoggedIn={isLoggedIn} />} />
           
-          {/* 正常渲染观测站组件，不使用动态key */}
           <Route path="/observatory" element={<Observatory isLoggedIn={isLoggedIn} isAdmin={isAdmin} />} />
           
-          {/* 使用条件渲染来决定显示哪个棉花糖组件 */}
           <Route 
             path="/cotton-candy" 
             element={isAdmin ? <Navigate to="/admin/cotton-candy" /> : <CottonCandy />} 
@@ -293,14 +444,18 @@ function App() {
       <Footer style={{ 
         textAlign: 'center', 
         color: '#fff',
-        borderRadius: '16px 16px 0 0',
-        boxShadow: '0 -2px 8px rgba(255, 133, 162, 0.3)',
-        marginTop: '16px'
+        background: headerGradient,
+        borderRadius: '20px 20px 0 0',
+        boxShadow: '0 -4px 15px rgba(255, 133, 162, 0.3)',
+        marginTop: '16px',
+        padding: '18px 0',
+        fontSize: '14px',
+        fontWeight: '500',
+        letterSpacing: '0.5px',
       }}>
-        © 2025 豆腐观测站 <HeartOutlined />
+        © 2025 豆腐观测站 <HeartOutlined style={{ margin: '0 4px' }} />
       </Footer>
       
-      {/* ✅ Live2D 模型 */}
       <Live2DModel />
     </Layout>
   );
