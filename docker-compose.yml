@@ -1,10 +1,6 @@
-version: '3.8'
-
 services:
   tofu-vtubia:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: ghcr.io/mayopickle/tofu-vtubia:master
     container_name: tofu-vtubia
     restart: unless-stopped
     ports:
