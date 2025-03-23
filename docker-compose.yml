@@ -1,21 +1,19 @@
 version: '3.8'
 
 services:
-  tofu-music-app:
+  tofu-vtubia:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: tofu-music-app
+    container_name: tofu-vtubia
     restart: unless-stopped
     ports:
       - "5000:5000"
     volumes:
       - ./backend/uploads:/app/uploads
       - ./backend/songs.db:/app/songs.db
-    environment:
-      - FLASK_DEBUG=false
-      # 可以在这里添加其他环境变量
-      # - DATABASE_URL=postgresql://user:password@db:5432/dbname
+    env_file:
+      - ./backend/.env
     networks:
       - tofu-network
 
