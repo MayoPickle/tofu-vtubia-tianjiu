@@ -4,11 +4,51 @@ import { Table, Input, InputNumber, Button, Space, Popconfirm, Upload, message, 
 import { UploadOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { useDeviceDetect } from '../../utils/deviceDetector';
 
+// 主题颜色和渐变定义
+const themeColor = '#a88f6a';
+const secondaryColor = '#352a46';  // 深紫色
+const highlightColor = '#e3bb4d';  // 亮黄色
+const themeGradient = 'linear-gradient(135deg, #a88f6a 0%, #917752 100%)';
+const secondaryGradient = 'linear-gradient(135deg, #352a46 0%, #261e36 100%)';
+const bgColor = '#1c2134';
+const textColor = '#e6d6bc';
+
 // 这里也可以把图片上传逻辑放到容器里；
 // 如果要在这里写，就直接在组件里 fetch('/api/upload') 即可。
 // 为了简洁，演示时就直接写在 columns 里。
 function PrizesTable({ prizes, setPrizes }) {
   const { isMobile } = useDeviceDetect();
+
+  // 自定义表格样式
+  const tableStyles = `
+    .custom-table .ant-table {
+      background-color: transparent !important;
+      color: ${textColor};
+    }
+    
+    .custom-table .ant-table-thead > tr > th {
+      background-color: rgba(53, 42, 70, 0.7) !important;
+      color: ${textColor} !important;
+      border-color: rgba(168, 143, 106, 0.3) !important;
+    }
+    
+    .custom-table .table-row-light {
+      background-color: rgba(28, 33, 52, 0.8) !important;
+    }
+    
+    .custom-table .table-row-dark {
+      background-color: rgba(53, 42, 70, 0.6) !important;
+    }
+    
+    .custom-table .ant-table-tbody > tr > td {
+      border-color: rgba(168, 143, 106, 0.2) !important;
+      color: ${textColor};
+    }
+    
+    .custom-table .ant-table-tbody > tr:hover > td {
+      background-color: rgba(227, 187, 77, 0.1) !important;
+    }
+  `;
 
   // 图片上传
   const handleImageUpload = (file, idx) => {
@@ -82,14 +122,16 @@ function PrizesTable({ prizes, setPrizes }) {
               size="small" 
               style={{ 
                 width: '100%',
-                boxShadow: '0 2px 6px rgba(0,0,0,0.05)',
-                borderRadius: '8px'
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
+                borderRadius: '8px',
+                background: idx % 2 === 0 ? bgColor : secondaryColor,
+                border: '1px solid rgba(168, 143, 106, 0.3)'
               }}
               title={
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ 
                     fontWeight: 500, 
-                    color: '#1890ff'
+                    color: highlightColor
                   }}>
                     奖品 {idx + 1}
                   </span>
@@ -102,39 +144,67 @@ function PrizesTable({ prizes, setPrizes }) {
                       type="text" 
                       size="small"
                       icon={<DeleteOutlined />}
-                      style={{ color: '#ff85c0' }}
+                      style={{ color: themeColor }}
                     />
                   </Popconfirm>
                 </div>
               }
+              headStyle={{
+                background: 'transparent',
+                borderBottom: `1px solid rgba(168, 143, 106, 0.2)`
+              }}
             >
               <Form layout="vertical">
-                <Form.Item label="奖品名称" style={{ marginBottom: 12 }}>
+                <Form.Item 
+                  label={<span style={{ color: textColor }}>奖品名称</span>} 
+                  style={{ marginBottom: 12 }}
+                >
                   <Input
                     value={item.name}
                     onChange={(e) => handleNameChange(e.target.value, idx)}
                     placeholder="请输入奖品名称"
+                    style={{ 
+                      background: 'rgba(53, 42, 70, 0.4)',
+                      color: textColor,
+                      borderColor: 'rgba(168, 143, 106, 0.3)'
+                    }}
                   />
                 </Form.Item>
                 
-                <Form.Item label="概率(0~1)" style={{ marginBottom: 12 }}>
+                <Form.Item 
+                  label={<span style={{ color: textColor }}>概率(0~1)</span>} 
+                  style={{ marginBottom: 12 }}
+                >
                   <InputNumber
                     min={0}
                     max={1}
                     step={0.01}
                     value={item.probability}
                     onChange={(value) => handleProbabilityChange(value, idx)}
-                    style={{ width: '100%' }}
+                    style={{ 
+                      width: '100%',
+                      background: 'rgba(53, 42, 70, 0.4)',
+                      color: textColor,
+                      borderColor: 'rgba(168, 143, 106, 0.3)'
+                    }}
                     placeholder="奖品抽中概率"
                   />
                 </Form.Item>
                 
-                <Form.Item label="图片" style={{ marginBottom: 8 }}>
+                <Form.Item 
+                  label={<span style={{ color: textColor }}>图片</span>} 
+                  style={{ marginBottom: 8 }}
+                >
                   <Space direction="vertical" style={{ width: '100%' }}>
                     <Input
                       value={item.image}
                       placeholder="粘贴图片链接"
                       onChange={(e) => handleImageUrlChange(e.target.value, idx)}
+                      style={{ 
+                        background: 'rgba(53, 42, 70, 0.4)',
+                        color: textColor,
+                        borderColor: 'rgba(168, 143, 106, 0.3)'
+                      }}
                     />
                     
                     <div style={{ 
@@ -150,7 +220,7 @@ function PrizesTable({ prizes, setPrizes }) {
                           icon={<UploadOutlined />} 
                           size="small"
                           type="primary"
-                          style={{ backgroundColor: '#ff85c0', borderColor: '#ff85c0' }}
+                          style={{ background: themeGradient, borderColor: themeColor }}
                         >
                           上传图片
                         </Button>
@@ -184,19 +254,24 @@ function PrizesTable({ prizes, setPrizes }) {
   const renderDesktopView = () => {
     const updatedColumns = [
       {
-        title: '奖品名称',
+        title: <span style={{ color: textColor }}>奖品名称</span>,
         dataIndex: 'name',
         render: (text, record, idx) => (
           <Input
             value={text}
             onChange={(e) => handleNameChange(e.target.value, idx)}
             placeholder="请输入奖品名称"
-            style={{ width: '90%' }}
+            style={{ 
+              width: '90%',
+              background: 'rgba(53, 42, 70, 0.4)',
+              color: textColor,
+              borderColor: 'rgba(168, 143, 106, 0.3)'
+            }}
           />
         ),
       },
       {
-        title: '概率(0~1)',
+        title: <span style={{ color: textColor }}>概率(0~1)</span>,
         dataIndex: 'probability',
         width: 120,
         render: (val, record, idx) => (
@@ -206,12 +281,17 @@ function PrizesTable({ prizes, setPrizes }) {
             step={0.01}
             value={val}
             onChange={(value) => handleProbabilityChange(value, idx)}
-            style={{ width: '100%' }}
+            style={{ 
+              width: '100%',
+              background: 'rgba(53, 42, 70, 0.4)',
+              color: textColor,
+              borderColor: 'rgba(168, 143, 106, 0.3)'
+            }}
           />
         ),
       },
       {
-        title: '图片',
+        title: <span style={{ color: textColor }}>图片</span>,
         dataIndex: 'image',
         responsive: ['md'],
         render: (val, record, idx) => (
@@ -224,14 +304,19 @@ function PrizesTable({ prizes, setPrizes }) {
                 icon={<UploadOutlined />} 
                 type="primary"
                 size="small"
-                style={{ backgroundColor: '#ff85c0', borderColor: '#ff85c0' }}
+                style={{ background: themeGradient, borderColor: themeColor }}
               >
                 上传
               </Button>
             </Upload>
 
             <Input
-              style={{ width: 200 }}
+              style={{ 
+                width: 200,
+                background: 'rgba(53, 42, 70, 0.4)',
+                color: textColor,
+                borderColor: 'rgba(168, 143, 106, 0.3)'
+              }}
               value={val}
               placeholder="或在此粘贴图片链接"
               onChange={(e) => handleImageUrlChange(e.target.value, idx)}
@@ -246,17 +331,17 @@ function PrizesTable({ prizes, setPrizes }) {
                   height: 48,
                   objectFit: 'cover',
                   borderRadius: '4px',
-                  border: '1px solid #eee',
+                  border: '1px solid rgba(168, 143, 106, 0.3)',
                 }}
               />
             ) : (
-              <div style={{ color: '#999' }}>暂无</div>
+              <div style={{ color: textColor }}>暂无</div>
             )}
           </Space>
         ),
       },
       {
-        title: '操作',
+        title: <span style={{ color: textColor }}>操作</span>,
         width: 80,
         render: (val, record, idx) => (
           <Space>
@@ -268,7 +353,11 @@ function PrizesTable({ prizes, setPrizes }) {
                 danger 
                 size="small"
                 icon={<DeleteOutlined />}
-                style={{ backgroundColor: '#fff0f6', borderColor: '#ffadd2', color: '#ff85c0' }}
+                style={{ 
+                  backgroundColor: 'rgba(53, 42, 70, 0.6)', 
+                  borderColor: themeColor, 
+                  color: highlightColor 
+                }}
               >
                 删除
               </Button>
@@ -287,11 +376,20 @@ function PrizesTable({ prizes, setPrizes }) {
         style={{ marginBottom: 20 }}
         bordered
         size="middle"
+        className="custom-table"
+        rowClassName={(record, index) => 
+          index % 2 === 0 ? 'table-row-light' : 'table-row-dark'
+        }
       />
     );
   };
 
-  return isMobile ? renderMobileView() : renderDesktopView();
+  return (
+    <>
+      {isMobile ? renderMobileView() : renderDesktopView()}
+      <style jsx="true">{tableStyles}</style>
+    </>
+  );
 }
 
 export default PrizesTable;

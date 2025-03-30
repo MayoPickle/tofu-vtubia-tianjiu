@@ -5,19 +5,24 @@ import { GiftOutlined } from '@ant-design/icons';
 import { useDeviceDetect } from '../../utils/deviceDetector';
 
 // 主题颜色和渐变定义
-const themeColor = '#FF85A2';
-const themeGradient = 'linear-gradient(135deg, #FFB6C1 0%, #FF69B4 100%)';
+const themeColor = '#a88f6a';
+const secondaryColor = '#352a46';  // 深紫色
+const highlightColor = '#e3bb4d';  // 亮黄色
+const themeGradient = 'linear-gradient(135deg, #a88f6a 0%, #917752 100%)';
+const secondaryGradient = 'linear-gradient(135deg, #352a46 0%, #261e36 100%)';
+const bgColor = '#1c2134';
+const textColor = '#e6d6bc';
 
-// 调色板 - 可爱的粉色系
+// 调色板 - 酒馆主题
 const palette = [
-  '#FFB6C1', // Light Pink
-  '#FFD1DC', // Pastel Pink
-  '#FFC0CB', // Pink
-  '#FF69B4', // Hot Pink
-  '#FFB7C5', // Cherry Blossom Pink
-  '#FFA5B3', // Flamingo Pink
-  '#FF85A2', // Rose Pink
-  '#FFB3BA', // Baby Pink
+  '#a88f6a', // 琥珀色
+  '#917752', // 深琥珀色
+  '#e3bb4d', // 亮黄色
+  '#352a46', // 深紫色
+  '#261e36', // 暗紫色
+  '#1c2134', // 深蓝色
+  '#e6d6bc', // 浅米色
+  '#4a3f62', // 中紫色
 ];
 
 function SpinWheel({ prizes, result, setResult }) {
@@ -109,15 +114,25 @@ function SpinWheel({ prizes, result, setResult }) {
       ctx.translate(textX, textY);
       ctx.rotate(mid + Math.PI / 2);
       
-      ctx.fillStyle = '#fff';
-      ctx.font = 'bold 16px sans-serif';
+      // 根据背景色调整文字颜色
+      const bgColor = palette[i % palette.length];
+      const isDarkBg = ['#352a46', '#261e36', '#1c2134', '#4a3f62'].includes(bgColor);
+      
+      // 文字颜色：深色背景用亮黄色，浅色背景用白色
+      ctx.fillStyle = isDarkBg ? highlightColor : '#ffffff';
+      ctx.font = 'bold 18px sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
+      
+      // 添加文字描边，增强可见度
+      ctx.strokeStyle = isDarkBg ? 'rgba(0, 0, 0, 0.7)' : 'rgba(0, 0, 0, 0.5)';
+      ctx.lineWidth = 2;
+      ctx.strokeText(seg.name, 0, 0);
       ctx.fillText(seg.name, 0, 0);
       
       // 添加文字阴影效果
-      ctx.shadowColor = 'rgba(0, 0, 0, 0.2)';
-      ctx.shadowBlur = 3;
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+      ctx.shadowBlur = 4;
       ctx.shadowOffsetX = 1;
       ctx.shadowOffsetY = 1;
       
@@ -284,32 +299,26 @@ function SpinWheel({ prizes, result, setResult }) {
       width: '100%',
       position: 'relative'
     }}>
-      <Button 
-        type="primary" 
-        onClick={handleSpin} 
-        icon={<GiftOutlined />}
-        style={{ 
-          marginBottom: isMobile ? 20 : 24,
-          width: isMobile ? '100%' : '200px',
-          height: isMobile ? '44px' : '40px',
-          fontSize: isMobile ? '16px' : '15px',
-          borderRadius: '20px',
-          background: themeGradient,
-          border: 'none',
-          boxShadow: '0 4px 15px rgba(255, 133, 192, 0.3)',
-          transition: 'all 0.3s ease',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: '8px',
-          transform: isSpinningRef.current ? 'scale(0.98)' : 'scale(1)',
-          opacity: isSpinningRef.current ? 0.8 : 1
-        }}
-        size="large"
-        disabled={isSpinningRef.current}
-      >
-        {isSpinningRef.current ? '抽奖中...' : '开始抽奖'}
-      </Button>
+      <div style={{ textAlign: 'center', marginTop: '20px' }}>
+        <Button
+          type="primary"
+          size="large"
+          onClick={handleSpin}
+          disabled={isSpinningRef.current}
+          icon={<GiftOutlined />}
+          style={{ 
+            background: themeGradient,
+            border: 'none',
+            height: '46px',
+            width: isMobile ? '80%' : '180px',
+            fontSize: '16px',
+            borderRadius: '8px',
+            boxShadow: '0 6px 16px rgba(0, 0, 0, 0.25)'
+          }}
+        >
+          {isSpinningRef.current ? '抽奖中...' : '开始抽奖'}
+        </Button>
+      </div>
       
       <div style={{
         position: 'relative',
@@ -324,7 +333,7 @@ function SpinWheel({ prizes, result, setResult }) {
             borderRadius: '50%',
             maxWidth: '100%',
             height: 'auto',
-            boxShadow: '0 8px 24px rgba(255, 133, 162, 0.2)',
+            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4)',
             transition: 'all 0.3s ease',
             transform: isSpinningRef.current ? 'scale(1.02)' : 'scale(1)',
             animation: isSpinningRef.current ? 'glow 1.5s ease-in-out infinite alternate' : 'none'
@@ -336,10 +345,10 @@ function SpinWheel({ prizes, result, setResult }) {
       <style jsx="true">{`
         @keyframes glow {
           from {
-            box-shadow: 0 8px 24px rgba(255, 133, 162, 0.2);
+            box-shadow: 0 8px 24px rgba(168, 143, 106, 0.3);
           }
           to {
-            box-shadow: 0 8px 36px rgba(255, 133, 162, 0.4);
+            box-shadow: 0 8px 36px rgba(227, 187, 77, 0.5);
           }
         }
       `}</style>

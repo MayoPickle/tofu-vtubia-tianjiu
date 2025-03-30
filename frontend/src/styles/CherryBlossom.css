@@ -5,93 +5,105 @@
   width: 100%;
   height: 100%;
   pointer-events: none;
-  z-index: 9999;
+  z-index: 1;
   overflow: hidden;
 }
 
-.petal {
+/* 星星样式 */
+.star {
   position: absolute;
-  top: -10%;
-  border-radius: 150% 0 150% 0;
-  animation: fall linear, sway ease-in-out infinite alternate;
-  opacity: 0.5;
-  box-shadow: 0 1px 2px rgba(255, 166, 201, 0.05);
-  filter: drop-shadow(0 1px 2px rgba(255, 166, 201, 0.1));
-}
-
-.petal-type-1 {
-  background: linear-gradient(to bottom right, #ffd6ee, #ffb6d9);
-  width: 10px;
-  height: 10px;
-}
-
-.petal-type-2 {
-  background: linear-gradient(to bottom right, #ffd9f0, #ffbfe2);
-  width: 8px;
-  height: 8px;
-  border-radius: 120% 20% 120% 20%;
-  transform-origin: center bottom;
-}
-
-.petal-type-3 {
-  background: linear-gradient(to bottom right, #ffe9f7, #ffcde5);
-  width: 6px;
-  height: 6px;
-  border-radius: 180% 0% 180% 0%;
-  transform-origin: center center;
-}
-
-/* 微光效果 */
-.petal::after {
-  content: '';
-  position: absolute;
-  top: 35%;
-  left: 35%;
-  width: 30%;
-  height: 30%;
-  background: rgba(255, 255, 255, 0.3);
   border-radius: 50%;
-  filter: blur(1px);
+  animation: twinkle ease-in-out infinite alternate;
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
 }
 
-@keyframes fall {
-  0% {
-    top: -10%;
-    opacity: 0.6;
-    transform: translateX(0) rotate(0deg);
-  }
-  10% {
-    opacity: 0.8;
-  }
-  75% {
-    opacity: 0.6;
-  }
-  100% {
-    top: 100%;
-    opacity: 0.2;
-    transform: translateX(calc(15px * var(--wind-direction, 1))) rotate(360deg);
-  }
+.star-type-1 {
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 6px rgba(230, 214, 188, 0.8);
 }
 
-@keyframes sway {
+.star-type-2 {
+  background: rgba(227, 187, 77, 0.9);  /* 亮黄色星星 */
+  box-shadow: 0 0 7px rgba(227, 187, 77, 0.7);
+}
+
+.star-type-3 {
+  background: rgba(168, 143, 106, 0.9);
+  box-shadow: 0 0 5px rgba(168, 143, 106, 0.8);
+}
+
+/* 紫色星星 */
+.star:nth-child(5n+4) {
+  background: rgba(83, 66, 110, 0.9);
+  box-shadow: 0 0 6px rgba(83, 66, 110, 0.8);
+}
+
+/* 光斑样式 */
+.light-spot {
+  position: absolute;
+  background: radial-gradient(
+    circle at center,
+    rgba(168, 143, 106, 0.15) 0%,
+    rgba(168, 143, 106, 0.05) 40%,
+    rgba(168, 143, 106, 0) 70%
+  );
+  border-radius: 50%;
+  animation: drift ease-in-out infinite alternate;
+  filter: blur(15px);
+}
+
+/* 紫色光斑 - 每隔几个出现一个紫色光斑 */
+.light-spot:nth-child(3n+2) {
+  background: radial-gradient(
+    circle at center,
+    rgba(83, 66, 110, 0.15) 0%,
+    rgba(83, 66, 110, 0.05) 40%,
+    rgba(83, 66, 110, 0) 70%
+  );
+}
+
+/* 黄色光斑 - 偶尔出现一个黄色光斑 */
+.light-spot:nth-child(5n+3) {
+  background: radial-gradient(
+    circle at center,
+    rgba(227, 187, 77, 0.12) 0%,
+    rgba(227, 187, 77, 0.04) 40%,
+    rgba(227, 187, 77, 0) 70%
+  );
+}
+
+/* 星星闪烁动画 */
+@keyframes twinkle {
   0% {
-    margin-left: 0;
-    transform: rotate(0deg) scale(1);
-  }
-  25% {
-    margin-left: 6px;
-    transform: rotate(40deg) scale(0.95);
+    opacity: 0.1;
+    transform: scale(0.8);
   }
   50% {
-    margin-left: 0;
-    transform: rotate(80deg) scale(1);
-  }
-  75% {
-    margin-left: -6px;
-    transform: rotate(-40deg) scale(1.05);
+    opacity: 0.8;
+    transform: scale(1.1);
   }
   100% {
-    margin-left: 0;
-    transform: rotate(0deg) scale(1);
+    opacity: 0.4;
+    transform: scale(1);
+  }
+}
+
+/* 光斑漂移动画 */
+@keyframes drift {
+  0% {
+    transform: translate(0, 0) scale(0.9);
+    opacity: 0.08;
+  }
+  33% {
+    transform: translate(30px, -15px) scale(1);
+    opacity: 0.12;
+  }
+  66% {
+    transform: translate(-20px, 10px) scale(1.1);
+    opacity: 0.1;
+  }
+  100% {
+    transform: translate(10px, -10px) scale(0.95);
+    opacity: 0.08;
   }
 } 

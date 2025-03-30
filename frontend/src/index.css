@@ -1,6 +1,9 @@
 /* 导入可爱字体 */
 @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&display=swap');
+/* 导入深夜小酒馆风格字体 */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&display=swap');
 
 /* 防止水平滚动 */
 html, body {
@@ -11,12 +14,13 @@ html, body {
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  font-family: 'Playfair Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #fff6f9;
+  background-color: #121622;
+  color: #e6d6bc;
 }
 
 /* 确保所有内容都在视口内 */
@@ -80,14 +84,19 @@ code {
     monospace;
 }
 
-/* 可爱风格主题定义 */
+/* 深夜小酒馆风格主题定义 */
 :root {
-  --primary-color: #ff85a2;
-  --secondary-color: #ffc2d1;
-  --accent-color: #ff5c8d;
-  --light-color: #ffeef2;
-  --border-radius: 12px;
-  --box-shadow: 0 4px 10px rgba(255, 133, 162, 0.2);
+  --primary-color: #2e3548;
+  --secondary-color: #352a46;  /* 深紫色作为副主题色 */
+  --accent-color: #a88f6a;
+  --highlight-color: #e3bb4d;  /* 亮黄色作为装点色 */
+  --light-color: #e6d6bc;
+  --text-color: #e6d6bc;
+  --bg-color: #121622;
+  --card-bg-color: #1c2134;
+  --card-bg-secondary: #261e36;  /* 深紫色卡片背景 */
+  --border-radius: 8px;
+  --box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
 }
 
 /* 链接样式 */
@@ -97,7 +106,7 @@ a {
 }
 
 a:hover {
-  color: var(--primary-color);
+  color: #c4aa86;
   text-decoration: none;
 }
 
@@ -113,7 +122,7 @@ a:hover {
 .ant-menu a:hover,
 .ant-dropdown a:hover,
 .ant-btn-link:hover {
-  color: var(--primary-color);
+  color: #c4aa86;
 }
 
 /* 保持导航菜单中的链接为白色 */
@@ -141,19 +150,19 @@ a:hover {
 /* 全局样式覆盖 */
 /* 主要按钮 */
 .ant-btn-primary {
-  background-color: var(--primary-color);
-  border-color: var(--primary-color);
-  color: white !important;
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
+  color: #121622 !important;
 }
 
 .ant-btn-primary:hover,
 .ant-btn-primary:focus,
 .ant-btn-primary:active,
 .ant-btn-primary.active {
-  background-color: var(--accent-color) !important;
-  border-color: var(--accent-color) !important;
-  box-shadow: 0 0 0 2px rgba(255, 92, 141, 0.2) !important;
-  color: white !important;
+  background-color: #c4aa86 !important;
+  border-color: #c4aa86 !important;
+  box-shadow: 0 0 0 2px rgba(168, 143, 106, 0.3) !important;
+  color: #121622 !important;
 }
 
 /* 按钮图标样式，确保图标颜色与文字颜色匹配 */
@@ -409,14 +418,20 @@ a:hover {
 /* 适配暗黑模式 */
 @media (prefers-color-scheme: dark) {
   body {
-    background-color: #382030;
+    background-color: var(--bg-color);
+    color: var(--text-color);
   }
   
   :root {
-    --primary-color: #ff5c8d;
-    --secondary-color: #ff3372;
-    --accent-color: #ff85a2;
-    --light-color: #412a36;
+    --primary-color: #2e3548;
+    --secondary-color: #352a46;  /* 深紫色作为副主题色 */
+    --accent-color: #a88f6a;
+    --highlight-color: #e3bb4d;  /* 亮黄色作为装点色 */
+    --light-color: #e6d6bc;
+    --text-color: #e6d6bc;
+    --bg-color: #121622;
+    --card-bg-color: #1c2134;
+    --card-bg-secondary: #261e36;  /* 深紫色卡片背景 */
   }
 }
 

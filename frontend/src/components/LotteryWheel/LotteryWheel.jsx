@@ -1,7 +1,7 @@
 // LotteryWheel.jsx
 import React, { useState, useEffect } from 'react';
 import { Button, Space, message, Typography, Divider } from 'antd';
-import { GiftOutlined, SaveOutlined, PlusOutlined, HeartOutlined, StarOutlined } from '@ant-design/icons';
+import { GiftOutlined, SaveOutlined, PlusOutlined, HeartOutlined, StarOutlined, CoffeeOutlined } from '@ant-design/icons';
 import { defaultPrizes } from './constants';
 import PrizesTable from './PrizesTable';
 import SpinWheel from './SpinWheel';
@@ -11,9 +11,13 @@ import { useDeviceDetect } from '../../utils/deviceDetector';
 const { Title } = Typography;
 
 // 主题颜色和渐变定义
-const themeColor = '#FF85A2';
-const themeGradient = 'linear-gradient(135deg, #FFB6C1 0%, #FF69B4 100%)';
-const secondaryColor = '#FF69B4';
+const themeColor = '#a88f6a';
+const secondaryColor = '#352a46';  // 深紫色
+const highlightColor = '#e3bb4d';  // 亮黄色
+const themeGradient = 'linear-gradient(135deg, #a88f6a 0%, #917752 100%)';
+const secondaryGradient = 'linear-gradient(135deg, #352a46 0%, #261e36 100%)';
+const bgColor = '#1c2134';
+const textColor = '#e6d6bc';
 
 function LotteryWheel({ isLoggedIn }) {
   const { isMobile } = useDeviceDetect();
@@ -100,9 +104,9 @@ function LotteryWheel({ isLoggedIn }) {
       maxWidth: '1200px',
       margin: '0 auto',
       position: 'relative',
-      background: 'linear-gradient(135deg, rgba(255, 182, 193, 0.1) 0%, rgba(255, 105, 180, 0.1) 100%)',
-      borderRadius: '20px',
-      boxShadow: '0 10px 25px rgba(255, 133, 162, 0.2)',
+      background: 'linear-gradient(135deg, rgba(28, 33, 52, 0.8) 0%, rgba(53, 42, 70, 0.8) 100%)',
+      borderRadius: '8px',
+      boxShadow: '0 10px 25px rgba(0, 0, 0, 0.4)',
       overflow: 'hidden'
     }}>
       {/* 装饰性背景元素 */}
@@ -111,7 +115,7 @@ function LotteryWheel({ isLoggedIn }) {
         width: '200px',
         height: '200px',
         borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(255,192,203,0.1) 0%, rgba(255,192,203,0) 70%)',
+        background: 'radial-gradient(circle, rgba(168, 143, 106, 0.15) 0%, rgba(168, 143, 106, 0) 70%)',
         top: '10%',
         right: '-50px',
         zIndex: 0,
@@ -122,7 +126,7 @@ function LotteryWheel({ isLoggedIn }) {
         width: '150px',
         height: '150px',
         borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(255,105,180,0.1) 0%, rgba(255,105,180,0) 70%)',
+        background: 'radial-gradient(circle, rgba(227, 187, 77, 0.1) 0%, rgba(227, 187, 77, 0) 70%)',
         bottom: '10%',
         left: '-30px',
         zIndex: 0,
@@ -141,9 +145,9 @@ function LotteryWheel({ isLoggedIn }) {
         position: 'relative',
         zIndex: 1
       }}>
-        <StarOutlined />
+        <CoffeeOutlined />
         幸运抽奖转盘
-        <StarOutlined />
+        <CoffeeOutlined />
       </Title>
 
       {/* 桌面端布局 */}
@@ -157,11 +161,11 @@ function LotteryWheel({ isLoggedIn }) {
         }}>
           {/* 上部分：奖品编辑区域 */}
           <div style={{ 
-            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+            backgroundColor: bgColor,
             padding: '24px',
-            borderRadius: '16px',
-            boxShadow: '0 8px 24px rgba(255, 133, 162, 0.15)',
-            border: '1px solid rgba(255, 192, 203, 0.3)',
+            borderRadius: '8px',
+            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3)',
+            border: '1px solid rgba(168, 143, 106, 0.3)',
             backdropFilter: 'blur(10px)'
           }}>
             <div style={{ 
@@ -176,9 +180,9 @@ function LotteryWheel({ isLoggedIn }) {
                 style={{ 
                   background: themeGradient,
                   border: 'none',
-                  borderRadius: '12px',
+                  borderRadius: '8px',
                   height: '40px',
-                  boxShadow: '0 4px 12px rgba(255, 133, 162, 0.2)',
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '6px'
@@ -193,7 +197,7 @@ function LotteryWheel({ isLoggedIn }) {
                   style={{ 
                     borderColor: themeColor,
                     color: themeColor,
-                    borderRadius: '12px',
+                    borderRadius: '8px',
                     height: '40px',
                     display: 'flex',
                     alignItems: 'center',
@@ -215,11 +219,11 @@ function LotteryWheel({ isLoggedIn }) {
             {/* 左边：转盘 */}
             <div style={{ 
               width: '60%',
-              backgroundColor: 'rgba(255, 255, 255, 0.95)',
+              backgroundColor: bgColor,
               padding: '24px',
-              borderRadius: '16px',
-              boxShadow: '0 8px 24px rgba(255, 133, 162, 0.15)',
-              border: '1px solid rgba(255, 192, 203, 0.3)',
+              borderRadius: '8px',
+              boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3)',
+              border: '1px solid rgba(168, 143, 106, 0.3)',
               backdropFilter: 'blur(10px)',
               transition: 'transform 0.3s ease',
               '&:hover': {
@@ -232,11 +236,11 @@ function LotteryWheel({ isLoggedIn }) {
             {/* 右边：结果展示 */}
             <div style={{ 
               width: '40%',
-              backgroundColor: 'rgba(255, 255, 255, 0.95)',
+              backgroundColor: bgColor,
               padding: '24px',
-              borderRadius: '16px',
-              boxShadow: '0 8px 24px rgba(255, 133, 162, 0.15)',
-              border: '1px solid rgba(255, 192, 203, 0.3)',
+              borderRadius: '8px',
+              boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3)',
+              border: '1px solid rgba(168, 143, 106, 0.3)',
               backdropFilter: 'blur(10px)',
               display: 'flex',
               alignItems: 'center',
@@ -251,45 +255,69 @@ function LotteryWheel({ isLoggedIn }) {
         </div>
       )}
 
-      {/* 移动端布局：垂直排列所有元素 */}
+      {/* 移动端布局 */}
       {isMobile && (
         <div style={{ 
           display: 'flex', 
-          flexDirection: 'column',
-          gap: '20px',
+          flexDirection: 'column', 
+          gap: '16px',
           position: 'relative',
           zIndex: 1
         }}>
-          {/* 奖品编辑区域 */}
+          {/* 转盘 */}
           <div style={{ 
-            backgroundColor: 'rgba(255, 255, 255, 0.95)',
-            padding: '20px',
-            borderRadius: '16px',
-            boxShadow: '0 8px 24px rgba(255, 133, 162, 0.15)',
-            border: '1px solid rgba(255, 192, 203, 0.3)',
+            backgroundColor: bgColor,
+            padding: '16px',
+            borderRadius: '8px',
+            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3)',
+            border: '1px solid rgba(168, 143, 106, 0.3)',
             backdropFilter: 'blur(10px)'
           }}>
-            <Space style={{ 
-              marginBottom: '16px',
-              display: 'flex',
-              width: '100%',
-              gap: '12px'
+            <SpinWheel prizes={prizes} result={result} setResult={setResult} />
+          </div>
+
+          {/* 结果展示 */}
+          <div style={{ 
+            backgroundColor: bgColor,
+            padding: '16px',
+            borderRadius: '8px',
+            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3)',
+            border: '1px solid rgba(168, 143, 106, 0.3)',
+            backdropFilter: 'blur(10px)',
+            minHeight: '150px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            <LotteryResult result={result} prizes={prizes} />
+          </div>
+
+          {/* 奖品编辑区域 */}
+          <div style={{ 
+            backgroundColor: bgColor,
+            padding: '16px',
+            borderRadius: '8px',
+            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3)',
+            border: '1px solid rgba(168, 143, 106, 0.3)',
+            backdropFilter: 'blur(10px)'
+          }}>
+            <div style={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              marginBottom: '16px', 
+              gap: '10px'
             }}>
               <Button 
                 type="primary" 
                 onClick={handleAddPrize}
                 icon={<PlusOutlined />}
                 style={{ 
-                  flex: 1,
                   background: themeGradient,
                   border: 'none',
-                  borderRadius: '12px',
+                  borderRadius: '8px',
+                  flex: 1,
                   height: '40px',
-                  boxShadow: '0 4px 12px rgba(255, 133, 162, 0.2)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '6px'
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)'
                 }}
               >
                 添加奖品
@@ -299,46 +327,18 @@ function LotteryWheel({ isLoggedIn }) {
                   onClick={handleSavePrizes}
                   icon={<SaveOutlined />}
                   style={{ 
-                    flex: 1,
                     borderColor: themeColor,
                     color: themeColor,
-                    borderRadius: '12px',
-                    height: '40px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '6px'
+                    borderRadius: '8px',
+                    flex: 1,
+                    height: '40px'
                   }}
                 >
                   保存奖品
                 </Button>
               )}
-            </Space>
+            </div>
             <PrizesTable prizes={prizes} setPrizes={setPrizes} />
-          </div>
-          
-          {/* 转盘 */}
-          <div style={{ 
-            backgroundColor: 'rgba(255, 255, 255, 0.95)',
-            padding: '20px',
-            borderRadius: '16px',
-            boxShadow: '0 8px 24px rgba(255, 133, 162, 0.15)',
-            border: '1px solid rgba(255, 192, 203, 0.3)',
-            backdropFilter: 'blur(10px)'
-          }}>
-            <SpinWheel prizes={prizes} result={result} setResult={setResult} />
-          </div>
-          
-          {/* 结果展示 */}
-          <div style={{ 
-            backgroundColor: 'rgba(255, 255, 255, 0.95)',
-            padding: '20px',
-            borderRadius: '16px',
-            boxShadow: '0 8px 24px rgba(255, 133, 162, 0.15)',
-            border: '1px solid rgba(255, 192, 203, 0.3)',
-            backdropFilter: 'blur(10px)'
-          }}>
-            <LotteryResult result={result} prizes={prizes} />
           </div>
         </div>
       )}

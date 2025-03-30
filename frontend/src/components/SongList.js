@@ -2,16 +2,33 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Table, Input, Button, Modal, Form, message, Space, Card, List, Typography, Tag, Select } from 'antd';
-import { SearchOutlined, PlusOutlined, EditOutlined, DeleteOutlined, HeartOutlined, CustomerServiceOutlined, StarOutlined } from '@ant-design/icons';
+import { 
+  SearchOutlined, 
+  PlusOutlined, 
+  EditOutlined, 
+  DeleteOutlined, 
+  HeartOutlined, 
+  CustomerServiceOutlined, 
+  StarOutlined,
+  BulbOutlined, 
+  FireOutlined, 
+  ShopOutlined, 
+  CoffeeOutlined,
+  HistoryOutlined
+} from '@ant-design/icons';
 import { useDeviceDetect } from '../utils/deviceDetector';
 
 const { Text, Title } = Typography;
 const { Option } = Select;
 
-// 主题颜色和渐变定义
-const themeColor = '#FF85A2';
-const themeGradient = 'linear-gradient(135deg, #FFB6C1 0%, #FF69B4 100%)';
-const secondaryColor = '#FF69B4';
+// 深夜小酒馆主题颜色和渐变定义
+const themeColor = '#a88f6a';
+const secondaryColor = '#352a46';  // 深紫色
+const highlightColor = '#e3bb4d';  // 亮黄色
+const themeGradient = 'linear-gradient(135deg, #a88f6a 0%, #917752 100%)';
+const secondaryGradient = 'linear-gradient(135deg, #352a46 0%, #261e36 100%)';
+const bgColor = '#1c2134';
+const textColor = '#e6d6bc';
 
 function SongList() {
   const [songs, setSongs] = useState([]);
@@ -208,15 +225,21 @@ function SongList() {
   // ========================== 表格配置 ==========================
   const columns = [
     {
-      title: '歌曲名',
+      title: '歌曲名称',
       dataIndex: 'title',
       key: 'title',
-      render: (text, record) => <a href={record.link} target="_blank" rel="noopener noreferrer">{text}</a>
+      render: (text, record) => (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <CoffeeOutlined style={{ color: themeColor, fontSize: '18px' }} />
+          <span style={{ color: textColor }}>{text}</span>
+        </div>
+      ),
     },
     {
-      title: '艺术家',
+      title: '歌手',
       dataIndex: 'artist',
-      key: 'artist'
+      key: 'artist',
+      render: (text) => <span style={{ color: 'rgba(230, 214, 188, 0.8)' }}>{text}</span>,
     },
     {
       title: '专辑',
@@ -280,80 +303,77 @@ function SongList() {
   // ======== 渲染单个歌曲的标签 ========
   const renderSongTags = (tags) => {
     if (!tags) return null;
-    const tagArray = tags.split(',').map(tag => tag.trim());
+    
     return (
-      <Space size={[0, 4]} wrap>
-        {tagArray.map(tag => (
+      <div style={{ marginTop: '8px' }}>
+        {tags.split(',').map((tag, index) => (
           <Tag 
             key={tag} 
             style={{ 
-              background: 'rgba(255, 182, 193, 0.15)',
-              border: '1px solid rgba(255, 105, 180, 0.3)',
-              color: secondaryColor,
-              borderRadius: '12px',
-              padding: '4px 12px',
-              margin: '2px',
-              fontSize: '12px',
-              transition: 'all 0.3s ease'
+              marginBottom: '6px',
+              background: index % 3 === 0 ? 'rgba(168, 143, 106, 0.15)' : 
+                          index % 3 === 1 ? 'rgba(53, 42, 70, 0.2)' : 
+                          'rgba(227, 187, 77, 0.15)',
+              borderColor: index % 3 === 0 ? 'rgba(168, 143, 106, 0.5)' : 
+                           index % 3 === 1 ? 'rgba(53, 42, 70, 0.5)' : 
+                           'rgba(227, 187, 77, 0.4)',
+              color: index % 3 === 2 ? '#261e36' : '#e6d6bc'
+            }}
+            onClick={() => {
+              if (!selectedTags.includes(tag.trim())) {
+                setSelectedTags([...selectedTags, tag.trim()]);
+              }
             }}
           >
-            {tag}
+            {tag.trim()}
           </Tag>
         ))}
-      </Space>
+      </div>
     );
   };
 
   // ======== 渲染表单组件 ========
   const renderSongForm = (form, onFinish, modalVisible, setModalVisible, title) => (
     <Modal
-      title={
-        <div style={{ 
-          display: 'flex', 
-          alignItems: 'center',
-          color: secondaryColor,
-          fontSize: '18px',
-          fontWeight: 'bold'
-        }}>
-          <CustomerServiceOutlined style={{ marginRight: '8px' }} />
-          {title}
-        </div>
-      }
+      title={title}
       open={modalVisible}
-      onOk={onFinish}
       onCancel={() => setModalVisible(false)}
-      width={600}
-      style={{ top: 20 }}
-      bodyStyle={{ 
-        background: 'rgba(255, 255, 255, 0.95)',
-        borderRadius: '12px',
-        padding: '24px'
-      }}
-      okButtonProps={{
-        style: {
-          background: themeGradient,
-          border: 'none',
-          boxShadow: '0 4px 12px rgba(255, 133, 162, 0.3)'
-        }
+      onOk={onFinish}
+      styles={{
+        header: {
+          background: bgColor,
+          borderBottom: '1px solid rgba(168, 143, 106, 0.3)',
+        },
+        body: {
+          background: bgColor,
+          padding: '20px',
+        },
+        footer: {
+          background: bgColor,
+          borderTop: '1px solid rgba(168, 143, 106, 0.3)',
+        },
+        mask: {
+          backdropFilter: 'blur(5px)',
+        },
       }}
     >
       <Form form={form} layout="vertical">
         <Form.Item
           name="title"
-          label="歌曲名"
-          rules={[{ required: true, message: '请输入歌曲名' }]}
+          label="歌曲名称"
+          rules={[{ required: true, message: '请输入歌曲名称' }]}
         >
-          <Input placeholder="请输入歌曲名" />
+          <Input placeholder="请输入歌曲名称" />
         </Form.Item>
-
+        
         <Form.Item
           name="artist"
-          label="艺术家"
-          rules={[{ required: true, message: '请输入艺术家' }]}
+          label="歌手"
+          rules={[{ required: true, message: '请输入歌手名' }]}
         >
-          <Input placeholder="请输入艺术家" />
+          <Input placeholder="请输入歌手名" />
         </Form.Item>
-
+        
         <Form.Item name="album" label="专辑">
           <Input placeholder="请输入专辑名" />
         </Form.Item>
@@ -382,138 +402,160 @@ function SongList() {
     const filteredSongs = getFilteredSongs();
 
     return (
-      <div style={{ 
-        width: '100%', 
-        maxWidth: '100%', 
-        overflowX: 'hidden',
-        boxSizing: 'border-box'
-      }}>
+      <div style={{ padding: '16px', paddingTop: '0' }}>
         <div style={{ 
-          padding: '16px',
-          background: 'rgba(255, 255, 255, 0.95)',
-          borderRadius: '20px',
-          boxShadow: '0 8px 24px rgba(255, 133, 162, 0.15)',
-          marginBottom: '16px',
-          width: '100%',
-          boxSizing: 'border-box'
+          marginBottom: '20px', 
+          display: 'flex', 
+          flexDirection: 'column', 
+          gap: '12px'
         }}>
-          {/* 搜索栏和标签栏 */}
-          <div style={{ 
-            display: 'flex', 
-            flexDirection: 'column',
-            gap: '12px',
-            marginBottom: '16px'
-          }}>
+          <div style={{ display: 'flex', gap: '8px' }}>
             <Input
-              placeholder="搜索歌曲..."
-              prefix={<SearchOutlined style={{ color: themeColor }} />}
+              placeholder="搜索歌曲名或歌手"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               onPressEnter={() => onSearch(searchTerm)}
-              style={{ 
-                borderRadius: '12px',
-                border: '1px solid rgba(255, 105, 180, 0.3)',
-                padding: '8px 12px'
-              }}
-            />
-            
-            <Select
-              mode="multiple"
+              style={{ flex: 1 }}
+              prefix={<SearchOutlined style={{ color: themeColor }} />}
               allowClear
-              style={{ width: '100%' }}
-              placeholder="标签筛选"
-              value={selectedTags}
-              onChange={handleTagSelect}
-              options={allTags.map(tag => ({ label: tag, value: tag }))}
-              showSearch
-              optionFilterProp="label"
-              filterOption={(input, option) =>
-                (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
-              }
-              maxTagCount={2}
-              maxTagPlaceholder={(omittedValues) => `+${omittedValues.length}...`}
             />
+            <Button 
+              type="primary" 
+              onClick={() => onSearch(searchTerm)}
+              icon={<SearchOutlined />}
+            >
+              搜索
+            </Button>
           </div>
           
-          {/* 添加按钮 */}
-          {isAdmin && (
-            <Button
-              type="primary"
-              icon={<PlusOutlined />}
-              onClick={handleOpenAddModal}
-              style={{
-                width: '100%',
-                background: themeGradient,
-                border: 'none',
-                borderRadius: '12px',
-                height: '40px',
-                boxShadow: '0 4px 12px rgba(255, 133, 162, 0.2)',
-                marginBottom: '16px'
-              }}
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+            <Select
+              mode="multiple"
+              style={{ flex: 1 }}
+              placeholder="按标签筛选"
+              value={selectedTags}
+              onChange={handleTagSelect}
+              maxTagCount="responsive"
             >
-              添加歌曲
-            </Button>
-          )}
+              {allTags.map(tag => (
+                <Option key={tag} value={tag}>{tag}</Option>
+              ))}
+            </Select>
+            
+            {isAdmin && (
+              <Button 
+                type="primary" 
+                onClick={handleOpenAddModal}
+                icon={<PlusOutlined />}
+              >
+                添加
+              </Button>
+            )}
+          </div>
         </div>
-
+        
         <List
-          loading={loading}
+          itemLayout="vertical"
           dataSource={filteredSongs}
-          renderItem={item => (
-            <Card
-              key={item.id}
-              size="small"
+          loading={loading}
+          renderItem={(item, index) => (
+            <Card 
               style={{ 
-                margin: '8px 0',
-                borderRadius: '16px',
-                border: '1px solid rgba(255, 192, 203, 0.3)',
-                background: 'rgba(255, 255, 255, 0.9)',
-                boxShadow: '0 4px 12px rgba(255, 133, 162, 0.1)',
-                transition: 'all 0.3s ease',
-                width: '100%',
-                boxSizing: 'border-box'
+                marginBottom: '16px',
+                background: index % 2 === 0 ? bgColor : secondaryColor,
+                borderColor: index % 2 === 0 ? 'rgba(168, 143, 106, 0.3)' : 'rgba(227, 187, 77, 0.2)',
               }}
-              hoverable
-              title={
-                <div style={{ 
-                  display: 'flex', 
-                  alignItems: 'center',
-                  gap: '8px'
-                }}>
-                  <CustomerServiceOutlined style={{ color: themeColor }} />
-                  <Text strong style={{ flex: 1 }}>{item.title}</Text>
-                  <Text type="secondary" style={{ fontSize: '13px' }}>{item.artist}</Text>
-                </div>
-              }
-              actions={isAdmin ? [
-                <EditOutlined key="edit" onClick={() => handleOpenEditModal(item)} style={{ color: themeColor }} />,
-                <DeleteOutlined key="delete" onClick={() => handleDeleteSong(item.id)} style={{ color: secondaryColor }} />
-              ] : []}
+              bodyStyle={{ padding: '16px' }}
             >
-              <div style={{ marginBottom: 8 }}>
-                {item.album && (
-                  <Text style={{ 
-                    marginRight: 12,
-                    fontSize: '13px',
-                    color: '#666'
-                  }}>
-                    💿 {item.album}
-                  </Text>
+              <List.Item
+                key={item.id}
+                actions={isAdmin ? [
+                  <Button 
+                    type="text" 
+                    icon={<EditOutlined style={{ color: highlightColor }} />} 
+                    onClick={() => handleOpenEditModal(item)}
+                  >
+                    编辑
+                  </Button>,
+                  <Button 
+                    type="text" 
+                    danger
+                    icon={<DeleteOutlined />} 
+                    onClick={() => handleDeleteSong(item.id)}
+                  >
+                    删除
+                  </Button>
+                ] : []}
+              >
+                <List.Item.Meta
+                  title={
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <CoffeeOutlined style={{ color: highlightColor, fontSize: '18px' }} />
+                      <Text 
+                        style={{ 
+                          color: textColor, 
+                          fontSize: '18px',
+                          fontFamily: 'Playfair Display'
+                        }}
+                        strong
+                      >
+                        {item.title}
+                      </Text>
+                    </div>
+                  }
+                  description={
+                    <div>
+                      <Text style={{ color: 'rgba(230, 214, 188, 0.8)' }}>
+                        <CustomerServiceOutlined style={{ marginRight: '5px', color: themeColor }} />
+                        {item.artist}
+                      </Text>
+                      <br />
+                      {item.album && (
+                        <Text style={{ color: 'rgba(230, 214, 188, 0.7)' }}>
+                          <FireOutlined style={{ marginRight: '5px', color: secondaryColor === bgColor ? highlightColor : themeColor }} />
+                          专辑: {item.album}
+                        </Text>
+                      )}
+                      {item.year && (
+                        <Text style={{ marginLeft: '10px', color: 'rgba(230, 214, 188, 0.7)' }}>
+                          • {item.year}
+                        </Text>
+                      )}
+                    </div>
+                  }
+                />
+
+                {item.link && (
+                  <div style={{ margin: '10px 0' }}>
+                    <a 
+                      href={item.link} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      style={{
+                        display: 'inline-block',
+                        padding: '6px 12px',
+                        color: highlightColor,
+                        border: `1px solid ${highlightColor}`,
+                        borderRadius: '4px',
+                        transition: 'all 0.3s',
+                        textDecoration: 'none',
+                        marginTop: '8px'
+                      }}
+                    >
+                      <CustomerServiceOutlined style={{ marginRight: '5px' }} />
+                      播放歌曲
+                    </a>
+                  </div>
                 )}
-                {item.year && (
-                  <Text style={{ 
-                    fontSize: '13px',
-                    color: '#666'
-                  }}>
-                    📅 {item.year}
-                  </Text>
+
+                {item.description && (
+                  <div style={{ margin: '10px 0', color: 'rgba(230, 214, 188, 0.7)' }}>
+                    {item.description}
+                  </div>
                 )}
-              </div>
-              {item.tags && (
-                <div style={{ marginTop: 8 }}>
-                  {renderSongTags(item.tags)}
-                </div>
-              )}
+
+                {renderSongTags(item.tags)}
+              </List.Item>
             </Card>
           )}
         />
@@ -530,10 +572,10 @@ function SongList() {
         <Card
           style={{ 
             marginBottom: '24px',
-            borderRadius: '20px',
-            boxShadow: '0 8px 24px rgba(255, 133, 162, 0.15)',
-            border: '1px solid rgba(255, 192, 203, 0.3)',
-            background: 'rgba(255, 255, 255, 0.95)',
+            borderRadius: '8px',
+            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3)',
+            border: '1px solid rgba(168, 143, 106, 0.2)',
+            background: bgColor,
           }}
         >
           <div style={{ 
@@ -544,14 +586,14 @@ function SongList() {
           }}>
             <Input
               placeholder="搜索歌曲..."
-              prefix={<SearchOutlined style={{ color: themeColor }} />}
+              prefix={<SearchOutlined style={{ color: highlightColor }} />}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               onPressEnter={() => onSearch(searchTerm)}
               style={{ 
                 width: '320px',
-                borderRadius: '12px',
-                border: '1px solid rgba(255, 105, 180, 0.3)'
+                borderRadius: '8px',
+                border: '1px solid rgba(168, 143, 106, 0.3)'
               }}
             />
             
@@ -560,7 +602,7 @@ function SongList() {
               allowClear
               style={{ 
                 width: '200px',
-                borderRadius: '12px'
+                borderRadius: '8px'
               }}
               placeholder="标签筛选"
               value={selectedTags}
@@ -574,7 +616,7 @@ function SongList() {
               <Button 
                 type="link"
                 onClick={() => setSelectedTags([])}
-                style={{ color: themeColor }}
+                style={{ color: highlightColor }}
               >
                 清除筛选
               </Button>
@@ -588,11 +630,11 @@ function SongList() {
                 icon={<PlusOutlined />}
                 onClick={handleOpenAddModal}
                 style={{
-                  background: themeGradient,
-                  border: 'none',
-                  borderRadius: '12px',
+                  background: secondaryGradient,
+                  border: `1px solid ${highlightColor}`,
+                  borderRadius: '8px',
                   height: '40px',
-                  boxShadow: '0 4px 12px rgba(255, 133, 162, 0.2)'
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)'
                 }}
               >
                 添加歌曲
@@ -607,10 +649,11 @@ function SongList() {
           rowKey="id"
           loading={loading}
           style={{
-            background: 'white',
-            borderRadius: '20px',
+            background: bgColor,
+            borderRadius: '8px',
             overflow: 'hidden',
-            boxShadow: '0 8px 24px rgba(255, 133, 162, 0.15)'
+            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3)',
+            border: '1px solid rgba(168, 143, 106, 0.2)',
           }}
           pagination={{
             pageSize: 10,
@@ -618,7 +661,8 @@ function SongList() {
             showTotal: (total) => `共 ${total} 首歌曲`,
             style: {
               marginTop: '16px',
-              textAlign: 'center'
+              textAlign: 'center',
+              color: textColor
             }
           }}
         />
@@ -631,7 +675,7 @@ function SongList() {
       padding: isMobile ? '16px 8px' : '24px',
       position: 'relative',
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, rgba(255, 182, 193, 0.1) 0%, rgba(255, 105, 180, 0.1) 100%)'
+      background: 'linear-gradient(135deg, rgba(28, 33, 52, 0.8) 0%, rgba(53, 42, 70, 0.8) 100%)'
     }}>
       {/* 装饰性背景元素 */}
       <div style={{
@@ -639,7 +683,7 @@ function SongList() {
         width: '200px',
         height: '200px',
         borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(255,192,203,0.1) 0%, rgba(255,192,203,0) 70%)',
+        background: 'radial-gradient(circle, rgba(168, 143, 106, 0.1) 0%, rgba(168, 143, 106, 0) 70%)',
         top: '10%',
         right: '-50px',
         zIndex: 0,
@@ -650,7 +694,7 @@ function SongList() {
         width: '150px',
         height: '150px',
         borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(255,105,180,0.1) 0%, rgba(255,105,180,0) 70%)',
+        background: 'radial-gradient(circle, rgba(227, 187, 77, 0.1) 0%, rgba(227, 187, 77, 0) 70%)',
         bottom: '10%',
         left: '-30px',
         zIndex: 0,
@@ -661,18 +705,17 @@ function SongList() {
         style={{ 
           margin: '16px 0 24px',
           textAlign: 'center',
-          background: themeGradient,
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
+          color: highlightColor,
+          fontFamily: 'Playfair Display',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           gap: '8px'
         }}
       >
-        <HeartOutlined />
+        <CoffeeOutlined />
         音乐小馆
-        <HeartOutlined />
+        <CoffeeOutlined />
       </Title>
 
       <div style={{ position: 'relative', zIndex: 1 }}>

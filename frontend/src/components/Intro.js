@@ -1,15 +1,20 @@
 // Intro.js
 import React, { useEffect, useState } from 'react';
 import { Typography, Card, Image, Space, Row, Col, Button, Divider, Collapse, Avatar, List, Tag, Spin, message, Empty, Modal } from 'antd';
-import { HeartOutlined, StarOutlined, SmileOutlined, ArrowDownOutlined, RocketOutlined, HomeOutlined, BookOutlined, CrownOutlined } from '@ant-design/icons';
+import { HeartOutlined, StarOutlined, SmileOutlined, ArrowDownOutlined, RocketOutlined, HomeOutlined, BookOutlined, CrownOutlined, CoffeeOutlined } from '@ant-design/icons';
 import { useDeviceDetect } from '../utils/deviceDetector';
 
 const { Title, Paragraph, Text } = Typography;
 const { Panel } = Collapse;
 
 // 主题颜色和渐变定义
-const themeColor = '#FF85A2';
-const themeGradient = 'linear-gradient(135deg, #FFB6C1 0%, #FF69B4 100%)';
+const themeColor = '#a88f6a';
+const secondaryColor = '#352a46';  // 深紫色
+const highlightColor = '#e3bb4d';  // 亮黄色
+const themeGradient = 'linear-gradient(135deg, #a88f6a 0%, #917752 100%)';
+const secondaryGradient = 'linear-gradient(135deg, #352a46 0%, #261e36 100%)';
+const bgColor = '#1c2134';
+const textColor = '#e6d6bc';
 
 function Intro() {
   const { isMobile } = useDeviceDetect();
@@ -98,8 +103,8 @@ function Intro() {
           
           <div style={{ 
             padding: '12px 16px', 
-            background: 'rgba(255, 133, 162, 0.08)', 
-            borderRadius: '12px',
+            background: 'rgba(53, 42, 70, 0.3)', 
+            borderRadius: '8px',
             borderLeft: `3px solid ${themeColor}`,
             margin: '16px 0'
           }}>
@@ -107,7 +112,7 @@ function Intro() {
               fontSize: isMobile ? '16px' : '17px', 
               fontStyle: 'italic',
               fontWeight: '500',
-              color: '#555'
+              color: textColor
             }}>
               💫 "当某个仿生体被100个人同时爱着，它将获得真正的灵魂。"
             </Text>
@@ -119,12 +124,12 @@ function Intro() {
           
           <div style={{ 
             padding: '12px 16px', 
-            background: 'rgba(255, 240, 245, 0.5)', 
-            borderRadius: '12px',
-            border: '1px dashed rgba(255, 105, 180, 0.3)',
+            background: 'rgba(168, 143, 106, 0.1)', 
+            borderRadius: '8px',
+            border: '1px dashed rgba(168, 143, 106, 0.3)',
             margin: '16px 0'
           }}>
-            <Text style={{ fontSize: isMobile ? '15px' : '16px', color: '#FF69B4' }}>
+            <Text style={{ fontSize: isMobile ? '15px' : '16px', color: highlightColor }}>
               🔹 「编号X-兔-9672号仿生体（小兔），被选为实验个体，前往地球，收集100份'爱'。」
             </Text>
           </div>
@@ -150,15 +155,15 @@ function Intro() {
           
           <div style={{ 
             padding: '12px 16px', 
-            background: 'rgba(255, 133, 162, 0.08)', 
-            borderRadius: '12px',
+            background: 'rgba(53, 42, 70, 0.3)', 
+            borderRadius: '8px',
             borderLeft: `3px solid ${themeColor}`,
             margin: '16px 0',
             fontStyle: 'italic'
           }}>
             <Text style={{ 
               fontSize: isMobile ? '16px' : '17px', 
-              color: '#555',
+              color: textColor,
               fontWeight: '500'
             }}>
               💭 "如果没人爱我，我该怎么完成任务呢？"
@@ -179,14 +184,14 @@ function Intro() {
           
           <div style={{ 
             padding: '12px 16px', 
-            background: 'rgba(255, 240, 245, 0.5)', 
-            borderRadius: '12px',
-            border: '1px dashed rgba(255, 105, 180, 0.3)',
+            background: 'rgba(168, 143, 106, 0.1)', 
+            borderRadius: '8px',
+            border: '1px dashed rgba(168, 143, 106, 0.3)',
             margin: '16px 0'
           }}>
             <Text style={{ 
               fontSize: isMobile ? '15px' : '16px', 
-              color: '#FF69B4',
+              color: highlightColor,
               fontWeight: '500'
             }}>
               💡 "也许……我可以用面包来收集爱？"
@@ -249,7 +254,7 @@ function Intro() {
         width: '200px',
         height: '200px',
         borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(255,192,203,0.15) 0%, rgba(255,192,203,0) 70%)',
+        background: 'radial-gradient(circle, rgba(168, 143, 106, 0.15) 0%, rgba(168, 143, 106, 0) 70%)',
         top: '10%',
         right: isMobile ? '0' : '-50px',
         zIndex: -1,
@@ -262,7 +267,7 @@ function Intro() {
         width: '150px',
         height: '150px',
         borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(255,105,180,0.1) 0%, rgba(255,105,180,0) 70%)',
+        background: 'radial-gradient(circle, rgba(227, 187, 77, 0.1) 0%, rgba(227, 187, 77, 0) 70%)',
         bottom: '10%',
         left: isMobile ? '0' : '-30px',
         zIndex: -1,
@@ -273,10 +278,10 @@ function Intro() {
       <Card 
         style={{ 
           marginBottom: isMobile ? 24 : 32,
-          borderRadius: '20px',
-          boxShadow: '0 10px 25px rgba(255, 133, 162, 0.2)',
-          border: '1px solid rgba(255, 192, 203, 0.3)',
-          background: 'rgba(255, 255, 255, 0.9)',
+          borderRadius: '8px',
+          boxShadow: '0 10px 25px rgba(0, 0, 0, 0.4)',
+          border: '1px solid rgba(168, 143, 106, 0.3)',
+          background: 'rgba(28, 33, 52, 0.95)',
           backdropFilter: 'blur(10px)',
           overflow: 'hidden',
           transition: 'all 0.3s ease',
@@ -305,47 +310,47 @@ function Intro() {
           WebkitTextFillColor: 'transparent',
           fontWeight: 700,
         }}>
-          <HeartOutlined style={{ marginRight: '8px' }} />
-          9672星球的故事
-          <HeartOutlined style={{ marginLeft: '8px' }} />
+          <CoffeeOutlined style={{ marginRight: '8px' }} />
+          深夜小酒馆的故事
+          <CoffeeOutlined style={{ marginLeft: '8px' }} />
         </Title>
         
         <Paragraph style={{ 
           fontSize: isMobile ? '16px' : '18px',
-          color: themeColor,
+          color: textColor,
           textAlign: 'center',
           fontWeight: 'bold',
           marginBottom: '24px',
           letterSpacing: '0.5px',
         }}>
-          欢迎来到9672星球，荒凉，寂寞，但充满希望✨
+          欢迎来到深夜小酒馆，温馨，静谧，充满故事✨
         </Paragraph>
         
         {/* 故事梗概部分 */}
         <div style={{ 
           position: 'relative',
           padding: '20px',
-          borderRadius: '16px',
-          background: 'rgba(255, 240, 245, 0.5)',
+          borderRadius: '8px',
+          background: 'rgba(53, 42, 70, 0.4)',
           marginBottom: '20px',
-          border: '1px solid rgba(255, 192, 203, 0.2)',
+          border: '1px solid rgba(168, 143, 106, 0.2)',
         }}>
           <Paragraph style={{ 
             fontSize: isMobile ? '15px' : '17px',
             lineHeight: '1.8',
-            color: '#555',
+            color: textColor,
             margin: 0,
           }}>
-            在这个神奇的星球上，住着一群热爱音乐和故事的小精灵。每当夜幕降临，他们就会聚集在一起，用美妙的歌声和有趣的故事点亮整个星空。<span style={{ color: themeColor }}>🌙</span>
+            在这个典雅的酒馆里，聚集着各种灵魂，分享着生活的故事与心情。每当夜幕降临，这里就会响起悠扬的音乐和轻声的交谈，酒杯碰撞声点亮了整个夜晚。<span style={{ color: highlightColor }}>🌙</span>
           </Paragraph>
           <Paragraph style={{ 
             fontSize: isMobile ? '15px' : '17px',
             lineHeight: '1.8',
-            color: '#555',
+            color: textColor,
             marginBottom: 0,
             marginTop: '16px',
           }}>
-            这里的天空总是变幻莫测，有时是温柔的粉色，有时是梦幻的紫色，有时还会出现彩虹般的极光。在这里，每一天都是新的冒险，每一刻都充满惊喜！<span style={{ color: themeColor }}>🌈</span>
+            这里的灯光总是温暖而柔和，有时是琥珀色的光芒，有时是深紫色的氛围，偶尔还会有金黄色的烛光摇曳。在这里，每一杯酒都有故事，每一刻都值得回味！<span style={{ color: highlightColor }}>✨</span>
           </Paragraph>
         </div>
         
@@ -365,7 +370,7 @@ function Intro() {
               transition: 'transform 0.3s ease',
             }} />}
             style={{
-              color: themeColor,
+              color: highlightColor,
               fontWeight: 'bold',
               fontSize: isMobile ? '15px' : '16px',
               display: 'flex',
@@ -389,9 +394,9 @@ function Intro() {
           <Card
             bordered={false}
             style={{
-              background: 'rgba(255, 255, 255, 0.7)',
-              borderRadius: '16px',
-              boxShadow: '0 6px 16px rgba(255, 133, 162, 0.15)',
+              background: 'rgba(28, 33, 52, 0.7)',
+              borderRadius: '8px',
+              boxShadow: '0 6px 16px rgba(0, 0, 0, 0.3)',
             }}
           >
             <Space direction="vertical" size="large" style={{ width: '100%' }}>
@@ -413,7 +418,7 @@ function Intro() {
                       width: '36px',
                       height: '36px',
                       borderRadius: '50%',
-                      background: 'rgba(255, 133, 162, 0.1)',
+                      background: 'rgba(168, 143, 106, 0.1)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -424,7 +429,7 @@ function Intro() {
                     <Title level={4} style={{ 
                       margin: 0,
                       fontSize: isMobile ? '18px' : '20px',
-                      color: '#FF69B4',
+                      color: highlightColor,
                       fontWeight: '600',
                     }}>
                       {chapter.title}
@@ -439,7 +444,7 @@ function Intro() {
                     <Divider 
                       style={{ 
                         margin: '32px 0', 
-                        borderColor: 'rgba(255, 192, 203, 0.3)',
+                        borderColor: 'rgba(168, 143, 106, 0.3)',
                       }}
                       dashed
                     />
@@ -463,7 +468,7 @@ function Intro() {
             title={
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <div style={{ 
-                  background: 'rgba(255, 133, 162, 0.1)', 
+                  background: 'rgba(168, 143, 106, 0.1)', 
                   borderRadius: '50%', 
                   width: '36px', 
                   height: '36px', 
@@ -477,7 +482,7 @@ function Intro() {
                 <span style={{ 
                   fontWeight: 'bold', 
                   fontSize: isMobile ? '16px' : '18px',
-                  background: 'linear-gradient(45deg, #FF85A2, #FF1493)',
+                  background: 'linear-gradient(45deg, #a88f6a, #917752)',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
                 }}>关于我们</span>
@@ -485,10 +490,10 @@ function Intro() {
             } 
             style={{ 
               height: '100%',
-              borderRadius: '16px',
-              boxShadow: '0 8px 20px rgba(255, 133, 162, 0.15)',
-              border: '1px solid rgba(255, 192, 203, 0.3)',
-              background: 'rgba(255, 255, 255, 0.9)',
+              borderRadius: '8px',
+              boxShadow: '0 8px 20px rgba(0, 0, 0, 0.3)',
+              border: '1px solid rgba(168, 143, 106, 0.3)',
+              background: 'rgba(28, 33, 52, 0.9)',
               backdropFilter: 'blur(10px)',
               overflow: 'hidden',
               transition: 'all 0.3s ease',
@@ -499,24 +504,24 @@ function Intro() {
             <Paragraph style={{ 
               fontSize: isMobile ? '15px' : '16px',
               lineHeight: '1.8',
-              color: '#555',
+              color: textColor,
             }}>
-              我们在乎每一位路过或者选择留在星球上的开拓者呢！<span style={{ color: themeColor }}>✨</span> 这里的故事像星星一样闪闪发光，像彩虹一样绚丽多彩，让我们一起创造属于我们的美好回忆吧！<span style={{ color: themeColor }}>💫</span>
+              我们在乎每一位路过或者选择留在酒馆的旅人！<span style={{ color: highlightColor }}>✨</span> 这里的故事像星星一样闪闪发光，像美酒一样醇厚芬芳，让我们一起创造属于我们的美好回忆吧！<span style={{ color: highlightColor }}>💫</span>
             </Paragraph>
             
             <div style={{
               marginTop: '16px',
-              background: 'rgba(255, 240, 245, 0.5)',
+              background: 'rgba(53, 42, 70, 0.3)',
               padding: '12px',
-              borderRadius: '10px',
-              border: '1px dashed rgba(255, 192, 203, 0.3)',
+              borderRadius: '8px',
+              border: '1px dashed rgba(168, 143, 106, 0.3)',
             }}>
               <Text style={{ 
                 fontSize: isMobile ? '14px' : '15px',
-                color: '#666',
+                color: textColor,
                 fontStyle: 'italic',
               }}>
-                "每一个来到9672星球的人，都是这个故事的一部分..."
+                "每一个来到深夜小酒馆的人，都是这个故事的一部分..."
               </Text>
             </div>
           </Card>
@@ -532,7 +537,7 @@ function Intro() {
             title={
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <div style={{ 
-                  background: 'rgba(255, 133, 162, 0.1)', 
+                  background: 'rgba(168, 143, 106, 0.1)', 
                   borderRadius: '50%', 
                   width: '36px', 
                   height: '36px', 
@@ -546,7 +551,7 @@ function Intro() {
                 <span style={{ 
                   fontWeight: 'bold', 
                   fontSize: isMobile ? '16px' : '18px',
-                  background: 'linear-gradient(45deg, #FF85A2, #FF1493)',
+                  background: 'linear-gradient(45deg, #a88f6a, #917752)',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
                 }}>加入我们</span>
@@ -554,10 +559,10 @@ function Intro() {
             } 
             style={{ 
               height: '100%',
-              borderRadius: '16px',
-              boxShadow: '0 8px 20px rgba(255, 133, 162, 0.15)',
-              border: '1px solid rgba(255, 192, 203, 0.3)',
-              background: 'rgba(255, 255, 255, 0.9)',
+              borderRadius: '8px',
+              boxShadow: '0 8px 20px rgba(0, 0, 0, 0.3)',
+              border: '1px solid rgba(168, 143, 106, 0.3)',
+              background: 'rgba(28, 33, 52, 0.9)',
               backdropFilter: 'blur(10px)',
               overflow: 'hidden',
               transition: 'all 0.3s ease',
@@ -568,10 +573,10 @@ function Intro() {
             <Paragraph style={{ 
               fontSize: isMobile ? '15px' : '16px',
               lineHeight: '1.8',
-              color: '#555',
+              color: textColor,
               marginBottom: '20px',
             }}>
-              请在BiliBili关注我们，加入大家庭，和我们一起建设9672星球吧！<span style={{ color: themeColor }}>✨</span>
+              请在BiliBili关注我们，加入大家庭，和我们一起建设深夜小酒馆吧！<span style={{ color: highlightColor }}>✨</span>
             </Paragraph>
             
             <Button 
@@ -584,24 +589,24 @@ function Intro() {
                 width: '100%',
                 background: themeGradient,
                 border: 'none',
-                borderRadius: '10px',
+                borderRadius: '8px',
                 fontWeight: 'bold',
                 height: isMobile ? '40px' : '46px',
-                boxShadow: '0 4px 12px rgba(255, 133, 162, 0.3)',
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
                 transition: 'all 0.3s ease',
               }}
             >
-              <HeartOutlined style={{ marginRight: '8px' }} />
+              <CoffeeOutlined style={{ marginRight: '8px' }} />
               关注 万能小兔旅店
             </Button>
             
             <div style={{
               marginTop: '16px',
               fontSize: isMobile ? '13px' : '14px',
-              color: '#888',
+              color: 'rgba(230, 214, 188, 0.7)',
               textAlign: 'center',
             }}>
-              每一位新朋友的加入都让星球更加闪耀 ✨
+              每一位新朋友的加入都让酒馆更加温暖 ✨
             </div>
           </Card>
         </Col>
@@ -613,7 +618,7 @@ function Intro() {
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <div style={{ 
-                background: 'rgba(255, 133, 162, 0.1)', 
+                background: 'rgba(168, 143, 106, 0.1)', 
                 borderRadius: '50%', 
                 width: '36px', 
                 height: '36px', 
@@ -627,10 +632,10 @@ function Intro() {
               <span style={{ 
                 fontWeight: 'bold', 
                 fontSize: isMobile ? '16px' : '18px',
-                background: 'linear-gradient(45deg, #FF85A2, #FF1493)',
+                background: 'linear-gradient(45deg, #a88f6a, #917752)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
-              }}>星球守护者</span>
+              }}>酒馆守护者</span>
             </div>
             <Tag color={themeColor} style={{ marginLeft: '8px' }}>
               {guards.length} 位守护者
@@ -639,10 +644,10 @@ function Intro() {
         }
         style={{ 
           marginTop: '24px',
-          borderRadius: '16px',
-          boxShadow: '0 8px 20px rgba(255, 133, 162, 0.15)',
-          border: '1px solid rgba(255, 192, 203, 0.3)',
-          background: 'rgba(255, 255, 255, 0.9)',
+          borderRadius: '8px',
+          boxShadow: '0 8px 20px rgba(0, 0, 0, 0.3)',
+          border: '1px solid rgba(168, 143, 106, 0.3)',
+          background: 'rgba(28, 33, 52, 0.9)',
           backdropFilter: 'blur(10px)',
           animation: showCards ? 'slideUp 0.6s ease-out' : 'none',
         }}
@@ -652,19 +657,19 @@ function Intro() {
           <div style={{ 
             textAlign: 'center', 
             padding: '40px',
-            background: 'rgba(255, 240, 245, 0.5)',
-            borderRadius: '12px',
+            background: 'rgba(53, 42, 70, 0.3)',
+            borderRadius: '8px',
           }}>
             <Space direction="vertical" size="middle" align="center">
               <Spin size="large" />
-              <Text type="secondary">正在召集星球守护者...</Text>
+              <Text type="secondary" style={{ color: 'rgba(230, 214, 188, 0.7)' }}>正在召集酒馆守护者...</Text>
             </Space>
           </div>
         ) : guards.length === 0 ? (
           <Empty
             image={Empty.PRESENTED_IMAGE_SIMPLE}
             description={
-              <Text type="secondary">暂时还没有守护者加入我们</Text>
+              <Text type="secondary" style={{ color: 'rgba(230, 214, 188, 0.7)' }}>暂时还没有守护者加入我们</Text>
             }
           />
         ) : (
@@ -690,11 +695,11 @@ function Intro() {
                 <div
                   style={{
                     position: 'relative',
-                    borderRadius: '16px',
+                    borderRadius: '8px',
                     overflow: 'hidden',
-                    background: '#fff',
-                    boxShadow: '0 8px 24px rgba(255, 182, 193, 0.15)',
-                    border: '1px solid rgba(255, 192, 203, 0.2)',
+                    background: index % 2 === 0 ? bgColor : secondaryColor,
+                    boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3)',
+                    border: '1px solid rgba(168, 143, 106, 0.2)',
                     transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                     cursor: 'pointer',
                     minHeight: expandedGuards[guard.id] ? '380px' : '260px',
@@ -703,7 +708,7 @@ function Intro() {
                     transform: 'translateY(0)',
                     ':hover': {
                       transform: 'translateY(-6px)',
-                      boxShadow: '0 12px 28px rgba(255, 182, 193, 0.25)',
+                      boxShadow: '0 12px 28px rgba(0, 0, 0, 0.4)',
                     }
                   }}
                   onClick={() => handleGuardExpand(guard.id)}
@@ -743,8 +748,8 @@ function Intro() {
                       height: '100px',
                       borderRadius: '50%',
                       padding: '3px',
-                      background: '#fff',
-                      boxShadow: '0 4px 16px rgba(255, 182, 193, 0.2)',
+                      background: index % 2 === 0 ? bgColor : secondaryColor,
+                      boxShadow: '0 4px 16px rgba(0, 0, 0, 0.3)',
                       transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                       animation: 'float 3s ease-in-out infinite',
                     }}
@@ -754,7 +759,7 @@ function Intro() {
                         size={94}
                         src={guard.face ? `/api/proxy/image?url=${encodeURIComponent(guard.face)}` : null}
                         style={{ 
-                          border: `2px solid ${getGuardLevelColor(guard.guard_level)}22`,
+                          border: `2px solid ${themeColor}22`,
                           transition: 'all 0.3s ease',
                         }}
                         className="avatar-image"
@@ -765,8 +770,8 @@ function Intro() {
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            background: `linear-gradient(135deg, ${getGuardLevelColor(guard.guard_level)}22, ${getGuardLevelColor(guard.guard_level)}11)`,
-                            color: getGuardLevelColor(guard.guard_level),
+                            background: `linear-gradient(135deg, ${themeColor}22, ${themeColor}11)`,
+                            color: themeColor,
                             fontSize: '32px',
                             fontWeight: 'bold',
                           }}>
@@ -788,20 +793,22 @@ function Intro() {
                     <div style={{
                       fontSize: '18px',
                       fontWeight: 'bold',
-                      color: '#333',
+                      color: highlightColor,
                       marginBottom: '8px',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       gap: '6px',
+                      textShadow: '1px 1px 3px rgba(0, 0, 0, 0.7)'
                     }}>
                       {guard.username}
                       {guard.is_top3 && (
                         <div style={{
-                          background: 'linear-gradient(45deg, #FFD700, #FFA500)',
+                          background: 'linear-gradient(45deg, #e3bb4d, #ffd700)',
                           WebkitBackgroundClip: 'text',
                           WebkitTextFillColor: 'transparent',
                           fontSize: '14px',
+                          textShadow: 'none'
                         }}>
                           👑 TOP {guard.rank}
                         </div>
@@ -810,13 +817,15 @@ function Intro() {
 
                     <Space size={4} wrap style={{ justifyContent: 'center', marginBottom: '10px' }}>
                       <Tag 
-                        color={getGuardLevelColor(guard.guard_level)}
+                        color={themeColor}
                         style={{
                           borderRadius: '10px',
                           padding: '1px 8px',
                           border: 'none',
                           fontSize: '12px',
-                          opacity: 0.8,
+                          opacity: 0.9,
+                          color: '#ffffff',
+                          fontWeight: 'bold'
                         }}
                       >
                         <CrownOutlined style={{ marginRight: '4px' }} />
@@ -838,6 +847,7 @@ function Intro() {
                             boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
                             transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                             cursor: 'pointer',
+                            fontWeight: 'bold'
                           }}
                           className="medal-tag"
                           title={`粉丝勋章颜色: ${guard.medal_color_start} → ${guard.medal_color_end}`}
@@ -859,14 +869,14 @@ function Intro() {
 
                     <div style={{
                       fontSize: '13px',
-                      color: '#666',
+                      color: textColor,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       gap: '4px',
                       marginBottom: '12px',
                     }}>
-                      <HeartOutlined style={{ color: themeColor }} />
+                      <HeartOutlined style={{ color: highlightColor }} />
                       已陪伴: {guard.accompany} 天
                     </div>
 
