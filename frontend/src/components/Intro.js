@@ -956,6 +956,7 @@ function Intro() {
                           background: 'rgba(255, 133, 162, 0.1)',
                           borderRadius: '8px',
                         }}
+                        className="story-button"
                       >
                         查看完整故事
                       </Button>
@@ -977,13 +978,18 @@ function Intro() {
             display: 'flex',
             alignItems: 'center',
             gap: '12px',
-            padding: '12px 0',
+            background: secondaryColor,
+            margin: '-20px -24px 20px',
+            padding: '16px 24px',
+            borderBottom: `1px solid ${themeColor}44`,
+            borderRadius: '8px 8px 0 0',
           }}>
             <Avatar 
               size={48}
               src={selectedGuard?.face ? `/api/proxy/image?url=${encodeURIComponent(selectedGuard.face)}` : null}
               style={{
                 border: `2px solid ${selectedGuard ? getGuardLevelColor(selectedGuard.guard_level) : themeColor}`,
+                boxShadow: '0 0 10px rgba(0, 0, 0, 0.3)',
               }}
             />
             <div>
@@ -991,13 +997,19 @@ function Intro() {
                 fontSize: '18px',
                 fontWeight: 'bold',
                 marginBottom: '4px',
+                color: highlightColor,
+                textShadow: '1px 1px 3px rgba(0, 0, 0, 0.5)',
               }}>
                 {selectedGuard?.username} 的故事
               </div>
               <div style={{
                 fontSize: '14px',
-                color: '#666',
+                color: textColor,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
               }}>
+                <HeartOutlined style={{ color: highlightColor }} />
                 已陪伴: {selectedGuard?.accompany} 天
               </div>
             </div>
@@ -1012,46 +1024,206 @@ function Intro() {
           padding: '24px',
           maxHeight: '70vh',
           overflow: 'auto',
+          background: bgColor,
+          borderRadius: '0 0 8px 8px',
+          position: 'relative',
+          backgroundImage: `
+            linear-gradient(rgba(28, 33, 52, 0.95), rgba(28, 33, 52, 0.95)),
+            url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23a88f6a' fill-opacity='0.05' fill-rule='evenodd'%3E%3Cpath d='M0 0h20v20H0V0zm10 17a7 7 0 1 0 0-14 7 7 0 0 0 0 14zm-8-7a8 8 0 1 1 16 0 8 8 0 0 1-16 0z'/%3E%3C/g%3E%3C/svg%3E")
+          `,
         }}
-      >
-        {selectedGuard && generateGuardStory(selectedGuard).map((story, index) => (
-          <div key={index} style={{
-            marginBottom: index < generateGuardStory(selectedGuard).length - 1 ? '32px' : 0,
+        modalRender={(modal) => (
+          <div style={{
+            background: bgColor,
+            borderRadius: '8px',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.6)',
+            border: `1px solid ${themeColor}44`,
           }}>
+            {/* 酒杯装饰 */}
             <div style={{
-              fontSize: '16px',
-              fontWeight: 'bold',
-              color: themeColor,
-              marginBottom: '12px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
+              position: 'absolute',
+              top: '20px',
+              right: '20px',
+              fontSize: '24px',
+              color: highlightColor,
+              textShadow: '0 0 10px rgba(227, 187, 77, 0.5)',
+              zIndex: 2,
+              transform: 'rotate(15deg)',
+              animation: 'float 3s ease-in-out infinite',
             }}>
-              <div style={{
-                width: '24px',
-                height: '24px',
-                borderRadius: '50%',
-                background: 'rgba(255, 133, 162, 0.1)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '12px',
-              }}>
-                {index + 1}
-              </div>
-              {story.title}
+              🍷
             </div>
-            <Paragraph style={{
-              fontSize: '14px',
-              lineHeight: '1.8',
-              color: '#666',
-              margin: 0,
-              paddingLeft: '32px',
+            
+            <div style={{
+              position: 'absolute',
+              bottom: '30px',
+              left: '15px',
+              fontSize: '20px',
+              color: highlightColor,
+              zIndex: 2,
+              transform: 'rotate(-10deg)',
+              animation: 'float 4s ease-in-out infinite',
             }}>
-              {story.content}
-            </Paragraph>
+              🥃
+            </div>
+            
+            {/* 蜡烛装饰 */}
+            <div style={{
+              position: 'absolute',
+              top: '50%',
+              right: '18px',
+              fontSize: '18px',
+              zIndex: 2,
+              animation: 'candleLight 2s ease-in-out infinite',
+            }}>
+              🕯️
+            </div>
+            
+            {/* 酒桶装饰 */}
+            <div style={{
+              position: 'absolute',
+              bottom: '15px',
+              right: '20px',
+              fontSize: '20px',
+              zIndex: 2,
+              animation: 'float 5s ease-in-out infinite',
+            }}>
+              🪣
+            </div>
+            
+            {/* 装饰性背景元素 */}
+            <div style={{
+              position: 'absolute',
+              width: '150px',
+              height: '150px',
+              borderRadius: '50%',
+              background: 'radial-gradient(circle, rgba(168, 143, 106, 0.15) 0%, rgba(168, 143, 106, 0) 70%)',
+              top: '10%',
+              right: '0',
+              zIndex: 0,
+              pointerEvents: 'none',
+              overflow: 'hidden'
+            }} />
+            
+            <div style={{
+              position: 'absolute',
+              width: '120px',
+              height: '120px',
+              borderRadius: '50%',
+              background: 'radial-gradient(circle, rgba(227, 187, 77, 0.1) 0%, rgba(227, 187, 77, 0) 70%)',
+              bottom: '10%',
+              left: '5%',
+              zIndex: 0,
+              pointerEvents: 'none',
+              overflow: 'hidden'
+            }} />
+            
+            <div style={{ position: 'relative', zIndex: 1 }}>
+              {selectedGuard && generateGuardStory(selectedGuard).map((story, index) => (
+                <div key={index} style={{
+                  marginBottom: index < generateGuardStory(selectedGuard).length - 1 ? '32px' : 0,
+                  background: `rgba(${secondaryColor.slice(1).match(/../g).map(hex => parseInt(hex, 16)).join(', ')}, 0.4)`,
+                  borderRadius: '8px',
+                  padding: '16px',
+                  border: `1px solid ${themeColor}22`,
+                  transition: 'all 0.3s ease',
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  backgroundImage: `
+                    linear-gradient(rgba(53, 42, 70, 0.6), rgba(53, 42, 70, 0.6)),
+                    url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm32-63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23a88f6a' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E")
+                  `,
+                  backgroundSize: '100px 100px',
+                }}>
+                  {/* 玻璃杯反光效果 */}
+                  <div className="glass-shine"></div>
+                  
+                  {/* 装饰性边角 */}
+                  <div style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '20px',
+                    height: '20px',
+                    borderTop: `2px solid ${highlightColor}66`,
+                    borderLeft: `2px solid ${highlightColor}66`,
+                    borderRadius: '4px 0 0 0',
+                  }} />
+                  <div style={{
+                    position: 'absolute',
+                    bottom: 0,
+                    right: 0,
+                    width: '20px',
+                    height: '20px',
+                    borderBottom: `2px solid ${highlightColor}66`,
+                    borderRight: `2px solid ${highlightColor}66`,
+                    borderRadius: '0 0 4px 0',
+                  }} />
+                  
+                  <div style={{
+                    fontSize: '16px',
+                    fontWeight: 'bold',
+                    color: highlightColor,
+                    marginBottom: '12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                  }}>
+                    <div style={{
+                      width: '28px',
+                      height: '28px',
+                      borderRadius: '50%',
+                      background: themeColor,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '13px',
+                      color: '#fff',
+                      fontWeight: 'bold',
+                      boxShadow: '0 2px 6px rgba(0, 0, 0, 0.3)',
+                    }}>
+                      {index + 1}
+                    </div>
+                    <div style={{ textShadow: '1px 1px 2px rgba(0, 0, 0, 0.5)' }}>
+                      {story.title}
+                    </div>
+                  </div>
+                  <Paragraph style={{
+                    fontSize: '14px',
+                    lineHeight: '1.8',
+                    color: textColor,
+                    margin: 0,
+                    paddingLeft: '36px',
+                    position: 'relative',
+                  }}>
+                    <span style={{ 
+                      position: 'absolute',
+                      left: '0',
+                      top: '0',
+                      fontSize: '22px',
+                      color: `${themeColor}66`,
+                      fontFamily: 'serif',
+                      lineHeight: '1',
+                    }}>❝</span>
+                    {story.content}
+                    <span style={{ 
+                      position: 'absolute',
+                      right: '0',
+                      bottom: '-10px',
+                      fontSize: '22px',
+                      color: `${themeColor}66`,
+                      fontFamily: 'serif',
+                      lineHeight: '1',
+                    }}>❞</span>
+                  </Paragraph>
+                </div>
+              ))}
+            </div>
           </div>
-        ))}
+        )}
+        closeIcon={<span style={{ color: textColor }}>×</span>}
+      >
       </Modal>
 
       {/* 全局CSS动画定义 */}
@@ -1134,6 +1306,32 @@ function Intro() {
             transform: translateY(0px);
           }
         }
+        
+        @keyframes candleLight {
+          0%, 100% {
+            text-shadow: 0 0 8px rgba(255, 183, 77, 0.6),
+                       0 0 12px rgba(255, 183, 77, 0.4),
+                       0 0 16px rgba(255, 160, 38, 0.2);
+            opacity: 0.9;
+          }
+          50% {
+            text-shadow: 0 0 10px rgba(255, 183, 77, 0.8),
+                       0 0 16px rgba(255, 183, 77, 0.6),
+                       0 0 20px rgba(255, 160, 38, 0.4);
+            opacity: 1;
+          }
+        }
+        
+        @keyframes shimmer {
+          0% {
+            opacity: 0.4;
+            transform: skewX(-20deg) translateX(-150%);
+          }
+          100% {
+            opacity: 0.2;
+            transform: skewX(-20deg) translateX(250%);
+          }
+        }
 
         .guard-card:hover .avatar-container {
           transform: scale(1.05) rotate(5deg);
@@ -1195,6 +1393,24 @@ function Intro() {
 
         .medal-tag:hover::before {
           opacity: 0.6;
+        }
+
+        .story-button:hover {
+          color: ${highlightColor} !important;
+          background: rgba(53, 42, 70, 0.6) !important;
+          text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+          border-color: transparent !important;
+        }
+        
+        .glass-shine {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(120deg, rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, 0.04) 50%, rgba(255, 255, 255, 0) 70%);
+          animation: shimmer 3s infinite;
+          pointer-events: none;
         }
       `}</style>
     </div>

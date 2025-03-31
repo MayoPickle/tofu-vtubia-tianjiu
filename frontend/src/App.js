@@ -315,7 +315,7 @@ function App() {
         }} className="mobile-content">
           <Routes>
             <Route path="/intro" element={<Intro />} />
-            <Route path="/songs" element={<SongList />} />
+            <Route path="/songs" element={<SongList isAdmin={isAdmin} />} />
             <Route path="/" element={<Navigate to="/intro" />} />
             <Route path="/admin/users" element={<AdminUserList />} />
             <Route path="/lottery" element={<LotteryWheel isLoggedIn={isLoggedIn} />} />
@@ -477,7 +477,7 @@ function App() {
         }}>
           <Routes>
             <Route path="/intro" element={<Intro />} />
-            <Route path="/songs" element={<SongList />} />
+            <Route path="/songs" element={<SongList isAdmin={isAdmin} />} />
             <Route path="/" element={<Navigate to="/intro" />} />
             <Route path="/admin/users" element={<AdminUserList />} />
             <Route path="/lottery" element={<LotteryWheel isLoggedIn={isLoggedIn} />} />

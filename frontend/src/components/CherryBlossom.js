@@ -84,6 +84,34 @@ function CherryBlossom() {
       }, (driftDuration + delay) * 1000);
     };
     
+    // 创建流星
+    const createShootingStar = () => {
+      const shootingStar = document.createElement('div');
+      shootingStar.className = 'shooting-star';
+      
+      // 随机位置和持续时间
+      const yPos = 10 + Math.random() * 30; // 顶部位置（保持在上半部分）
+      const animationDuration = 3 + Math.random() * 2; // 3-6秒的动画，速度更慢
+      
+      // 设置流星样式
+      shootingStar.style.top = `${yPos}%`;
+      shootingStar.style.left = '0';
+      shootingStar.style.animationDuration = `${animationDuration}s`;
+      
+      container.appendChild(shootingStar);
+      
+      // 动画结束后移除流星
+      setTimeout(() => {
+        if (shootingStar.parentElement === container) {
+          container.removeChild(shootingStar);
+        }
+      }, animationDuration * 1000);
+      
+      // 随机安排下一颗流星
+      const nextShootingStarDelay = 3000 + Math.random() * 8000; // 3-11秒后出现下一颗
+      setTimeout(createShootingStar, nextShootingStarDelay);
+    };
+    
     // 初始创建一批星星
     for (let i = 0; i < maxStars; i++) {
       setTimeout(createStar, i * 100);
@@ -93,6 +121,9 @@ function CherryBlossom() {
     for (let i = 0; i < 5; i++) {
       setTimeout(createLightSpot, i * 1000);
     }
+    
+    // 延迟一段时间后开始创建流星
+    setTimeout(createShootingStar, 2000);
     
     return () => {
       // 清理元素
@@ -106,6 +137,13 @@ function CherryBlossom() {
       lightSpots.forEach(spot => {
         if (spot.parentElement === container) {
           container.removeChild(spot);
+        }
+      });
+      
+      const shootingStars = container.querySelectorAll('.shooting-star');
+      shootingStars.forEach(shootingStar => {
+        if (shootingStar.parentElement === container) {
+          container.removeChild(shootingStar);
         }
       });
     };
