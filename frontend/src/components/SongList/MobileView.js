@@ -17,7 +17,6 @@ import SongTags from './SongTags';
 import { themeColor, bgColor, secondaryColor, highlightColor, textColor, themeGradient, secondaryGradient } from './constants';
 
 const { Text, Paragraph, Title } = Typography;
-const { Option } = Select;
 
 const MobileView = ({ 
   songs, 
@@ -39,7 +38,7 @@ const MobileView = ({
         style={{ 
           marginBottom: '20px',
           background: 'rgba(28, 33, 52, 0.7)',
-          borderRadius: '8px',
+          borderRadius: '16px',
           borderColor: 'rgba(168, 143, 106, 0.3)',
           boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)'
         }}
@@ -58,7 +57,7 @@ const MobileView = ({
               onPressEnter={() => onSearch(searchTerm)}
               style={{ 
                 flex: 1,
-                borderRadius: '8px',
+                borderRadius: '12px',
                 background: 'rgba(28, 33, 52, 0.6)',
                 borderColor: 'rgba(168, 143, 106, 0.3)',
                 color: textColor,
@@ -76,7 +75,7 @@ const MobileView = ({
               style={{
                 background: themeGradient,
                 borderColor: 'rgba(168, 143, 106, 0.5)',
-                borderRadius: '8px',
+                borderRadius: '12px',
                 height: '32px',
                 display: 'flex',
                 alignItems: 'center',
@@ -149,7 +148,7 @@ const MobileView = ({
                     color: highlightColor,
                     padding: '4px 10px',
                     background: 'rgba(227, 187, 77, 0.1)',
-                    borderRadius: '12px',
+                    borderRadius: '16px',
                     height: 'auto',
                     fontSize: '12px',
                     border: 'none'
@@ -167,7 +166,7 @@ const MobileView = ({
                   style={{
                     background: secondaryGradient,
                     borderColor: highlightColor,
-                    borderRadius: '8px',
+                    borderRadius: '12px',
                     marginLeft: 'auto'
                   }}
                 >
@@ -185,7 +184,7 @@ const MobileView = ({
             padding: '40px 0',
             textAlign: 'center',
             background: 'rgba(28, 33, 52, 0.6)',
-            borderRadius: '8px',
+            borderRadius: '16px',
             border: '1px solid rgba(168, 143, 106, 0.2)',
             marginBottom: '16px'
           }}>
@@ -205,7 +204,7 @@ const MobileView = ({
             style={{
               padding: '40px 0',
               background: 'rgba(28, 33, 52, 0.6)',
-              borderRadius: '8px',
+              borderRadius: '16px',
               border: '1px solid rgba(168, 143, 106, 0.2)',
               color: textColor
             }}
@@ -219,7 +218,7 @@ const MobileView = ({
                 style={{ 
                   marginBottom: '16px',
                   background: index % 2 === 0 ? 'rgba(28, 33, 52, 0.7)' : 'rgba(53, 42, 70, 0.6)',
-                  borderRadius: '8px',
+                  borderRadius: '16px',
                   borderColor: index % 2 === 0 ? 'rgba(168, 143, 106, 0.3)' : 'rgba(227, 187, 77, 0.2)',
                   boxShadow: '0 6px 16px rgba(0, 0, 0, 0.2)',
                   transition: 'all 0.3s ease',
@@ -338,7 +337,7 @@ const MobileView = ({
                     <div style={{ 
                       margin: '12px 0',
                       padding: '10px 12px',
-                      borderRadius: '6px',
+                      borderRadius: '12px',
                       background: 'rgba(0, 0, 0, 0.2)',
                       borderLeft: `3px solid ${themeColor}` 
                     }}>
@@ -482,7 +481,7 @@ const MobileView = ({
         .tag-select .ant-select-selector {
           background: rgba(28, 33, 52, 0.6) !important;
           border-color: rgba(168, 143, 106, 0.3) !important;
-          border-radius: 8px !important;
+          border-radius: 12px !important;
           height: 32px !important;
           padding-top: 0 !important;
           padding-bottom: 0 !important;

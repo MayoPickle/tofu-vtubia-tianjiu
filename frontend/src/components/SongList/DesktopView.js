@@ -341,7 +341,7 @@ const DesktopView = ({
       <Card
         style={{ 
           marginBottom: '24px',
-          borderRadius: '8px',
+          borderRadius: '16px',
           boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3)',
           border: '1px solid rgba(168, 143, 106, 0.2)',
           background: 'rgba(28, 33, 52, 0.7)',
@@ -380,7 +380,7 @@ const DesktopView = ({
               onPressEnter={() => onSearch(searchTerm)}
               style={{ 
                 width: '100%',
-                borderRadius: '8px',
+                borderRadius: '12px',
                 border: '1px solid rgba(168, 143, 106, 0.3)',
                 background: 'rgba(28, 33, 52, 0.6)',
                 color: textColor,
@@ -453,7 +453,7 @@ const DesktopView = ({
                 height: 'auto',
                 fontSize: '14px',
                 background: 'rgba(227, 187, 77, 0.1)',
-                borderRadius: '8px',
+                borderRadius: '16px',
                 border: 'none',
                 marginTop: '24px'
               }}
@@ -471,7 +471,7 @@ const DesktopView = ({
                 style={{
                   background: themeGradient,
                   border: `1px solid ${themeColor}`,
-                  borderRadius: '8px',
+                  borderRadius: '12px',
                   height: '40px',
                   padding: '0 24px',
                   boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
@@ -530,12 +530,12 @@ const DesktopView = ({
       <style jsx="true">{`
         .songs-table .ant-table {
           background: transparent !important;
-          border-radius: 8px;
+          border-radius: 16px;
           overflow: hidden;
         }
         
         .songs-table .ant-table-container {
-          border-radius: 8px;
+          border-radius: 16px;
           box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
           border: 1px solid rgba(168, 143, 106, 0.2);
           overflow: hidden;
@@ -641,7 +641,7 @@ const DesktopView = ({
         .tag-select .ant-select-selector {
           background: rgba(28, 33, 52, 0.6) !important;
           border-color: rgba(168, 143, 106, 0.3) !important;
-          border-radius: 8px !important;
+          border-radius: 12px !important;
           height: 32px !important;
           padding-top: 0 !important;
           padding-bottom: 0 !important;
