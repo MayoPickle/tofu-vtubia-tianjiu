@@ -871,7 +871,7 @@ def register_routes(app):
                        medal_color_end, medal_color_border, medal_color,
                        guard_level, expired_str, is_top3, timestamp
                 FROM bilibili_guards 
-                WHERE room_id = 1883353860
+                WHERE room_id = 1749141031
                 ORDER BY rank ASC
             """)
             

@@ -582,7 +582,7 @@ function Intro() {
             <Button 
               type="primary" 
               size={isMobile ? "middle" : "large"}
-              href="https://space.bilibili.com/3546719987960278" 
+              href="https://space.bilibili.com/3546696388708380" 
               target="_blank" 
               rel="noopener noreferrer"
               style={{
@@ -597,7 +597,7 @@ function Intro() {
               }}
             >
               <CoffeeOutlined style={{ marginRight: '8px' }} />
-              关注 万能小兔旅店
+              关注 晚风甜酒Lori
             </Button>
             
             <div style={{

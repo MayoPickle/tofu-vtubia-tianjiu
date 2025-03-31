@@ -1,39 +1,48 @@
 import React, { useEffect, useState } from 'react';
 import { Card, Row, Col, Button, message, Tooltip, Typography, Space, Divider } from 'antd';
-import { CopyOutlined, LockOutlined, UnlockOutlined, SyncOutlined } from '@ant-design/icons';
+import { CopyOutlined, LockOutlined, UnlockOutlined, SyncOutlined, CoffeeOutlined } from '@ant-design/icons';
 import { useDeviceDetect } from '../utils/deviceDetector';
 
 const { Title, Paragraph, Text } = Typography;
 
-// 4个挡位配置 - 修改为粉色系渐变
+// 主题颜色和渐变定义 - 与Intro.js保持一致
+const themeColor = '#a88f6a';
+const secondaryColor = '#352a46';  // 深紫色
+const highlightColor = '#e3bb4d';  // 亮黄色
+const themeGradient = 'linear-gradient(135deg, #a88f6a 0%, #917752 100%)';
+const secondaryGradient = 'linear-gradient(135deg, #352a46 0%, #261e36 100%)';
+const bgColor = '#1c2134';
+const textColor = '#e6d6bc';
+
+// 4个挡位配置 - 修改为主题风格渐变
 const levels = [
   {
     label: '幽灵',
     trigger: '观测站幽灵+密码',
     exponent: 2,
     comment: '一倍',
-    color: 'linear-gradient(135deg, #FFB6C1 0%, #FF69B4 100%)',
+    color: themeGradient, // 酒馆基础色 - 棕色系
   },
   {
     label: '强袭',
     trigger: '观测站强袭+密码',
     exponent: 3,
     comment: '十倍',
-    color: 'linear-gradient(135deg, #FF69B4 0%, #FF1493 100%)',
+    color: secondaryGradient, // 酒馆次要色 - 深紫色系
   },
   {
     label: '泰坦',
     trigger: '观测站泰坦+密码',
     exponent: 4,
     comment: '百倍',
-    color: 'linear-gradient(135deg, #FF1493 0%, #C71585 100%)',
+    color: `linear-gradient(135deg, ${highlightColor} 0%, #d5a520 100%)`, // 酒馆高亮色 - 金色系
   },
   {
     label: '全境',
     trigger: '观测站全境+密码',
     exponent: 5,
     comment: 'ALL IN',
-    color: 'linear-gradient(135deg, #C71585 0%, #8B008B 100%)',
+    color: 'linear-gradient(135deg, #614092 0%, #3b1d63 100%)', // 神秘感 - 深紫色系
   },
 ];
 
@@ -131,6 +140,17 @@ function getCountdownTime() {
   return { minutes, seconds };
 }
 
+// 为每个档位添加装饰性图标
+function getLevelIcon(idx) {
+  switch(idx) {
+    case 0: return '👻'; // 幽灵
+    case 1: return '⚡'; // 强袭
+    case 2: return '🔱'; // 泰坦
+    case 3: return '🌌'; // 全境
+    default: return '✨';
+  }
+}
+
 function Observatory({ isLoggedIn, isAdmin }) {
   const { isMobile } = useDeviceDetect();
   
@@ -173,16 +193,56 @@ function Observatory({ isLoggedIn, isAdmin }) {
   return (
     <div 
       style={{ 
-        padding: isMobile ? '12px 8px' : '20px',
+        padding: isMobile ? '16px 8px' : '24px',
         maxWidth: '1200px',
         margin: '0 auto',
-        background: 'rgba(255, 245, 250, 0.8)',
+        background: 'rgba(28, 33, 52, 0.95)',
         borderRadius: '12px',
-        boxShadow: '0 4px 15px rgba(220, 110, 170, 0.1)',
+        boxShadow: '0 10px 25px rgba(0, 0, 0, 0.4)',
         backdropFilter: 'blur(10px)',
-        border: '1px solid rgba(255, 192, 203, 0.2)'
+        border: `1px solid rgba(168, 143, 106, 0.3)`,
+        position: 'relative',
+        overflowX: 'hidden'
       }}
     >
+      {/* 装饰性背景元素 */}
+      <div style={{
+        position: 'absolute',
+        width: '200px',
+        height: '200px',
+        borderRadius: '50%',
+        background: `radial-gradient(circle, rgba(168, 143, 106, 0.15) 0%, rgba(168, 143, 106, 0) 70%)`,
+        top: '10%',
+        right: isMobile ? '0' : '-50px',
+        zIndex: -1,
+        pointerEvents: 'none',
+        overflow: 'hidden'
+      }} />
+      
+      <div style={{
+        position: 'absolute',
+        width: '150px',
+        height: '150px',
+        borderRadius: '50%',
+        background: `radial-gradient(circle, rgba(227, 187, 77, 0.1) 0%, rgba(227, 187, 77, 0) 70%)`,
+        bottom: '10%',
+        left: isMobile ? '0' : '-30px',
+        zIndex: -1,
+        pointerEvents: 'none',
+        overflow: 'hidden'
+      }} />
+
+      {/* 顶部渐变装饰条 */}
+      <div style={{
+        height: '6px',
+        background: themeGradient,
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        borderRadius: '12px 12px 0 0'
+      }} />
+      
       <div style={{ 
         display: 'flex', 
         justifyContent: 'center', 
@@ -191,17 +251,19 @@ function Observatory({ isLoggedIn, isAdmin }) {
       }}>
         <Title level={isMobile ? 3 : 2} style={{ 
           margin: 0, 
-          background: 'linear-gradient(45deg, #FF69B4, #FFB6C1)',
+          background: themeGradient,
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
           fontWeight: 700,
         }}>
+          <CoffeeOutlined style={{ marginRight: '8px' }} />
           观测站
+          <CoffeeOutlined style={{ marginLeft: '8px' }} />
         </Title>
         <Tooltip title="刷新密码">
           <Button 
             type="text"
-            icon={<SyncOutlined spin={isRefreshing} style={{ color: '#FF69B4' }} />} 
+            icon={<SyncOutlined spin={isRefreshing} style={{ color: highlightColor }} />} 
             onClick={handleRefresh}
             style={{ marginLeft: 10 }}
           />
@@ -212,11 +274,11 @@ function Observatory({ isLoggedIn, isAdmin }) {
         textAlign: 'center', 
         marginBottom: isMobile ? 16 : 24,
         padding: '8px',
-        background: 'rgba(255, 230, 240, 0.6)',
+        background: 'rgba(53, 42, 70, 0.4)',
         borderRadius: '8px',
-        border: '1px solid rgba(255, 192, 203, 0.3)'
+        border: `1px solid rgba(168, 143, 106, 0.2)`
       }}>
-        <Text type="secondary" style={{ fontSize: isMobile ? '12px' : '14px', color: '#FF1493' }}>
+        <Text style={{ fontSize: isMobile ? '12px' : '14px', color: textColor }}>
           密码将在 {countdown.minutes}:{countdown.seconds.toString().padStart(2, '0')} 后更新
         </Text>
       </div>
@@ -240,13 +302,20 @@ function Observatory({ isLoggedIn, isAdmin }) {
           const disabledReason = getDisabledReason(idx, isLoggedIn, isAdmin);
 
           return (
-            <Col xs={12} sm={12} md={6} key={lvl.label}>
+            <Col xs={12} sm={12} md={6} key={lvl.label}
+              style={{
+                opacity: 1,
+                transform: 'translateY(0)',
+                transition: `all 0.5s ease ${idx * 0.1}s`,
+              }}
+            >
               <Card
                 title={
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    {!copyAllowed && <LockOutlined style={{ marginRight: 5 }} />}
-                    {copyAllowed && <UnlockOutlined style={{ marginRight: 5 }} />}
-                    <span>{lvl.label}</span>
+                    {!copyAllowed && <LockOutlined style={{ marginRight: 5, color: textColor }} />}
+                    {copyAllowed && <UnlockOutlined style={{ marginRight: 5, color: highlightColor }} />}
+                    <span style={{ marginRight: '5px' }}>{lvl.label}</span>
+                    <span style={{ fontSize: '16px' }}>{getLevelIcon(idx)}</span>
                   </div>
                 }
                 bordered={false}
@@ -254,11 +323,11 @@ function Observatory({ isLoggedIn, isAdmin }) {
                 style={{ 
                   textAlign: 'center', 
                   height: '100%',
-                  backgroundImage: 'linear-gradient(to bottom, rgba(255, 245, 250, 0.95), rgba(255, 240, 245, 0.85))',
+                  background: 'rgba(28, 33, 52, 0.7)',
                   borderRadius: '12px',
                   overflow: 'hidden',
-                  boxShadow: '0 4px 12px rgba(220, 110, 170, 0.08)',
-                  border: '1px solid rgba(255, 192, 203, 0.2)',
+                  boxShadow: '0 8px 20px rgba(0, 0, 0, 0.3)',
+                  border: `1px solid rgba(168, 143, 106, 0.3)`,
                   transition: 'all 0.3s ease',
                 }}
                 styles={{
@@ -266,9 +335,9 @@ function Observatory({ isLoggedIn, isAdmin }) {
                     fontSize: isMobile ? '14px' : '16px',
                     padding: isMobile ? '8px' : '12px',
                     fontWeight: 'bold',
-                    borderBottom: '1px solid rgba(255, 192, 203, 0.3)',
+                    borderBottom: `1px solid rgba(168, 143, 106, 0.3)`,
                     backgroundImage: lvl.color,
-                    color: 'white',
+                    color: textColor,
                     textShadow: '0 1px 2px rgba(0, 0, 0, 0.2)',
                   },
                   body: {
@@ -276,34 +345,35 @@ function Observatory({ isLoggedIn, isAdmin }) {
                   }
                 }}
                 hoverable
+                className="observatory-card"
               >
                 <Paragraph style={{ 
                   fontSize: isMobile ? '12px' : '14px', 
                   marginBottom: isMobile ? 8 : 12,
-                  color: '#555'
+                  color: textColor
                 }}>
-                  挡位说明：<Text strong style={{ color: '#FF1493' }}>{lvl.comment}</Text>
+                  挡位说明：<Text strong style={{ color: highlightColor }}>{lvl.comment}</Text>
                 </Paragraph>
 
-                <Divider style={{ margin: isMobile ? '8px 0' : '12px 0', borderColor: 'rgba(255, 192, 203, 0.3)' }} />
+                <Divider style={{ margin: isMobile ? '8px 0' : '12px 0', borderColor: `rgba(168, 143, 106, 0.3)` }} />
 
                 {/* 触发关键词 + 复制按钮 */}
                 <div style={{ marginBottom: isMobile ? 10 : 16 }}>
                   <Paragraph style={{ 
                     marginBottom: isMobile ? 6 : 10,
                     fontSize: isMobile ? '12px' : '14px',
-                    color: '#666'
+                    color: textColor
                   }}>
                     触发关键词：
                     <Text strong style={{ 
-                      color: '#111',
+                      color: textColor,
                       display: 'block',
                       padding: '5px',
                       margin: '4px 0',
-                      background: 'rgba(255, 230, 240, 0.5)',
+                      background: 'rgba(53, 42, 70, 0.3)',
                       borderRadius: '4px',
                       wordBreak: 'break-all',
-                      border: '1px solid rgba(255, 192, 203, 0.2)'
+                      border: `1px solid rgba(168, 143, 106, 0.2)`
                     }}>
                       {finalTrigger}
                     </Text>
@@ -320,11 +390,12 @@ function Observatory({ isLoggedIn, isAdmin }) {
                       disabled={!copyAllowed}
                       type="primary"
                       style={{ 
-                        background: copyAllowed ? lvl.color : undefined,
+                        background: copyAllowed ? themeGradient : undefined,
                         borderColor: 'transparent',
                         width: '100%',
-                        boxShadow: copyAllowed ? '0 2px 6px rgba(255, 105, 180, 0.25)' : 'none',
+                        boxShadow: copyAllowed ? '0 4px 12px rgba(0, 0, 0, 0.3)' : 'none',
                       }}
+                      className="copy-button"
                     >
                       复制触发词
                     </Button>
@@ -336,16 +407,16 @@ function Observatory({ isLoggedIn, isAdmin }) {
                   fontSize: isMobile ? '28px' : '36px', 
                   fontWeight: 'bold', 
                   fontFamily: 'monospace',
-                  color: finalPwd === '****' ? '#C9C9C9' : '#FF1493',
+                  color: finalPwd === '****' ? 'rgba(230, 214, 188, 0.4)' : highlightColor,
                   padding: '10px 0',
                   letterSpacing: '2px',
-                  textShadow: finalPwd === '****' ? 'none' : '0 1px 0 rgba(255, 105, 180, 0.1)',
+                  textShadow: finalPwd === '****' ? 'none' : '0 2px 4px rgba(0, 0, 0, 0.3)',
                 }}>
                   {finalPwd}
                 </div>
                 <div style={{ 
                   fontSize: isMobile ? '10px' : '12px', 
-                  color: '#999', 
+                  color: 'rgba(230, 214, 188, 0.7)', 
                   marginTop: 4 
                 }}>
                   当前 4 位密码
@@ -360,16 +431,70 @@ function Observatory({ isLoggedIn, isAdmin }) {
       <div style={{
         textAlign: 'center',
         fontSize: isMobile ? '11px' : '13px',
-        color: '#888',
+        color: 'rgba(230, 214, 188, 0.7)',
         marginTop: isMobile ? 16 : 24,
         padding: '8px',
-        background: 'rgba(255, 230, 240, 0.3)',
+        background: 'rgba(53, 42, 70, 0.3)',
         borderRadius: '6px',
-        border: '1px solid rgba(255, 192, 203, 0.2)'
+        border: `1px solid rgba(168, 143, 106, 0.2)`
       }}>
-        <SyncOutlined spin={isRefreshing} style={{ marginRight: 5, color: '#FF69B4' }} />
+        <SyncOutlined spin={isRefreshing} style={{ marginRight: 5, color: highlightColor }} />
         密码自动更新 (上次更新: {currentTime.toLocaleTimeString()})
       </div>
+
+      {/* 添加CSS动画 */}
+      <style jsx="true">{`
+        .observatory-card {
+          position: relative;
+          animation: slideDown 0.6s ease-out;
+        }
+        
+        .observatory-card::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(45deg, rgba(168, 143, 106, 0.1), rgba(227, 187, 77, 0.1));
+          opacity: 0;
+          transition: opacity 0.3s ease;
+          pointer-events: none;
+          border-radius: 12px;
+        }
+        
+        .observatory-card:hover::after {
+          opacity: 1;
+        }
+        
+        .copy-button:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4) !important;
+        }
+        
+        @keyframes slideDown {
+          from {
+            opacity: 0;
+            transform: translateY(-20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        @keyframes float {
+          0% {
+            transform: translateY(0px);
+          }
+          50% {
+            transform: translateY(-6px);
+          }
+          100% {
+            transform: translateY(0px);
+          }
+        }
+      `}</style>
     </div>
   );
 }
