@@ -1,12 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Dropdown, Menu, Modal, Form, Input, message, Avatar, Typography, Divider, Button, Space } from 'antd';
-import { UserOutlined, LogoutOutlined, LoginOutlined, UserAddOutlined } from '@ant-design/icons';
+import { UserOutlined, LogoutOutlined, LoginOutlined, UserAddOutlined, CoffeeOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import MD5 from 'crypto-js/md5';
 import { useDeviceDetect } from '../utils/deviceDetector';
 
 const { Text } = Typography;
+
+// 主题颜色和渐变定义 - 与Intro.js保持一致
+const themeColor = '#a88f6a';
+const secondaryColor = '#352a46';  // 深紫色
+const highlightColor = '#e3bb4d';  // 亮黄色
+const themeGradient = 'linear-gradient(135deg, #a88f6a 0%, #917752 100%)';
+const secondaryGradient = 'linear-gradient(135deg, #352a46 0%, #261e36 100%)';
+const bgColor = '#1c2134';
+const textColor = '#e6d6bc';
+const borderColor = 'rgba(168, 143, 106, 0.3)';
 
 function AdminAuth() {
   const navigate = useNavigate();
@@ -53,7 +63,13 @@ function AdminAuth() {
       });
   
       if (res.status === 200) {
-        message.success('登录成功');
+        message.success({
+          content: '登录成功',
+          style: { 
+            borderRadius: '10px',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)' 
+          }
+        });
         setIsAdmin(res.data.is_admin);
         setUsername(res.data.username || '用户');
         setShowLoginModal(false);
@@ -72,7 +88,13 @@ function AdminAuth() {
         }
       }
     } catch (err) {
-      message.error(err.response?.data?.message || '登录失败');
+      message.error({
+        content: err.response?.data?.message || '登录失败',
+        style: { 
+          borderRadius: '10px',
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)' 
+        }
+      });
     }
   };
   
@@ -87,7 +109,13 @@ function AdminAuth() {
       
       setIsAdmin(false);
       setUsername(null);
-      message.success('已登出');
+      message.success({
+        content: '已登出',
+        style: { 
+          borderRadius: '10px',
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)' 
+        }
+      });
       
       // 如果当前在管理员棉花糖页面，重定向到普通棉花糖页面
       if (currentPath === '/admin/cotton-candy') {
@@ -97,7 +125,13 @@ function AdminAuth() {
         navigate('/intro');
       }
     } catch (err) {
-      message.error('登出失败');
+      message.error({
+        content: '登出失败',
+        style: { 
+          borderRadius: '10px',
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)' 
+        }
+      });
     }
   };
 
@@ -121,11 +155,23 @@ function AdminAuth() {
       });
   
       if (res.status === 201) {
-        message.success('注册成功，请登录');
+        message.success({
+          content: '注册成功，请登录',
+          style: { 
+            borderRadius: '10px',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)' 
+          }
+        });
         setShowRegisterModal(false);
       }
     } catch (err) {
-      message.error(err.response?.data?.message || '注册失败');
+      message.error({
+        content: err.response?.data?.message || '注册失败',
+        style: { 
+          borderRadius: '10px',
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)' 
+        }
+      });
     }
   };
 
@@ -136,16 +182,21 @@ function AdminAuth() {
       return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Avatar icon={<UserOutlined />} />
-            <Text strong>{username}</Text>
-            {isAdmin && <Text type="success">(管理员)</Text>}
+            <Avatar icon={<UserOutlined />} style={{ backgroundColor: secondaryColor }} />
+            <Text strong style={{ color: textColor }}>{username}</Text>
+            {isAdmin && <Text style={{ color: highlightColor }}>(管理员)</Text>}
           </div>
           
           <Space>
             {isAdmin && (
               <Button 
                 size="small" 
-                type="primary"
+                style={{
+                  background: secondaryGradient,
+                  borderColor: 'transparent',
+                  color: textColor,
+                  borderRadius: '6px'
+                }}
                 onClick={() => navigate('/admin/users')}
               >
                 用户管理
@@ -157,6 +208,12 @@ function AdminAuth() {
               danger 
               icon={<LogoutOutlined />}
               onClick={handleLogout}
+              style={{
+                background: 'rgba(53, 42, 70, 0.5)',
+                borderColor: 'rgba(255, 77, 79, 0.5)',
+                color: '#ff4d4f',
+                borderRadius: '6px'
+              }}
             >
               退出
             </Button>
@@ -173,6 +230,11 @@ function AdminAuth() {
           type="primary" 
           icon={<LoginOutlined />}
           onClick={() => setShowLoginModal(true)}
+          style={{
+            background: themeGradient,
+            borderColor: 'transparent',
+            borderRadius: '6px'
+          }}
         >
           登录
         </Button>
@@ -181,6 +243,12 @@ function AdminAuth() {
           block 
           icon={<UserAddOutlined />}
           onClick={openRegisterModal}
+          style={{
+            background: 'rgba(53, 42, 70, 0.5)',
+            borderColor: borderColor,
+            color: textColor,
+            borderRadius: '6px'
+          }}
         >
           注册
         </Button>
@@ -198,8 +266,8 @@ function AdminAuth() {
           label: (
             <div style={{ padding: '4px 0' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Avatar icon={<UserOutlined />} style={{ flexShrink: 0 }} />
-                <Text strong style={{ fontSize: '15px', margin: 0 }}>{username}</Text>
+                <Avatar icon={<UserOutlined />} style={{ flexShrink: 0, backgroundColor: secondaryColor }} />
+                <Text strong style={{ fontSize: '15px', margin: 0, color: textColor }}>{username}</Text>
               </div>
             </div>
           ),
@@ -207,7 +275,7 @@ function AdminAuth() {
         },
         {
           type: 'divider',
-          style: { margin: '4px 0' }
+          style: { margin: '4px 0', borderColor: borderColor }
         }
       ];
       
@@ -220,11 +288,11 @@ function AdminAuth() {
                 width: '8px', 
                 height: '8px', 
                 borderRadius: '50%', 
-                backgroundColor: '#52c41a', 
+                backgroundColor: highlightColor, 
                 marginRight: '8px',
                 flexShrink: 0
               }}></div>
-              <Text style={{ color: '#52c41a', margin: 0 }}>管理员</Text>
+              <Text style={{ color: highlightColor, margin: 0 }}>管理员</Text>
             </div>
           ),
           disabled: true,
@@ -235,7 +303,7 @@ function AdminAuth() {
           label: (
             <div style={{ padding: '4px 0' }}>
               <Link to="/admin/users" style={{ 
-                color: 'var(--accent-color)', 
+                color: themeColor, 
                 display: 'block', 
                 whiteSpace: 'nowrap',
                 fontSize: '14px'
@@ -246,7 +314,7 @@ function AdminAuth() {
         
         items.push({
           type: 'divider',
-          style: { margin: '4px 0' }
+          style: { margin: '4px 0', borderColor: borderColor }
         });
       }
       
@@ -275,6 +343,9 @@ function AdminAuth() {
             style: { 
               width: '140px', // 设置固定宽度
               padding: '8px 4px',
+              background: bgColor,
+              boxShadow: '0 6px 16px rgba(0, 0, 0, 0.4)',
+              border: `1px solid ${borderColor}`
             } 
           }}
           placement="bottomRight"
@@ -290,17 +361,17 @@ function AdminAuth() {
             transition: 'background 0.3s',
           }} 
           className="user-dropdown-trigger"
-          onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'}
+          onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(168, 143, 106, 0.2)'}
           onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
           >
-            <Avatar size="small" icon={<UserOutlined />} style={{ flexShrink: 0 }} />
-            <span style={{ color: '#fff', fontSize: '14px' }}>{username}</span>
+            <Avatar size="small" icon={<UserOutlined />} style={{ flexShrink: 0, backgroundColor: secondaryColor }} />
+            <span style={{ color: textColor, fontSize: '14px' }}>{username}</span>
             {isAdmin && (
               <div style={{ 
                 width: '6px', 
                 height: '6px', 
                 borderRadius: '50%', 
-                backgroundColor: '#52c41a', 
+                backgroundColor: highlightColor, 
                 marginLeft: '-4px',
                 marginTop: '-10px',
                 flexShrink: 0
@@ -313,10 +384,10 @@ function AdminAuth() {
     
     // 未登录状态
     return (
-      <div style={{ color: '#fff' }}>
+      <div style={{ color: textColor }}>
         <a 
           style={{ 
-            color: '#fff',
+            color: textColor,
             transition: 'opacity 0.3s'
           }} 
           onClick={() => setShowLoginModal(true)}
@@ -326,10 +397,10 @@ function AdminAuth() {
         >
           登录
         </a>
-        <Divider type="vertical" style={{ backgroundColor: '#fff' }} />
+        <Divider type="vertical" style={{ backgroundColor: borderColor }} />
         <a 
           style={{ 
-            color: '#fff',
+            color: textColor,
             transition: 'opacity 0.3s'
           }} 
           onClick={openRegisterModal}
@@ -350,13 +421,53 @@ function AdminAuth() {
 
       {/* 登录对话框 */}
       <Modal
-        title="登录"
+        title={
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <CoffeeOutlined style={{ color: highlightColor, marginRight: '10px' }} />
+            <span style={{ color: textColor }}>登录</span>
+          </div>
+        }
         open={showLoginModal}
         onCancel={() => setShowLoginModal(false)}
         onOk={handleLoginSubmit}
         okText="登录"
         cancelText="取消"
         maskClosable={false}
+        styles={{
+          header: { 
+            borderBottom: `1px solid ${borderColor}`,
+            padding: '16px 24px',
+            background: bgColor
+          },
+          body: { 
+            padding: '24px',
+            background: bgColor 
+          },
+          footer: { 
+            borderTop: `1px solid ${borderColor}`,
+            background: bgColor 
+          },
+          mask: { backdropFilter: 'blur(5px)' },
+          content: { 
+            background: bgColor, 
+            borderRadius: '12px',
+            boxShadow: '0 10px 25px rgba(0, 0, 0, 0.4)',
+            border: `1px solid ${borderColor}`
+          }
+        }}
+        okButtonProps={{
+          style: {
+            background: themeGradient,
+            borderColor: 'transparent'
+          }
+        }}
+        cancelButtonProps={{
+          style: {
+            background: 'rgba(53, 42, 70, 0.5)',
+            borderColor: borderColor,
+            color: textColor
+          }
+        }}
       >
         <Form
           form={loginForm}
@@ -364,62 +475,131 @@ function AdminAuth() {
         >
           <Form.Item
             name="username"
-            label="用户名"
+            label={<label style={{ color: textColor }}>用户名</label>}
             rules={[{ required: true, message: '请输入用户名' }]}
           >
-            <Input prefix={<UserOutlined />} placeholder="请输入用户名" />
+            <Input 
+              prefix={<UserOutlined style={{ color: highlightColor }} />} 
+              placeholder="请输入用户名" 
+              style={{ 
+                backgroundColor: 'rgba(53, 42, 70, 0.3)', 
+                borderColor: borderColor,
+                color: textColor
+              }}
+            />
           </Form.Item>
 
           <Form.Item
             name="password"
-            label="密码"
+            label={<label style={{ color: textColor }}>密码</label>}
             rules={[{ required: true, message: '请输入密码' }]}
           >
-            <Input.Password placeholder="请输入密码" />
+            <Input.Password 
+              placeholder="请输入密码" 
+              style={{ 
+                backgroundColor: 'rgba(53, 42, 70, 0.3)', 
+                borderColor: borderColor,
+                color: textColor
+              }}
+            />
           </Form.Item>
         </Form>
       </Modal>
 
       {/* 注册对话框 */}
       <Modal
-        title="注册"
+        title={
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <UserAddOutlined style={{ color: highlightColor, marginRight: '10px' }} />
+            <span style={{ color: textColor }}>注册</span>
+          </div>
+        }
         open={showRegisterModal}
         onOk={handleRegister}
         onCancel={() => setShowRegisterModal(false)}
         okText="注册"
         cancelText="取消"
         maskClosable={false}
+        styles={{
+          header: { 
+            borderBottom: `1px solid ${borderColor}`,
+            padding: '16px 24px',
+            background: bgColor
+          },
+          body: { 
+            padding: '24px',
+            background: bgColor 
+          },
+          footer: { 
+            borderTop: `1px solid ${borderColor}`,
+            background: bgColor 
+          },
+          mask: { backdropFilter: 'blur(5px)' },
+          content: { 
+            background: bgColor, 
+            borderRadius: '12px',
+            boxShadow: '0 10px 25px rgba(0, 0, 0, 0.4)',
+            border: `1px solid ${borderColor}`
+          }
+        }}
+        okButtonProps={{
+          style: {
+            background: themeGradient,
+            borderColor: 'transparent'
+          }
+        }}
+        cancelButtonProps={{
+          style: {
+            background: 'rgba(53, 42, 70, 0.5)',
+            borderColor: borderColor,
+            color: textColor
+          }
+        }}
       >
-        <Typography.Text type="secondary" style={{ display: 'block', marginBottom: 16 }}>
+        <Typography.Text style={{ display: 'block', marginBottom: 16, color: 'rgba(230, 214, 188, 0.7)' }}>
           您的密码将使用哈希加密存储，维护者也无法查看密码。
         </Typography.Text>
         <Form form={registerForm} layout="vertical">
           <Form.Item
             name="username"
-            label="用户名"
+            label={<label style={{ color: textColor }}>用户名</label>}
             rules={[
               { required: true, message: '请输入用户名' },
               { min: 3, message: '用户名至少3个字符' },
               { max: 20, message: '用户名最多20个字符' },
             ]}
           >
-            <Input placeholder="请输入用户名" />
+            <Input 
+              placeholder="请输入用户名" 
+              style={{ 
+                backgroundColor: 'rgba(53, 42, 70, 0.3)', 
+                borderColor: borderColor,
+                color: textColor
+              }}
+            />
           </Form.Item>
 
           <Form.Item
             name="password"
-            label="密码"
+            label={<label style={{ color: textColor }}>密码</label>}
             rules={[
               { required: true, message: '请输入密码' },
               { min: 6, message: '密码至少6个字符' },
             ]}
           >
-            <Input.Password placeholder="请输入密码" />
+            <Input.Password 
+              placeholder="请输入密码" 
+              style={{ 
+                backgroundColor: 'rgba(53, 42, 70, 0.3)', 
+                borderColor: borderColor,
+                color: textColor
+              }}
+            />
           </Form.Item>
 
           <Form.Item
             name="confirm"
-            label="确认密码"
+            label={<label style={{ color: textColor }}>确认密码</label>}
             dependencies={['password']}
             rules={[
               { required: true, message: '请确认密码' },
@@ -433,17 +613,60 @@ function AdminAuth() {
               }),
             ]}
           >
-            <Input.Password placeholder="请再次输入密码" />
+            <Input.Password 
+              placeholder="请再次输入密码" 
+              style={{ 
+                backgroundColor: 'rgba(53, 42, 70, 0.3)', 
+                borderColor: borderColor,
+                color: textColor
+              }}
+            />
           </Form.Item>
           
           <Form.Item
             name="bilibili_uid"
-            label="B站UID（选填）"
+            label={<label style={{ color: textColor }}>B站UID（选填）</label>}
           >
-            <Input placeholder="请输入你的B站UID" />
+            <Input 
+              placeholder="请输入你的B站UID" 
+              style={{ 
+                backgroundColor: 'rgba(53, 42, 70, 0.3)', 
+                borderColor: borderColor,
+                color: textColor
+              }}
+            />
           </Form.Item>
         </Form>
       </Modal>
+
+      {/* 全局CSS样式 */}
+      <style jsx="true">{`
+        .ant-dropdown-menu {
+          background: ${bgColor} !important;
+        }
+        
+        .ant-dropdown-menu-item:hover {
+          background: rgba(168, 143, 106, 0.2) !important;
+        }
+        
+        .ant-divider {
+          background-color: ${borderColor} !important;
+        }
+        
+        .ant-form-item-explain-error {
+          color: #ff4d4f !important;
+        }
+        
+        .ant-input-affix-wrapper-focused,
+        .ant-input-affix-wrapper:focus,
+        .ant-input-affix-wrapper:hover,
+        .ant-input:focus,
+        .ant-input:hover,
+        .ant-input-password:hover {
+          border-color: ${highlightColor} !important;
+          box-shadow: 0 0 0 2px rgba(227, 187, 77, 0.2) !important;
+        }
+      `}</style>
     </>
   );
 }

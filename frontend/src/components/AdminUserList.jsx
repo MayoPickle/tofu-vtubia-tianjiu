@@ -2,15 +2,20 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Table, Button, message, Space, Typography, Card, List, Avatar, Tag, Tooltip, Badge } from 'antd';
-import { UserOutlined, KeyOutlined, CrownOutlined, ReloadOutlined, TeamOutlined, StarOutlined, UserSwitchOutlined } from '@ant-design/icons';
+import { UserOutlined, KeyOutlined, CrownOutlined, ReloadOutlined, TeamOutlined, StarOutlined, UserSwitchOutlined, CoffeeOutlined } from '@ant-design/icons';
 import { useDeviceDetect } from '../utils/deviceDetector';
 
 const { Title, Text } = Typography;
 
-// 主题颜色和渐变定义
-const themeColor = '#FF85A2';
-const themeGradient = 'linear-gradient(135deg, #FFB6C1 0%, #FF69B4 100%)';
-const lightPink = 'rgba(255, 192, 203, 0.3)';
+// 主题颜色和渐变定义 - 与Intro.js保持一致
+const themeColor = '#a88f6a';
+const secondaryColor = '#352a46';  // 深紫色
+const highlightColor = '#e3bb4d';  // 亮黄色
+const themeGradient = 'linear-gradient(135deg, #a88f6a 0%, #917752 100%)';
+const secondaryGradient = 'linear-gradient(135deg, #352a46 0%, #261e36 100%)';
+const bgColor = '#1c2134';
+const textColor = '#e6d6bc';
+const borderColor = 'rgba(168, 143, 106, 0.3)';
 
 function AdminUserList() {
   const [users, setUsers] = useState([]);
@@ -41,10 +46,10 @@ function AdminUserList() {
       await axios.post(`/api/users/${userId}/reset_password`); 
       message.success({
         content: `用户 ${username} 密码已重置为 'xiaotu123'`,
-        icon: <KeyOutlined style={{ color: themeColor }} />,
+        icon: <KeyOutlined style={{ color: highlightColor }} />,
         style: { 
           borderRadius: '10px',
-          boxShadow: '0 4px 12px rgba(255, 133, 162, 0.2)' 
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)' 
         }
       });
     } catch (err) {
@@ -60,10 +65,10 @@ function AdminUserList() {
       const res = await axios.post(`/api/users/${userId}/toggle_admin`);
       message.success({
         content: `${username} ${isCurrentlyAdmin ? '已取消管理员权限' : '已设为管理员'}`,
-        icon: <CrownOutlined style={{ color: isCurrentlyAdmin ? '#888' : '#FFD700' }} />,
+        icon: <CrownOutlined style={{ color: isCurrentlyAdmin ? '#888' : highlightColor }} />,
         style: { 
           borderRadius: '10px',
-          boxShadow: '0 4px 12px rgba(255, 133, 162, 0.2)' 
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)' 
         }
       });
       setUsers((prev) => prev.map(u => {
@@ -87,8 +92,8 @@ function AdminUserList() {
   // 随机颜色生成器，为用户头像选择不同的柔和颜色
   const getAvatarColor = (userId) => {
     const colors = [
-      '#FFB6C1', '#FFD1DC', '#FFC0CB', '#FF85A2', 
-      '#FF69B4', '#FFA6C9', '#FFB3DE', '#FF99CC'
+      themeColor, secondaryColor, highlightColor, '#614092', 
+      '#917752', '#48385f', '#d5a520', '#4a3072'
     ];
     return colors[userId % colors.length];
   };
@@ -96,17 +101,17 @@ function AdminUserList() {
   // 渲染用户标签 (管理员状态)
   const renderAdminTag = (isAdmin) => (
     isAdmin ? (
-      <Tag color="#FF69B4" style={{ 
+      <Tag color={highlightColor} style={{ 
         borderRadius: '12px', 
         display: 'inline-flex', 
         alignItems: 'center', 
         fontWeight: 'bold',
-        boxShadow: '0 2px 4px rgba(255, 105, 180, 0.2)'
+        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.3)'
       }}>
         <CrownOutlined style={{ marginRight: '4px' }} />管理员
       </Tag>
     ) : (
-      <Tag color="#D3D3D3" style={{ 
+      <Tag color={secondaryColor} style={{ 
         borderRadius: '12px',
         display: 'inline-flex', 
         alignItems: 'center'
@@ -123,7 +128,7 @@ function AdminUserList() {
       key: 'id', 
       width: 60,
       render: (id) => (
-        <Text strong style={{ color: '#888' }}>#{id}</Text>
+        <Text strong style={{ color: textColor }}>{id}</Text>
       )
     },
     { 
@@ -135,13 +140,13 @@ function AdminUserList() {
           <Avatar 
             style={{ 
               backgroundColor: getAvatarColor(record.id),
-              boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+              boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
             }} 
             icon={<UserOutlined />}
           />
           <Space direction="vertical" size={0}>
-            <Text strong>{username}</Text>
-            <Text type="secondary" style={{ fontSize: '12px' }}>
+            <Text strong style={{ color: textColor }}>{username}</Text>
+            <Text style={{ fontSize: '12px', color: 'rgba(230, 214, 188, 0.7)' }}>
               B站UID: {record.bilibili_uid || '未绑定'}
             </Text>
           </Space>
@@ -170,11 +175,11 @@ function AdminUserList() {
               style={{
                 borderRadius: '8px',
                 transition: 'all 0.3s',
-                background: 'white',
-                border: `1px solid ${lightPink}`,
-                color: '#666'
+                background: 'rgba(53, 42, 70, 0.5)',
+                border: `1px solid ${borderColor}`,
+                color: textColor
               }}
-              className="hover-button"
+              className="action-button"
             >
               重置密码
             </Button>
@@ -187,16 +192,16 @@ function AdminUserList() {
                 borderRadius: '8px',
                 transition: 'all 0.3s',
                 ...(isAdmin ? {
-                  background: 'white',
-                  border: `1px solid ${lightPink}`,
-                  color: '#666'
+                  background: 'rgba(53, 42, 70, 0.5)',
+                  border: `1px solid ${borderColor}`,
+                  color: textColor
                 } : {
                   background: themeGradient,
                   border: 'none',
-                  boxShadow: '0 4px 12px rgba(255, 133, 162, 0.3)'
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)'
                 })
               }}
-              className="hover-button"
+              className="action-button"
             >
               {isAdmin ? '取消管理员' : '设为管理员'}
             </Button>
@@ -218,13 +223,14 @@ function AdminUserList() {
           style={{ 
             marginBottom: '12px',
             borderRadius: '12px',
-            boxShadow: '0 4px 8px rgba(255, 133, 162, 0.15)',
-            border: `1px solid ${lightPink}`,
+            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.3)',
+            border: `1px solid ${borderColor}`,
             overflow: 'hidden',
             opacity: fadeIn ? 1 : 0,
             transform: fadeIn ? 'translateY(0)' : 'translateY(10px)',
             transition: 'all 0.3s ease',
             transitionDelay: `${user.id % 10 * 50}ms`,
+            background: 'rgba(28, 33, 52, 0.8)',
           }}
           className="user-card"
         >
@@ -234,24 +240,24 @@ function AdminUserList() {
                 size="large" 
                 style={{ 
                   backgroundColor: getAvatarColor(user.id),
-                  boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
                 }} 
                 icon={<UserOutlined />} 
               />
             }
             title={
               <Space>
-                <Text strong style={{ fontSize: '16px' }}>{user.username}</Text>
+                <Text strong style={{ fontSize: '16px', color: textColor }}>{user.username}</Text>
                 {renderAdminTag(user.is_admin)}
               </Space>
             }
             description={
               <Space direction="vertical" size={2} style={{ marginTop: '4px' }}>
-                <Text type="secondary" style={{ fontSize: '13px' }}>
-                  <span style={{ color: '#888' }}>ID:</span> {user.id}
+                <Text style={{ fontSize: '13px', color: 'rgba(230, 214, 188, 0.7)' }}>
+                  <span style={{ color: 'rgba(230, 214, 188, 0.9)' }}>ID:</span> {user.id}
                 </Text>
-                <Text type="secondary" style={{ fontSize: '13px' }}>
-                  <span style={{ color: '#888' }}>B站UID:</span> {user.bilibili_uid || '未绑定'}
+                <Text style={{ fontSize: '13px', color: 'rgba(230, 214, 188, 0.7)' }}>
+                  <span style={{ color: 'rgba(230, 214, 188, 0.9)' }}>B站UID:</span> {user.bilibili_uid || '未绑定'}
                 </Text>
               </Space>
             }
@@ -260,7 +266,7 @@ function AdminUserList() {
             display: 'flex', 
             justifyContent: 'space-around', 
             marginTop: '12px',
-            borderTop: `1px dashed ${lightPink}`,
+            borderTop: `1px dashed ${borderColor}`,
             paddingTop: '12px'
           }}>
             <Button 
@@ -271,12 +277,12 @@ function AdminUserList() {
                 flex: 1,
                 marginRight: '8px',
                 borderRadius: '8px',
-                background: 'white',
-                border: `1px solid ${lightPink}`,
-                color: '#666',
+                background: 'rgba(53, 42, 70, 0.5)',
+                border: `1px solid ${borderColor}`,
+                color: textColor,
                 transition: 'all 0.3s',
               }}
-              className="hover-button"
+              className="action-button"
             >
               重置密码
             </Button>
@@ -290,16 +296,16 @@ function AdminUserList() {
                 borderRadius: '8px',
                 transition: 'all 0.3s',
                 ...(user.is_admin ? {
-                  background: 'white',
-                  border: `1px solid ${lightPink}`,
-                  color: '#666'
+                  background: 'rgba(53, 42, 70, 0.5)',
+                  border: `1px solid ${borderColor}`,
+                  color: textColor
                 } : {
                   background: themeGradient,
                   border: 'none',
-                  boxShadow: '0 4px 8px rgba(255, 133, 162, 0.3)'
+                  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.3)'
                 })
               }}
-              className="hover-button"
+              className="action-button"
             >
               {user.is_admin ? '取消管理员' : '设为管理员'}
             </Button>
@@ -319,13 +325,15 @@ function AdminUserList() {
       {/* 装饰性背景元素 */}
       <div style={{
         position: 'absolute',
-        width: '180px',
-        height: '180px',
+        width: '200px',
+        height: '200px',
         borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(255,192,203,0.1) 0%, rgba(255,192,203,0) 70%)',
+        background: `radial-gradient(circle, rgba(168, 143, 106, 0.15) 0%, rgba(168, 143, 106, 0) 70%)`,
         top: isMobile ? '5%' : '10%',
         right: '-50px',
         zIndex: -1,
+        pointerEvents: 'none',
+        overflow: 'hidden'
       }} />
       
       <div style={{
@@ -333,10 +341,12 @@ function AdminUserList() {
         width: '150px',
         height: '150px',
         borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(255,105,180,0.08) 0%, rgba(255,105,180,0) 70%)',
+        background: `radial-gradient(circle, rgba(227, 187, 77, 0.1) 0%, rgba(227, 187, 77, 0) 70%)`,
         bottom: isMobile ? '5%' : '10%',
         left: '-30px',
         zIndex: -1,
+        pointerEvents: 'none',
+        overflow: 'hidden'
       }} />
       
       {/* 标题区域 */}
@@ -346,7 +356,7 @@ function AdminUserList() {
         marginBottom: isMobile ? '16px' : '24px',
       }}>
         <div style={{ 
-          background: 'rgba(255, 133, 162, 0.1)', 
+          background: 'rgba(53, 42, 70, 0.4)', 
           borderRadius: '50%', 
           width: isMobile ? '40px' : '48px', 
           height: isMobile ? '40px' : '48px', 
@@ -354,10 +364,10 @@ function AdminUserList() {
           alignItems: 'center', 
           justifyContent: 'center',
           marginRight: '16px',
-          boxShadow: '0 4px 10px rgba(255, 133, 162, 0.15)'
+          boxShadow: '0 4px 10px rgba(0, 0, 0, 0.3)'
         }}>
-          <TeamOutlined style={{ 
-            color: themeColor, 
+          <CoffeeOutlined style={{ 
+            color: highlightColor, 
             fontSize: isMobile ? '20px' : '24px' 
           }} />
         </div>
@@ -375,8 +385,8 @@ function AdminUserList() {
           >
             用户管理
           </Title>
-          <Text style={{ color: '#888', fontSize: isMobile ? '13px' : '14px' }}>
-            总用户数: <Badge count={users.length} style={{ backgroundColor: themeColor }} />
+          <Text style={{ color: textColor, fontSize: isMobile ? '13px' : '14px' }}>
+            总用户数: <Badge count={users.length} style={{ backgroundColor: highlightColor }} />
           </Text>
         </div>
         
@@ -394,8 +404,9 @@ function AdminUserList() {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              border: `1px solid ${lightPink}`,
-              color: themeColor,
+              border: `1px solid ${borderColor}`,
+              color: highlightColor,
+              background: 'rgba(53, 42, 70, 0.4)',
               transition: 'all 0.3s ease',
             }}
             className="refresh-button"
@@ -408,21 +419,22 @@ function AdminUserList() {
         bordered={false}
         style={{
           borderRadius: '16px',
-          boxShadow: '0 8px 20px rgba(255, 133, 162, 0.15)',
-          border: `1px solid ${lightPink}`,
+          boxShadow: '0 10px 25px rgba(0, 0, 0, 0.4)',
+          border: `1px solid ${borderColor}`,
           overflow: 'hidden',
           opacity: fadeIn ? 1 : 0,
           transform: fadeIn ? 'translateY(0)' : 'translateY(20px)',
           transition: 'all 0.5s ease',
+          background: 'rgba(28, 33, 52, 0.95)',
+          animation: 'slideDown 0.6s ease-out',
         }}
         bodyStyle={{ 
-          padding: isMobile ? '12px 8px' : '16px',
-          background: 'rgba(255, 255, 255, 0.9)',
+          padding: isMobile ? '12px 8px' : '16px'
         }}
       >
         {/* 顶部渐变装饰条 */}
         <div style={{
-          height: '4px',
+          height: '6px',
           background: themeGradient,
           position: 'absolute',
           top: 0,
@@ -454,17 +466,18 @@ function AdminUserList() {
       <style jsx="true">{`
         .user-card:hover {
           transform: translateY(-3px);
-          box-shadow: 0 6px 16px rgba(255, 133, 162, 0.25);
+          box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
         }
         
-        .hover-button:hover {
+        .action-button:hover {
           transform: translateY(-2px);
-          box-shadow: 0 4px 8px rgba(255, 133, 162, 0.2);
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+          background: rgba(53, 42, 70, 0.8) !important;
         }
         
         .refresh-button:hover {
           transform: rotate(180deg);
-          background-color: #FFF0F5;
+          background: rgba(53, 42, 70, 0.7);
         }
         
         .table-row {
@@ -472,7 +485,7 @@ function AdminUserList() {
         }
         
         .table-row:hover {
-          background-color: rgba(255, 240, 245, 0.5) !important;
+          background-color: rgba(53, 42, 70, 0.4) !important;
         }
         
         .fade-in {
@@ -490,25 +503,65 @@ function AdminUserList() {
           }
         }
         
+        @keyframes slideDown {
+          from {
+            opacity: 0;
+            transform: translateY(-20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
         /* 美化表格样式 */
+        .ant-table {
+          background: transparent !important;
+          color: ${textColor} !important;
+        }
+        
         .ant-table-thead > tr > th {
-          background: rgba(255, 240, 245, 0.5);
-          color: #888;
+          background: rgba(53, 42, 70, 0.5) !important;
+          color: ${textColor} !important;
           font-weight: bold;
-          border-bottom: 1px solid ${lightPink};
+          border-bottom: 1px solid ${borderColor} !important;
         }
         
         .ant-table-tbody > tr > td {
-          border-bottom: 1px solid ${lightPink};
+          border-bottom: 1px solid ${borderColor} !important;
+          color: ${textColor} !important;
+          background: transparent !important;
+        }
+        
+        .ant-table-tbody > tr.ant-table-row:hover > td {
+          background: rgba(53, 42, 70, 0.4) !important;
         }
         
         /* 表格分页器样式 */
         .ant-pagination-item-active {
-          border-color: ${themeColor};
+          border-color: ${highlightColor} !important;
+          background: rgba(168, 143, 106, 0.2) !important;
         }
         
         .ant-pagination-item-active a {
-          color: ${themeColor};
+          color: ${highlightColor} !important;
+        }
+        
+        .ant-pagination-item a {
+          color: ${textColor} !important;
+        }
+        
+        .ant-pagination-prev button, 
+        .ant-pagination-next button,
+        .ant-pagination-jump-prev button,
+        .ant-pagination-jump-next button {
+          color: ${textColor} !important;
+          background: rgba(53, 42, 70, 0.3) !important;
+          border-color: ${borderColor} !important;
+        }
+        
+        .ant-empty-description {
+          color: ${textColor} !important;
         }
       `}</style>
     </div>
