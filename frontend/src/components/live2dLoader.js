@@ -22,11 +22,11 @@ export function loadLive2DScripts() {
       .then(() => loadScript('/assets/live2d/live2d.min.js'))
       // 加载L2Dwidget
       .then(() => loadScript('https://cdn.jsdelivr.net/npm/live2d-widget@3.1.4/lib/L2Dwidget.min.js'))
-      // 加载Cubism 4运行时
+      // 加载Cubism核心库
       .then(() => loadScript('https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js'))
-      // 加载Cubism 4支持
+      // 加载Cubism 4支持（包含Cubism 3支持）
       .then(() => loadScript('https://cdn.jsdelivr.net/npm/pixi-live2d-display@0.3.1/dist/cubism4.min.js'))
-      // 加载主索引文件 - 需要在Cubism 2和Cubism 4都加载完毕后加载
+      // 加载主索引文件
       .then(() => loadScript('https://cdn.jsdelivr.net/npm/pixi-live2d-display@0.3.1/dist/index.min.js'))
       .then(() => {
         console.log('所有 Live2D 相关库加载完成');
@@ -51,7 +51,7 @@ export function loadLive2DScripts() {
     // 检测是否为移动设备
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
   
-    // 根据设备类型设置画布大小
+    // 根据设备类型设置画布大小 - 回到原始高度
     const containerWidth = container.clientWidth;
     const containerHeight = container.clientHeight;
     
@@ -91,17 +91,19 @@ export function loadLive2DScripts() {
     const modelContainer = new PIXI.Container();
     app.stage.addChild(modelContainer);
   
-    // 根据设备选择不同复杂度的模型
-    const modelPath = 'model/JKRabbit/JKRabbit.model3.json';
+    // 使用英文路径加载模型，避免中文路径问题
+    const modelPath = '/model/deluxe-cat/deluxe-cat.model3.json';
     console.log('开始加载 Live2D 模型:', modelPath);
 
-    // 性能优化：添加模型加载选项
+    // 简化模型加载选项
     const modelOptions = {
-      autoInteract: true, // 启用自动交互
-      autoUpdate: true, // 启用自动更新
-      motionPreload: true // 启用预加载所有动作
+      autoInteract: true,
+      autoUpdate: true,
+      motionPreload: true,
+      expressionDefault: "web_idle" // 设置默认表情为web_idle
     };
   
+    // 使用标准方式加载Cubism3模型
     PIXI.live2d.Live2DModel.from(modelPath, modelOptions)
       .then(model => {
         console.log('Live2D 模型加载成功');
@@ -110,6 +112,30 @@ export function loadLive2DScripts() {
         
         // 恢复交互功能，无论是什么设备都启用
         setupModelInteraction(model);
+
+        // 尝试应用web_idle表情
+        try {
+          if (model.internalModel.settings.expressions && 
+              model.internalModel.settings.expressions.length > 0) {
+            console.log('可用表情列表:', model.internalModel.settings.expressions.map(e => e.name));
+            
+            // 查找web_idle表情
+            const webIdleExpression = model.internalModel.settings.expressions.find(
+              e => e.name === 'web_idle'
+            );
+            
+            if (webIdleExpression) {
+              console.log('应用web_idle表情');
+              model.expression(webIdleExpression.name);
+            } else {
+              console.log('未找到web_idle表情');
+            }
+          } else {
+            console.log('模型没有表情设置');
+          }
+        } catch (e) {
+          console.error('应用表情时出错:', e);
+        }
 
         // 保存模型到window对象以便后续清理
         window.live2dModel = model;
@@ -147,6 +173,26 @@ export function loadLive2DScripts() {
         // 页面不可见时暂停渲染
         document.addEventListener('visibilitychange', handleVisibilityChange);
         window.live2dVisibilityHandler = handleVisibilityChange;
+        
+        // 等待一些资源完全加载后，再次尝试应用表情
+        setTimeout(() => {
+          try {
+            // 尝试使用另一种方式触发表情
+            if (model.expression) {
+              console.log('延迟触发表情...');
+              model.expression('web_idle');
+            }
+            
+            // 触发默认的待机动作
+            if (model.motion) {
+              console.log('触发默认待机动作...');
+              // 对于Cubism 3模型，尝试触发"Idle"组中的随机动作
+              model.motion('Idle');
+            }
+          } catch (e) {
+            console.error('延迟触发表情/动作时出错:', e);
+          }
+        }, 1000);
       })
       .catch(error => {
         console.error('Live2D 模型加载失败:', error);
@@ -236,19 +282,19 @@ export function loadLive2DScripts() {
   function adjustModelPosition(model, containerWidth, containerHeight, isMobile) {
     if (!model) return;
 
-    // 计算合适的缩放比例 - 进一步缩小模型以提高性能
+    // 缩小模型以确保完全显示
     const scale = isMobile 
-      ? Math.min(containerWidth / model.width, containerHeight / model.height) * 0.5  // 移动端进一步缩小到0.5倍
-      : Math.min(containerWidth / model.width, containerHeight / model.height) * 0.8; // 桌面端缩小到0.8倍
+      ? Math.min(containerWidth / model.width, containerHeight / model.height) * 0.5  // 移动端保守缩放
+      : Math.min(containerWidth / model.width, containerHeight / model.height) * 0.9; // 桌面端适当缩小
     
     model.scale.set(scale);
 
-    // 设置模型锚点为底部中心
-    model.anchor.set(0.5, 1);
+    // 改变锚点到中心
+    model.anchor.set(0.5, 0.5);
     
-    // 调整模型位置 - 向右上方移动
-    model.x = containerWidth * 0.7; // 向右移动到容器70%的位置
-    model.y = containerHeight * 0.9; // 向上移动10%
+    // 将模型放在容器中心
+    model.x = containerWidth * 0.7;  // 水平居中
+    model.y = containerHeight * 0.5; // 垂直居中
   }
 
   function setupModelInteraction(model) {
