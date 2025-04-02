@@ -1,5 +1,6 @@
 backend/songs.db
-backend/__pycache__/database.cpython-312.pyc
+backend/__pycache__
+backend/uploads
 # 💡 忽略 Node.js 依赖包
 node_modules/
 npm-debug.log
@@ -56,6 +57,3 @@ dump.pm2
 
 # 💡 忽略 Docker 相关文件（如果使用 Docker）
 docker-compose.override.yml
-
-# 💡 忽略 model 目录及所有内容
-model/
