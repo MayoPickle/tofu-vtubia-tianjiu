@@ -1,0 +1,28 @@
+{
+	"Version": 3,
+	"FileReferences": {
+		"Moc": "JK Rabbit.moc3",
+		"Textures": [
+			"JK Rabbit.4096/texture_00.png",
+			"JK Rabbit.4096/texture_01.png",
+			"JK Rabbit.4096/texture_02.png"
+		],
+		"Physics": "JK Rabbit.physics3.json",
+		"DisplayInfo": "JK Rabbit.cdi3.json"
+	},
+	"Groups": [
+		{
+			"Target": "Parameter",
+			"Name": "EyeBlink",
+			"Ids": [
+				"ParamEyeLOpen",
+				"ParamEyeROpen"
+			]
+		},
+		{
+			"Target": "Parameter",
+			"Name": "LipSync",
+			"Ids": []
+		}
+	]
+}
