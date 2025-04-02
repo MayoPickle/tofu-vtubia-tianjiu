@@ -200,4 +200,210 @@ python -m http.server
 
 <div align="center">
   <p>💖 感谢使用VUP乌托邦 | 为虚拟主播打造的理想家园 💖</p>
+</div>
+
+---
+
+# VUP Utopia - English Version
+
+<div align="center">
+  <img src="frontend/public/assets/logo.png" alt="VUP Utopia Logo" width="200" />
+  <p>🎮 VTuber Interaction Platform | 🎵 Music Playlist Management | 🎁 Fan Engagement System</p>
+</div>
+
+## 📖 Project Overview
+
+VUP Utopia is an interactive platform designed specifically for Virtual YouTubers (VTubers), integrating music playlist management, fan engagement, and Live2D model display features. This project aims to provide VTubers with an all-in-one streaming assistant tool to enhance viewer interaction and improve the streaming experience. The platform consists of a React frontend application, Flask backend API, and Live2D model display components, offering VTubers and their fans a highly interactive and visually rich communication space.
+
+## ✨ Key Features
+
+### 🎬 VTuber Features
+- 🐰 **Live2D Model Integration**: Responsive interactive Live2D model display with eye tracking and head rotation
+- 🎙️ **Stream Information Management**: Manage streaming schedules, announcements, and special events
+- 👑 **Membership Management System**: Track and manage premium membership information
+- 📊 **Data Analytics**: Provide basic analytics for streaming data and audience engagement
+
+### 🎵 Music Features
+- 📋 **Playlist Management**: Browse, add, edit, and delete song requests
+- 🏷️ **Tag Classification System**: Categorize songs by style, mood, and other attributes
+- 🔍 **Advanced Search**: Multi-condition search functionality
+- 🔄 **Song Status Tracking**: Display song playback status and queue position
+
+### 👥 User Interaction System
+- 👤 **User Account System**: Registration, login, and permission management
+- 🎁 **Raffle System**: Interactive raffle functionality to enhance stream participation
+- 💬 **Q&A Message Board**: Fans can submit questions for VTubers to answer
+- 📱 **Cross-Platform Support**: Compatible with PC and mobile devices for engagement anywhere
+
+### 🌟 Special Highlights
+- 🧩 **Modular Design**: Freely combine different functional modules according to needs
+- 🌸 **Cherry Blossom Effects**: Beautiful visual effects to enhance the streaming atmosphere
+- 🔒 **Security Management**: Admin backend for content review and user management
+- 🌐 **Multi-Platform Integration**: Support for basic data connection with platforms like Bilibili, YouTube, etc.
+
+## 🛠️ Technology Stack
+
+### Frontend
+- **React.js** - User interface construction
+- **Ant Design** - UI component library for beautiful interface elements
+- **React Router** - Page routing management
+- **Axios** - API request handling
+- **Pixi.js & Live2D** - Model rendering technology
+
+### Backend
+- **Flask (Python)** - Lightweight backend framework
+- **SQLite/PostgreSQL** - Data storage
+- **Flask-CORS** - Cross-origin resource sharing
+- **psycopg2** - PostgreSQL database connection
+- **Werkzeug** - General web application toolkit
+
+## 🗂️ Project Structure
+
+```
+vup-utopia/
+├── frontend/               # React frontend application
+│   ├── src/                # Source code
+│   │   ├── components/     # Component library
+│   │   ├── pages/          # Pages
+│   │   └── utils/          # Utilities
+│   ├── public/             # Static resources
+│   │   └── assets/         # Images, models, etc.
+│   └── package.json        # Dependency configuration
+│
+├── backend/                # Flask backend API
+│   ├── app.py              # Main application file
+│   ├── database.py         # Database operations
+│   ├── config.py           # Configuration file
+│   ├── routes/             # API routes
+│   └── requirements.txt    # Python dependencies
+│
+└── live2d-demo/            # Live2D model demo
+    ├── index.html          # Demo page
+    ├── live2d.js           # Live2D core script
+    └── model/              # Model files
+```
+
+## 🚀 Installation and Deployment
+
+### Docker Quick Deployment (Recommended)
+
+```bash
+# Start all services with Docker Compose
+docker-compose up -d
+
+# Check service status
+docker-compose ps
+```
+
+For more information on Docker deployment, please refer to `DOCKER_GUIDE.md`.
+
+### Manual Deployment
+
+#### Frontend
+
+```bash
+# Enter the frontend directory
+cd frontend
+
+# Install dependencies
+npm install
+
+# Run in development mode
+npm start
+
+# Build production version
+npm run build
+```
+
+#### Backend
+
+```bash
+# Enter the backend directory
+cd backend
+
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate  # Linux/Mac
+venv\Scripts\activate     # Windows
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Configure environment variables
+cp .env.example .env
+# Edit .env file to set necessary environment variables
+
+# Run the application
+python app.py
+```
+
+#### Live2D Demo
+
+```bash
+# Enter the Live2D demo directory
+cd live2d-demo
+
+# Run using a simple HTTP server
+python -m http.server
+```
+
+## 📱 User Guide
+
+1. Start the backend server
+2. Start the frontend development server or deploy the build version
+3. Access the application (default: http://localhost:3000)
+4. Register an account and log in
+5. Use features based on your role (VTuber/Viewer):
+   - **VTuber**: Manage playlists, respond to messages, set up raffles
+   - **Viewer**: Request songs, participate in interactions, send messages
+
+## 🧑‍💻 Developer Guide
+
+### Project Extension
+
+- **Frontend Development**: Modify React components in the `frontend/src` directory
+- **Backend API Development**: Add new API endpoints in `backend/app.py` or `backend/routes/`
+- **Live2D Model Customization**:
+  - Replace model files in the `live2d-demo/model/` directory
+  - Adjust model loading and interaction parameters in `frontend/src/components/live2dLoader.js`
+
+### Performance Optimization
+
+- Live2D models have been performance optimized, including:
+  - Reduced rendering resolution on mobile devices
+  - Throttle functions to reduce interaction event processing frequency
+  - Pause rendering when page is not visible
+  - IntersectionObserver to monitor model visibility
+
+## 📄 License
+
+This project is licensed under the MIT License. See the LICENSE file for details.
+
+## 🤝 Contribution Guidelines
+
+Issues and feature requests are welcome. If you want to contribute code, please follow these steps:
+
+1. Fork the project
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Create a Pull Request
+
+## 🔗 Related Links
+
+- [Project Demo](https://vup-utopia.example.com)
+- [Development Documentation](https://docs.vup-utopia.example.com)
+- [Issue Reporting](https://github.com/yourusername/vup-utopia/issues)
+
+## 📞 Contact Information
+
+For questions or suggestions, please contact us through:
+
+- **GitHub Issues**: [Submit an issue](https://github.com/yourusername/vup-utopia/issues)
+- **Email**: contact@vup-utopia.example.com
+
+---
+
+<div align="center">
+  <p>💖 Thank you for using VUP Utopia | The ideal home for VTubers 💖</p>
 </div> 
