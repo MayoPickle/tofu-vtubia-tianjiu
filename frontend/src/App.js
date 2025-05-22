@@ -356,7 +356,7 @@ function App() {
           left: 0
         }}>
           © 2025 豆腐观测站 <HeartOutlined style={{ margin: '0 4px' }} /> <br />
-          <span style={{ fontSize: '12px', opacity: '0.9' }}>支援邮箱: support@xiaotudd.com</span>
+          <span style={{ fontSize: '12px', opacity: '0.9' }}>支援邮箱: support@yudoufu.org</span>
         </Footer>
         
         <Live2DModel />
@@ -505,7 +505,7 @@ function App() {
         borderTop: '1px solid rgba(168, 143, 106, 0.2)'
       }}>
         © 2025 豆腐观测站 <HeartOutlined style={{ margin: '0 4px' }} /> <br />
-        <span style={{ fontSize: '12px', opacity: '0.9' }}>支援邮箱: support@xiaotudd.com</span>
+        <span style={{ fontSize: '12px', opacity: '0.9' }}>支support@yudoufu.org</span>
       </Footer>
       
       <Live2DModel />
