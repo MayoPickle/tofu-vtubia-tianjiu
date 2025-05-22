@@ -89,18 +89,10 @@ function Intro() {
   // 设置故事章节
   const storyChapters = [
     {
-      title: "1️⃣ 9672星球的起源",
+      title: "1️⃣ 甜梦宇宙的奇幻起源",
       icon: <RocketOutlined />,
       content: (
         <>
-          <Paragraph style={{ fontSize: isMobile ? '15px' : '16px', lineHeight: '1.8', color: '#555' }}>
-            在宇宙的无垠深处，漂浮着一颗神秘的星球——9672。这颗星球上没有自然生命，只有一座座高耸入云的科技塔，每座塔中都居住着仿生人。它们被制造出来，是为了执行特定任务，冷静、精准、完美，却没有情感。
-          </Paragraph>
-          
-          <Paragraph style={{ fontSize: isMobile ? '15px' : '16px', lineHeight: '1.8', color: '#555', marginTop: '16px' }}>
-            但9672星球上流传着一个古老的传说：
-          </Paragraph>
-          
           <div style={{ 
             padding: '12px 16px', 
             background: 'rgba(53, 42, 70, 0.3)', 
@@ -114,12 +106,16 @@ function Intro() {
               fontWeight: '500',
               color: textColor
             }}>
-              💫 "当某个仿生体被100个人同时爱着，它将获得真正的灵魂。"
+              🔔 "叮咚！叮咚！hi！猫猫酱~"
             </Text>
           </div>
           
           <Paragraph style={{ fontSize: isMobile ? '15px' : '16px', lineHeight: '1.8', color: '#555' }}>
-            这个传说被科学家们视为毫无依据的神话，但有一天，中央计算塔生成了一份特殊的实验任务——
+            欢迎光临「甜梦宇宙」平行世界~✨ 我是晚风甜酒！叫我甜酒、酒汁、甜老板都阔以~
+          </Paragraph>
+          
+          <Paragraph style={{ fontSize: isMobile ? '15px' : '16px', lineHeight: '1.8', color: '#555', marginTop: '16px' }}>
+            甜酒酱在这里开了一家专属于甜梦猫的小酒馆~今天是你加入小酒馆的第N天~没错，你变成了甜梦猫~🐱
           </Paragraph>
           
           <div style={{ 
@@ -130,27 +126,23 @@ function Intro() {
             margin: '16px 0'
           }}>
             <Text style={{ fontSize: isMobile ? '15px' : '16px', color: highlightColor }}>
-              🔹 「编号X-兔-9672号仿生体（小兔），被选为实验个体，前往地球，收集100份'爱'。」
+              🐱 甜梦猫是小酒馆守护者嗷~每只猫尾储存着不同年代的梦境原浆
             </Text>
           </div>
           
           <Paragraph style={{ fontSize: isMobile ? '15px' : '16px', lineHeight: '1.8', color: '#555' }}>
-            他们制造了一只仿生兔，赋予它学习、沟通和适应的能力，放入一艘流星形的探测舱，将它送往银河彼端的蓝色星球——地球。
+            猫猫们可通过「醉意值」解锁跨次元互动剧情，用梦境能量酿造治愈系酒饮"甜梦酒"🍾
           </Paragraph>
         </>
       )
     },
     {
-      title: "2️⃣ 降落地球 · 面包铺的奇迹",
-      icon: <HomeOutlined />,
+      title: "2️⃣ 甜梦酒的神奇魔力",
+      icon: <CoffeeOutlined />,
       content: (
         <>
           <Paragraph style={{ fontSize: isMobile ? '15px' : '16px', lineHeight: '1.8', color: '#555' }}>
-            小兔降落在地球上的一个小镇，她的第一印象是——温暖。街道上的人们交谈着，孩子们追逐着泡泡，空气里弥漫着烘焙的香气。
-          </Paragraph>
-          
-          <Paragraph style={{ fontSize: isMobile ? '15px' : '16px', lineHeight: '1.8', color: '#555', marginTop: '16px' }}>
-            但小兔很快发现，人类不会轻易接受陌生的存在。她试着和他们交谈，但人们只是好奇地看她一眼，便匆匆离去。
+            存下一瓶甜梦酒，酿酒用孤独者的眼泪、恋人的心跳声、旅人的星光记忆，酿出了第一瓶甜梦酒。
           </Paragraph>
           
           <div style={{ 
@@ -166,20 +158,12 @@ function Intro() {
               color: textColor,
               fontWeight: '500'
             }}>
-              💭 "如果没人爱我，我该怎么完成任务呢？"
+              ✨ "饮下它的人，能短暂窥见内心最深处的渴望，但代价是失去当晚的梦境（对你不美好的故事会消失）......"
             </Text>
           </div>
           
           <Paragraph style={{ fontSize: isMobile ? '15px' : '16px', lineHeight: '1.8', color: '#555' }}>
-            就在她迷茫时，她闻到了世界上最美好的气味——新鲜出炉的面包香。
-          </Paragraph>
-          
-          <Paragraph style={{ fontSize: isMobile ? '15px' : '16px', lineHeight: '1.8', color: '#555' }}>
-            一间老旧的面包店里，温暖的烤箱正烘烤着松软的面包，面包师爷爷笑着递给她一块："你看起来像是第一次来到这里，吃点东西吧。"
-          </Paragraph>
-          
-          <Paragraph style={{ fontSize: isMobile ? '15px' : '16px', lineHeight: '1.8', color: '#555' }}>
-            小兔接过面包的那一刻，心里第一次感受到了一丝温暖。
+            每天夜晚/凌晨会开门营业一直陪伴到天亮~甜老板会轻声提醒：
           </Paragraph>
           
           <div style={{ 
@@ -194,13 +178,350 @@ function Intro() {
               color: highlightColor,
               fontWeight: '500'
             }}>
-              💡 "也许……我可以用面包来收集爱？"
+              🌙 "饮下甜梦酒的人，将用一夜梦境交换一次直视内心的勇气。"
             </Text>
           </div>
           
           <Paragraph style={{ fontSize: isMobile ? '15px' : '16px', lineHeight: '1.8', color: '#555' }}>
-            于是，她开始学习烘焙，开设了一间属于自己的温暖面包铺，期待着每一个走进店里的客人，都能带走一块面包，同时留下一点点爱。
+            每当小猫们来店打卡，甜梦酒醉意值就会更加香醇~醉意值满格的瞬间，焦糖的尾巴扫过我的掌心——原来童年弄丢的纸飞机，一直藏在妈妈的枕头里。
           </Paragraph>
+        </>
+      )
+    },
+    {
+      title: "3️⃣ 小酒馆的精彩节目",
+      icon: <SmileOutlined />,
+      content: (
+        <>
+          <Paragraph style={{ fontSize: isMobile ? '15px' : '16px', lineHeight: '1.8', color: '#555', marginBottom: '20px' }}>
+            甜梦酒是旅途中的能量源泉，每一瓶甜梦酒都能为大家提供特殊的能力。在旅途中，猫猫们会遇到各种奇妙的生物和挑战。
+          </Paragraph>
+          
+          <div style={{ 
+            padding: '16px', 
+            background: 'rgba(53, 42, 70, 0.3)', 
+            borderRadius: '8px',
+            border: `1px solid ${themeColor}44`,
+            margin: '16px 0'
+          }}>
+            <Text style={{ 
+              fontSize: isMobile ? '16px' : '17px', 
+              fontWeight: 'bold',
+              color: highlightColor,
+              display: 'block',
+              marginBottom: '12px'
+            }}>
+              【小酒馆每日固定节目】
+            </Text>
+            <Text style={{ fontSize: isMobile ? '15px' : '16px', color: textColor }}>
+              🎀独属于小猫的甜酒唱片机<br/>
+              点歌歌单：甜酒の歌单 - 哔哩哔哩
+            </Text>
+          </div>
+          
+          <div style={{ 
+            padding: '16px', 
+            background: 'rgba(168, 143, 106, 0.1)', 
+            borderRadius: '8px',
+            border: '1px dashed rgba(168, 143, 106, 0.3)',
+            margin: '16px 0'
+          }}>
+            <Text style={{ 
+              fontSize: isMobile ? '16px' : '17px', 
+              fontWeight: 'bold',
+              color: highlightColor,
+              display: 'block',
+              marginBottom: '12px'
+            }}>
+              【小酒馆周末限定节目】
+            </Text>
+            <Text style={{ fontSize: isMobile ? '15px' : '16px', color: textColor }}>
+              🎀深夜海龟汤/深夜灵异故事<br/>
+              🎀游戏GAME："PICO PARK 2"、"超级鸡马"、"蜡笔小新"、"双影奇境"、"旅者之憩 Travellers Rest"......<br/>
+              🎀节日活动：新年活动/情人节/端午节/元宵/圣诞节/中秋节......
+            </Text>
+          </div>
+        </>
+      )
+    },
+    {
+      title: "4️⃣ 特色服务与互动",
+      icon: <StarOutlined />,
+      content: (
+        <>
+          <div style={{ 
+            padding: '16px', 
+            background: 'rgba(53, 42, 70, 0.3)', 
+            borderRadius: '8px',
+            border: `1px solid ${themeColor}44`,
+            margin: '16px 0'
+          }}>
+            <Text style={{ 
+              fontSize: isMobile ? '16px' : '17px', 
+              fontWeight: 'bold',
+              color: highlightColor,
+              display: 'block',
+              marginBottom: '12px'
+            }}>
+              🎀甜梦猫歌曲收集鉴赏
+            </Text>
+            <Text style={{ fontSize: isMobile ? '15px' : '16px', color: textColor }}>
+              收集到20只猫猫的歌曲即可开启<br/>
+              收集地址：3826984043@qq.com
+            </Text>
+          </div>
+          
+          <div style={{ 
+            padding: '16px', 
+            background: 'rgba(168, 143, 106, 0.1)', 
+            borderRadius: '8px',
+            border: '1px dashed rgba(168, 143, 106, 0.3)',
+            margin: '16px 0'
+          }}>
+            <Text style={{ 
+              fontSize: isMobile ? '16px' : '17px', 
+              fontWeight: 'bold',
+              color: highlightColor,
+              display: 'block',
+              marginBottom: '12px'
+            }}>
+              🎀时间酿酒胶囊
+            </Text>
+            <Text style={{ fontSize: isMobile ? '15px' : '16px', color: textColor }}>
+              【Dreamail】约定时间 一周年 开启<br/>
+              两周年/三周年.......共同开启时间胶囊，回顾过去，展望未来～<br/>
+              邀请甜梦猫写给甜酒的未来祝福，放入特制的时间酿酒胶囊中。
+            </Text>
+          </div>
+          
+          <div style={{ 
+            padding: '16px', 
+            background: 'rgba(53, 42, 70, 0.3)', 
+            borderRadius: '8px',
+            border: `1px solid ${themeColor}44`,
+            margin: '16px 0'
+          }}>
+            <Text style={{ 
+              fontSize: isMobile ? '16px' : '17px', 
+              fontWeight: 'bold',
+              color: highlightColor,
+              display: 'block',
+              marginBottom: '12px'
+            }}>
+              🎀树洞小酒馆
+            </Text>
+            <Text style={{ fontSize: isMobile ? '15px' : '16px', color: textColor, marginBottom: '12px', display: 'block' }}>
+              收集到20只猫猫的故事即可开启<br/>
+              "长夜漫漫，心事有时难言，这里有甜酒陪你，把心事放入树洞心事瓶，专属于你的心灵驿站～"
+            </Text>
+            <div style={{
+              background: 'rgba(168, 143, 106, 0.1)',
+              padding: '12px',
+              borderRadius: '6px',
+              border: '1px dashed rgba(168, 143, 106, 0.3)',
+            }}>
+              <Text style={{ fontSize: isMobile ? '14px' : '15px', color: textColor, display: 'block', marginBottom: '8px' }}>
+                【Dreamail】点击下面的链接即可发送D-Mail给晚风甜酒Lori哦:
+              </Text>
+              <a 
+                href="https://dreamail.cn/send?dm=8a5e047f-302d-459a-bfae-a46b509a08aa"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  color: highlightColor,
+                  textDecoration: 'none',
+                  fontSize: isMobile ? '14px' : '15px',
+                  wordBreak: 'break-all',
+                  display: 'inline-block',
+                  padding: '4px 8px',
+                  background: 'rgba(227, 187, 77, 0.1)',
+                  borderRadius: '4px',
+                  border: '1px solid rgba(227, 187, 77, 0.3)',
+                  transition: 'all 0.3s ease',
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.background = 'rgba(227, 187, 77, 0.2)';
+                  e.target.style.transform = 'translateY(-1px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.background = 'rgba(227, 187, 77, 0.1)';
+                  e.target.style.transform = 'translateY(0)';
+                }}
+              >
+                💭 发送悄悄话
+              </a>
+            </div>
+          </div>
+        </>
+      )
+    },
+    {
+      title: "5️⃣ 守护者福利与奖励",
+      icon: <CrownOutlined />,
+      content: (
+        <>
+          <div style={{ 
+            padding: '16px', 
+            background: 'rgba(168, 143, 106, 0.1)', 
+            borderRadius: '8px',
+            border: '1px dashed rgba(168, 143, 106, 0.3)',
+            margin: '16px 0'
+          }}>
+            <Text style={{ 
+              fontSize: isMobile ? '16px' : '17px', 
+              fontWeight: 'bold',
+              color: highlightColor,
+              display: 'block',
+              marginBottom: '12px'
+            }}>
+              【给甜梦猫的守护奖励】
+            </Text>
+            <Text style={{ fontSize: isMobile ? '14px' : '15px', color: textColor, lineHeight: '1.8' }}>
+              🍥每天营业投喂1000电池可抽心愿劵截图挑战*1：25种以上随机心愿卷<br/><br/>
+              🍥舰长：上舰心愿劵截图挑战*1：学歌劵/冠歌碎片/礼物劵/零食劵/录歌劵/电话劵/奶茶劵/上舰打折劵+绿泡泡群<br/><br/>
+              🍥提督：冠歌投稿*1+定制礼物卷*1<br/><br/>
+              🍥总督：定制小酒馆的节目*1+总督自定义心愿卷*1（甜老板同意的那种）是大股东嗷！！！
+            </Text>
+          </div>
+          
+          <div style={{ 
+            padding: '16px', 
+            background: 'rgba(53, 42, 70, 0.3)', 
+            borderRadius: '8px',
+            border: `1px solid ${themeColor}44`,
+            margin: '16px 0'
+          }}>
+            <Text style={{ 
+              fontSize: isMobile ? '16px' : '17px', 
+              fontWeight: 'bold',
+              color: highlightColor,
+              display: 'block',
+              marginBottom: '12px'
+            }}>
+              🍥冲舰奖励
+            </Text>
+            <Text style={{ fontSize: isMobile ? '14px' : '15px', color: textColor, lineHeight: '1.8' }}>
+              （30舰）小甜酒*10份 抽奖<br/>
+              （50舰）当天在舰礼物*1<br/>
+              （100舰）重装小酒馆，定制甜老板的新衣
+            </Text>
+          </div>
+        </>
+      )
+    },
+    {
+      title: "6️⃣ 晚风甜酒的悄悄话",
+      icon: <HeartOutlined />,
+      content: (
+        <>
+          <div style={{ 
+            padding: '16px', 
+            background: 'rgba(168, 143, 106, 0.1)', 
+            borderRadius: '8px',
+            border: '1px dashed rgba(168, 143, 106, 0.3)',
+            margin: '16px 0'
+          }}>
+            <Text style={{ 
+              fontSize: isMobile ? '16px' : '17px', 
+              fontWeight: 'bold',
+              color: highlightColor,
+              display: 'block',
+              marginBottom: '12px'
+            }}>
+              【营业通知】
+            </Text>
+            <Text style={{ fontSize: isMobile ? '15px' : '16px', color: textColor }}>
+              小企鹅：976217864<br/>
+              网某云：晚风甜酒
+            </Text>
+          </div>
+          
+          <Paragraph style={{ fontSize: isMobile ? '15px' : '16px', lineHeight: '1.8', color: '#555', marginTop: '16px' }}>
+            声音是有温度的，夜晚的声音会发光。我们的相识是从声音开始，透过麦克风穿过耳机，让你更靠近我。
+          </Paragraph>
+          
+          <div style={{ 
+            padding: '12px 16px', 
+            background: 'rgba(53, 42, 70, 0.3)', 
+            borderRadius: '8px',
+            borderLeft: `3px solid ${themeColor}`,
+            margin: '16px 0',
+            fontStyle: 'italic'
+          }}>
+            <Text style={{ 
+              fontSize: isMobile ? '16px' : '17px', 
+              color: textColor,
+              fontWeight: '500'
+            }}>
+              💕 "我喜欢这份小酒馆的故事，我愿意和你一起书写的很长很长，不知道看到这里的猫猫你愿不愿意吖？"
+            </Text>
+          </div>
+          
+          <Paragraph style={{ fontSize: isMobile ? '15px' : '16px', lineHeight: '1.8', color: '#555' }}>
+            双子座的我可能会有双重性格，每天的好状态取决于肚子有没有吃饱，有没有魔法期，有没有洗香香......
+          </Paragraph>
+          
+          <Paragraph style={{ fontSize: isMobile ? '15px' : '16px', lineHeight: '1.8', color: '#555' }}>
+            因为是倒时差营业，对甜酒的身体还是有影响的，猫咪们如果遇到我状态不好的时候，可以贴贴我嘛～
+          </Paragraph>
+          
+          <div style={{ 
+            padding: '16px', 
+            background: 'rgba(53, 42, 70, 0.3)', 
+            borderRadius: '8px',
+            border: `1px solid ${themeColor}44`,
+            margin: '16px 0'
+          }}>
+            <Text style={{ 
+              fontSize: isMobile ? '16px' : '17px', 
+              fontWeight: 'bold',
+              color: highlightColor,
+              display: 'block',
+              marginBottom: '12px'
+            }}>
+              📮 意见箱
+            </Text>
+            <Text style={{ fontSize: isMobile ? '15px' : '16px', color: textColor, marginBottom: '12px', display: 'block' }}>
+              要是甜酒有什么不对的地方，可以悄悄告诉我吗～
+            </Text>
+            <div style={{
+              background: 'rgba(168, 143, 106, 0.1)',
+              padding: '12px',
+              borderRadius: '6px',
+              border: '1px dashed rgba(168, 143, 106, 0.3)',
+            }}>
+              <Text style={{ fontSize: isMobile ? '14px' : '15px', color: textColor, display: 'block', marginBottom: '8px' }}>
+                【Dreamail】点击下面的链接即可发送D-Mail给晚风甜酒Lori哦:
+              </Text>
+              <a 
+                href="https://dreamail.cn/send?dm=d62f8683-474c-4bc1-9208-6ef6d7eccc16"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  color: highlightColor,
+                  textDecoration: 'none',
+                  fontSize: isMobile ? '14px' : '15px',
+                  wordBreak: 'break-all',
+                  display: 'inline-block',
+                  padding: '4px 8px',
+                  background: 'rgba(227, 187, 77, 0.1)',
+                  borderRadius: '4px',
+                  border: '1px solid rgba(227, 187, 77, 0.3)',
+                  transition: 'all 0.3s ease',
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.background = 'rgba(227, 187, 77, 0.2)';
+                  e.target.style.transform = 'translateY(-1px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.background = 'rgba(227, 187, 77, 0.1)';
+                  e.target.style.transform = 'translateY(0)';
+                }}
+              >
+                💌 发送意见邮件
+              </a>
+            </div>
+          </div>
         </>
       )
     }
@@ -385,9 +706,9 @@ function Intro() {
         
         {/* 完整故事展开区域 */}
         <div style={{ 
-          maxHeight: expandStory ? '2000px' : '0',
-          overflow: 'hidden',
-          transition: 'all 0.8s ease',
+          maxHeight: expandStory ? 'none' : '0',
+          overflow: expandStory ? 'visible' : 'hidden',
+          transition: expandStory ? 'all 0.8s ease, max-height 0s' : 'all 0.8s ease',
           opacity: expandStory ? 1 : 0,
           marginBottom: expandStory ? '20px' : '0',
         }}>
