@@ -1,329 +1,372 @@
 // LotteryResult.jsx
-import React, { useRef } from 'react';
-import { Empty, Card, Carousel, Button } from 'antd';
-import { TrophyOutlined, LeftOutlined, RightOutlined, GiftOutlined, HeartOutlined } from '@ant-design/icons';
+import React, { useState, useEffect } from 'react';
+import { Modal, Typography, Button, message, Space, Divider, Card } from 'antd';
+import { GiftOutlined, UserOutlined, TrophyOutlined, HeartOutlined, StarOutlined, CloseOutlined, SaveOutlined } from '@ant-design/icons';
+import { useDeviceDetect } from '../../utils/deviceDetector';
+import { LOTTERY_MODES } from './constants';
 
-// 主题颜色和渐变定义
-const themeColor = '#FF85A2';
-const themeGradient = 'linear-gradient(135deg, #FFB6C1 0%, #FF69B4 100%)';
+const { Title, Text } = Typography;
 
-function LotteryResult({ result, prizes = [] }) {
-  const hasResult = result && result.name;
-  // 使用useRef而不是useState来存储Carousel引用，避免无限渲染循环
-  const carouselRef = useRef(null);
+// 深夜小酒馆主题颜色
+const themeColor = '#a88f6a';
+const themeGradient = 'linear-gradient(135deg, #a88f6a 0%, #917752 100%)';
 
-  // 处理前一张/后一张
-  const handlePrev = () => carouselRef.current && carouselRef.current.prev();
-  const handleNext = () => carouselRef.current && carouselRef.current.next();
+function LotteryResultModal({ visible, result, onClose }) {
+  const { isMobile } = useDeviceDetect();
+  const [showAnimation, setShowAnimation] = useState(false);
 
-  return (
-    <div style={{ 
-      width: '100%', 
-      display: 'flex', 
-      flexDirection: 'column', 
-      alignItems: 'center', 
-      justifyContent: 'center',
-      textAlign: 'center',
-      position: 'relative'
-    }}>
-      {/* 装饰性背景元素 */}
-      <div style={{
-        position: 'absolute',
-        width: '120px',
-        height: '120px',
-        borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(255,192,203,0.1) 0%, rgba(255,192,203,0) 70%)',
-        top: '-20px',
-        right: '-20px',
-        zIndex: 0,
-      }} />
+  // 当弹窗显示时触发动画
+  useEffect(() => {
+    if (visible && result && result.name) {
+      setShowAnimation(true);
+      const timer = setTimeout(() => {
+        setShowAnimation(false);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [visible, result]);
 
-      <h3 style={{ 
-        fontSize: '20px', 
-        margin: '0 0 20px 0',
-        background: themeGradient,
-        WebkitBackgroundClip: 'text',
-        WebkitTextFillColor: 'transparent',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: '8px',
+  // 保存结果到历史记录
+  const saveToHistory = () => {
+    const history = JSON.parse(localStorage.getItem('lottery_history') || '[]');
+    const newRecord = {
+      ...result,
+      timestamp: new Date().toISOString(),
+      id: Date.now()
+    };
+    history.unshift(newRecord);
+    // 只保留最近50条记录
+    if (history.length > 50) {
+      history.splice(50);
+    }
+    localStorage.setItem('lottery_history', JSON.stringify(history));
+    message.success('结果已保存到历史记录');
+  };
+
+  // 没有结果时不显示弹窗
+  if (!result || !result.name) {
+    return null;
+  }
+
+  // 根据模式渲染不同的结果展示
+  const renderResult = () => {
+    const isGiftMemberMode = result.mode === LOTTERY_MODES.GIFT_MEMBER_MODE;
+    
+    return (
+      <div style={{ 
+        textAlign: 'center',
+        padding: isMobile ? '32px 24px' : '48px',
+        background: 'linear-gradient(135deg, rgba(198, 163, 115, 0.1) 0%, rgba(255, 105, 180, 0.1) 100%)',
+        borderRadius: '24px',
         position: 'relative',
-        zIndex: 1
+        overflow: 'hidden'
       }}>
-        {hasResult ? <TrophyOutlined /> : <GiftOutlined />}
-        {hasResult ? '中奖结果' : '奖品展示'}
-      </h3>
+        {/* 装饰性背景 */}
+        <div style={{
+          position: 'absolute',
+          width: '200px',
+          height: '200px',
+          borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(255,192,203,0.2) 0%, rgba(255,192,203,0) 70%)',
+          top: '-50px',
+          right: '-50px',
+          zIndex: 0,
+        }} />
+        
+        <div style={{
+          position: 'absolute',
+          width: '150px',
+          height: '150px',
+          borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(255,105,180,0.2) 0%, rgba(255,105,180,0) 70%)',
+          bottom: '-30px',
+          left: '-30px',
+          zIndex: 0,
+        }} />
 
-      {hasResult ? (
-        <Card 
-          style={{ 
-            width: '100%',
-            border: result.name === '未中奖' ? '1px solid rgba(0,0,0,0.1)' : '1px solid rgba(255, 133, 162, 0.3)',
-            background: result.name === '未中奖' ? 
-              'linear-gradient(135deg, #f5f5f5 0%, #fafafa 100%)' : 
-              'linear-gradient(135deg, rgba(255, 182, 193, 0.1) 0%, rgba(255, 105, 180, 0.1) 100%)',
-            borderRadius: '16px',
-            boxShadow: '0 8px 24px rgba(255, 133, 162, 0.15)',
-            backdropFilter: 'blur(10px)',
-            overflow: 'hidden',
-            transition: 'all 0.3s ease',
-            animation: 'slideIn 0.5s ease-out'
-          }}
-        >
-          <div style={{
-            position: 'relative',
-            padding: '20px'
+        <div style={{ position: 'relative', zIndex: 1 }}>
+          {/* 祝贺图标和标题 */}
+          <div style={{ 
+            marginBottom: '32px',
+            animation: showAnimation ? 'bounce 1s ease-in-out' : 'none'
           }}>
-            <h4 style={{ 
-              fontSize: '24px', 
-              color: result.name === '未中奖' ? '#999' : themeColor,
-              margin: '0 0 20px 0',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '8px'
+            <div style={{
+              fontSize: isMobile ? '48px' : '64px',
+              marginBottom: '16px',
+              animation: showAnimation ? 'spin 2s ease-in-out' : 'none'
             }}>
-              {result.name === '未中奖' ? '💔' : '🎉'} {result.name}
-            </h4>
+              🎉
+            </div>
             
-            {result.image ? (
+            {isGiftMemberMode ? (
+              <div>
+                <Title level={isMobile ? 2 : 1} style={{ 
+                  margin: '0 0 12px 0',
+                  background: themeGradient,
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  fontSize: isMobile ? '28px' : '36px',
+                  fontWeight: 'bold'
+                }}>
+                  🏆 恭喜中奖！
+                </Title>
+                <Text style={{ 
+                  color: '#e6d6bc', 
+                  fontSize: isMobile ? '16px' : '18px',
+                  display: 'block'
+                }}>
+                  幸运获奖者诞生了！
+                </Text>
+              </div>
+            ) : (
+              <div>
+                <Title level={isMobile ? 2 : 1} style={{ 
+                  margin: '0 0 12px 0',
+                  background: themeGradient,
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  fontSize: isMobile ? '28px' : '36px',
+                  fontWeight: 'bold'
+                }}>
+                  {result.name === '未中奖' ? '💔 很遗憾' : '🎁 恭喜中奖！'}
+                </Title>
+                <Text style={{ 
+                  color: '#e6d6bc', 
+                  fontSize: isMobile ? '16px' : '18px',
+                  display: 'block'
+                }}>
+                  {result.name === '未中奖' ? '这次没有中奖，下次再来' : '您抽中了精美奖品！'}
+                </Text>
+              </div>
+            )}
+          </div>
+
+          {/* 主要结果展示 */}
+          <div style={{ 
+            marginBottom: '32px',
+            transform: showAnimation ? 'scale(1.05)' : 'scale(1)',
+            transition: 'transform 0.8s ease',
+          }}>
+            {/* 头像/奖品图片 */}
+            {result.image && (
               <div style={{ 
-                display: 'flex', 
+                marginBottom: '24px',
+                display: 'flex',
                 justifyContent: 'center',
-                position: 'relative'
+                transform: showAnimation ? 'scale(1.1)' : 'scale(1)',
+                transition: 'transform 0.5s ease',
+                filter: showAnimation ? 'drop-shadow(0 0 30px rgba(168, 143, 106, 0.6))' : 'drop-shadow(0 8px 24px rgba(168, 143, 106, 0.3))'
               }}>
                 <img
                   src={result.image}
                   alt={result.name}
-                  style={{ 
-                    maxWidth: '100%', 
-                    maxHeight: '200px',
-                    borderRadius: '12px',
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-                    transition: 'transform 0.3s ease',
-                    '&:hover': {
-                      transform: 'scale(1.02)'
-                    }
+                  style={{
+                    width: isMobile ? '150px' : '200px',
+                    height: isMobile ? '150px' : '200px',
+                    objectFit: 'cover',
+                    borderRadius: isGiftMemberMode ? '50%' : '20px',
+                    border: `4px solid ${themeColor}`,
+                    background: '#2e3548',
+                    animation: showAnimation ? 'pulse 2s ease-in-out infinite' : 'none'
                   }}
                 />
               </div>
-            ) : (
-              <div style={{ 
-                color: '#999',
-                padding: '30px 0',
-                textAlign: 'center',
-                background: 'rgba(0,0,0,0.02)',
-                borderRadius: '8px'
+            )}
+
+            {/* 名称 */}
+            <Title level={isMobile ? 2 : 1} style={{ 
+              margin: '16px 0',
+              color: themeColor,
+              textAlign: 'center',
+              fontSize: isMobile ? '32px' : '42px',
+              fontWeight: 'bold',
+              textShadow: '2px 2px 4px rgba(168, 143, 106, 0.3)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '12px',
+              flexWrap: 'wrap'
+            }}>
+              {isGiftMemberMode ? <UserOutlined /> : <GiftOutlined />}
+              <span style={{ wordBreak: 'break-all' }}>{result.name}</span>
+            </Title>
+
+            {/* 礼物抽人模式：显示获得的礼品 */}
+            {isGiftMemberMode && result.gift && (
+              <div style={{
+                marginTop: '24px',
+                padding: '24px',
+                backgroundColor: 'rgba(46, 53, 72, 0.9)',
+                borderRadius: '20px',
+                border: '2px solid #a88f6a',
+                boxShadow: '0 8px 24px rgba(168, 143, 106, 0.2)',
+                maxWidth: '400px',
+                margin: '24px auto 0'
               }}>
-                暂无奖品图片
+                <div style={{ 
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '12px',
+                  marginBottom: '12px'
+                }}>
+                  <GiftOutlined style={{ fontSize: '24px', color: themeColor }} />
+                  <Text style={{ 
+                    fontSize: isMobile ? '18px' : '20px',
+                    fontWeight: 'bold',
+                    color: themeColor
+                  }}>
+                    获得礼品
+                  </Text>
+                </div>
+                
+                <div style={{ textAlign: 'center' }}>
+                  {result.gift.image && (
+                    <img
+                      src={result.gift.image}
+                      alt={result.gift.name}
+                      style={{
+                        width: '80px',
+                        height: '80px',
+                        objectFit: 'cover',
+                        borderRadius: '12px',
+                        marginBottom: '12px',
+                        border: '2px solid #a88f6a'
+                      }}
+                    />
+                  )}
+                  <div style={{ 
+                    fontSize: isMobile ? '20px' : '24px',
+                    fontWeight: 'bold',
+                    color: themeColor,
+                    marginBottom: '8px'
+                  }}>
+                    {result.gift.name} × {result.gift.quantity}
+                  </div>
+                  {result.gift.description && (
+                    <div style={{ 
+                      fontSize: '14px',
+                      color: '#e6d6bc',
+                      lineHeight: '1.4'
+                    }}>
+                      {result.gift.description}
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </div>
-        </Card>
-      ) : prizes && prizes.length > 0 ? (
-        <div style={{ width: '100%', position: 'relative' }}>
-          <Carousel 
-            ref={carouselRef}
-            dots={{ className: 'custom-dots' }}
-            autoplay
-            autoplaySpeed={3000}
-            effect="fade"
-          >
-            {prizes.map((prize, index) => (
-              <div key={index}>
-                <Card 
-                  style={{ 
-                    margin: '0 auto',
-                    maxWidth: '90%',
-                    border: '1px solid rgba(255, 133, 162, 0.3)',
-                    background: 'rgba(255, 255, 255, 0.95)',
-                    borderRadius: '16px',
-                    height: '300px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    boxShadow: '0 8px 24px rgba(255, 133, 162, 0.15)',
-                    backdropFilter: 'blur(10px)',
-                    transition: 'all 0.3s ease',
-                    '&:hover': {
-                      transform: 'translateY(-5px)'
-                    }
-                  }}
-                >
-                  <div style={{ position: 'relative', padding: '20px' }}>
-                    <h4 style={{ 
-                      fontSize: '20px', 
-                      background: themeGradient,
-                      WebkitBackgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent',
-                      margin: '0 0 16px 0',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '8px'
-                    }}>
-                      <GiftOutlined /> {prize.name || '未命名奖品'}
-                    </h4>
-                    
-                    {prize.image ? (
-                      <div style={{ 
-                        display: 'flex', 
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        height: '180px',
-                        position: 'relative'
-                      }}>
-                        <img
-                          src={prize.image}
-                          alt={prize.name}
-                          style={{ 
-                            maxWidth: '100%', 
-                            maxHeight: '180px',
-                            borderRadius: '12px',
-                            boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-                            transition: 'transform 0.3s ease',
-                            '&:hover': {
-                              transform: 'scale(1.05)'
-                            }
-                          }}
-                        />
-                      </div>
-                    ) : (
-                      <div style={{ 
-                        color: '#999', 
-                        padding: '30px 0', 
-                        textAlign: 'center',
-                        height: '180px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        background: 'rgba(0,0,0,0.02)',
-                        borderRadius: '8px'
-                      }}>
-                        暂无奖品图片
-                      </div>
-                    )}
-                    
-                    <div style={{ 
-                      marginTop: '16px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '4px'
-                    }}>
-                      <HeartOutlined style={{ color: themeColor }} />
-                      <span style={{ 
-                        fontSize: '14px',
-                        color: themeColor
-                      }}>
-                        中奖概率: {Math.round(prize.probability * 100)}%
-                      </span>
-                    </div>
-                  </div>
-                </Card>
-              </div>
-            ))}
-          </Carousel>
-          
-          {/* 左右翻页按钮 */}
-          <Button 
-            icon={<LeftOutlined />} 
-            style={{
-              position: 'absolute',
-              top: '50%',
-              left: '-12px',
-              transform: 'translateY(-50%)',
-              zIndex: 2,
-              width: '32px',
-              height: '32px',
-              borderRadius: '50%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              border: `1px solid ${themeColor}`,
-              color: themeColor,
-              background: 'rgba(255, 255, 255, 0.9)',
-              boxShadow: '0 2px 8px rgba(255, 133, 162, 0.2)',
-              transition: 'all 0.3s ease',
-              '&:hover': {
-                transform: 'translateY(-50%) scale(1.1)',
-                boxShadow: '0 4px 12px rgba(255, 133, 162, 0.3)'
-              }
-            }}
-            type="default"
-            onClick={handlePrev}
-          />
-          
-          <Button 
-            icon={<RightOutlined />} 
-            style={{
-              position: 'absolute',
-              top: '50%',
-              right: '-12px',
-              transform: 'translateY(-50%)',
-              zIndex: 2,
-              width: '32px',
-              height: '32px',
-              borderRadius: '50%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              border: `1px solid ${themeColor}`,
-              color: themeColor,
-              background: 'rgba(255, 255, 255, 0.9)',
-              boxShadow: '0 2px 8px rgba(255, 133, 162, 0.2)',
-              transition: 'all 0.3s ease',
-              '&:hover': {
-                transform: 'translateY(-50%) scale(1.1)',
-                boxShadow: '0 4px 12px rgba(255, 133, 162, 0.3)'
-              }
-            }}
-            type="default"
-            onClick={handleNext}
-          />
+
+          {/* 操作按钮 */}
+          <Space size="large" wrap>
+            <Button
+              type="primary"
+              size="large"
+              onClick={saveToHistory}
+              icon={<SaveOutlined />}
+              style={{
+                background: themeGradient,
+                border: 'none',
+                borderRadius: '16px',
+                height: '48px',
+                fontSize: '16px',
+                fontWeight: 'bold',
+                boxShadow: '0 6px 16px rgba(168, 143, 106, 0.3)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}
+            >
+              保存记录
+            </Button>
+            
+            <Button
+              size="large"
+              onClick={onClose}
+              icon={<CloseOutlined />}
+              style={{
+                borderColor: themeColor,
+                color: themeColor,
+                borderRadius: '16px',
+                height: '48px',
+                fontSize: '16px',
+                fontWeight: 'bold',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}
+            >
+              关闭
+            </Button>
+          </Space>
         </div>
-      ) : (
-        <Empty 
-          description={
-            <span style={{ color: '#999' }}>暂无奖品</span>
-          }
-          image={Empty.PRESENTED_IMAGE_SIMPLE} 
-          style={{ 
-            margin: '20px 0',
-            opacity: 0.6
-          }}
-        />
-      )}
+      </div>
+    );
+  };
 
-      {/* 添加CSS动画 */}
+  return (
+    <Modal
+      open={visible}
+      onCancel={onClose}
+      footer={null}
+      closable={false}
+      centered
+      width={isMobile ? '90%' : '600px'}
+      maskStyle={{
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+        backdropFilter: 'blur(8px)'
+      }}
+      style={{
+        top: 0,
+      }}
+      bodyStyle={{
+        padding: 0,
+        borderRadius: '24px',
+        overflow: 'hidden'
+      }}
+    >
+      {renderResult()}
+      
+      {/* 全局CSS动画定义 */}
       <style jsx="true">{`
-        @keyframes slideIn {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
+        @keyframes bounce {
+          0%, 20%, 53%, 80%, 100% {
+            transform: translate3d(0,0,0);
           }
-          to {
-            opacity: 1;
-            transform: translateY(0);
+          40%, 43% {
+            transform: translate3d(0, -20px, 0);
           }
-        }
-
-        .custom-dots {
-          bottom: -25px !important;
+          70% {
+            transform: translate3d(0, -10px, 0);
+          }
+          90% {
+            transform: translate3d(0, -4px, 0);
+          }
         }
         
-        .custom-dots li button {
-          background: ${themeColor} !important;
-          opacity: 0.3;
+        @keyframes spin {
+          0% {
+            transform: rotate(0deg);
+          }
+          100% {
+            transform: rotate(360deg);
+          }
         }
         
-        .custom-dots li.slick-active button {
-          opacity: 1;
+        @keyframes pulse {
+          0% {
+            box-shadow: 0 0 0 0 rgba(168, 143, 106, 0.7);
+          }
+          70% {
+            box-shadow: 0 0 0 10px rgba(168, 143, 106, 0);
+          }
+          100% {
+            box-shadow: 0 0 0 0 rgba(168, 143, 106, 0);
+          }
         }
       `}</style>
-    </div>
+    </Modal>
   );
 }
 
-export default LotteryResult;
+export default LotteryResultModal;
